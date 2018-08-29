@@ -1,0 +1,174 @@
+html,
+body {
+	height:100%;
+	overflow-x: hidden; /* Prevent scroll on narrow devices */
+}
+
+.modal .modal-body {
+    max-height: 420px;
+    overflow-y: auto;
+}
+.ui-datepicker{
+	z-index: 99999 !important;
+}
+.ui-datepicker-month{
+	color: #000 !important;
+}
+.ui-datepicker-year{
+	color: #000 !important;
+}
+.ui-widget{
+    font-size: 1em !important;
+}
+.dp {
+border: 0px;
+font-weight: bolder;
+width: 149px;
+float: left;
+     }
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+  }
+  
+    .row-offcanvas-right
+  .sidebar-offcanvas {
+    right: -248px; 
+  }
+  
+    .row-offcanvas-right.active
+  .sidebar-offcanvas
+   {
+    right: 0px; 
+  }
+  
+    .sidebar-offcanvas {
+	z-index: 1004;
+	position: absolute;
+    top: 0;
+    width: 300px; /* 6 columns */
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+.container-fluid {
+	height:100%;
+    width: 100%;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+
+.fill{
+	width:100%;
+    height:100%;
+    min-height:100%;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+#map {
+	z-index: 2;
+}
+#sidebar {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	min-height: 100%;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+#sidebar-content {
+	position: absolute;
+	top: 0px;
+	background-color: #fff;
+	height: 100%;
+	width: 248px;
+	margin-left: 52px;
+	min-height: 100%;
+	overflow-y: scroll;
+}
+
+.btn-sq-sm {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 2em !important;
+  z-index: 1003;
+}
+.btn-danger.active{
+     background: rgba(0, 0, 0, 0.8) !important;
+ }
+#colorbar {
+	position: absolute;
+	left: 0px;
+	top: 30px;
+	background: rgba(0,0,0,0.8);
+	z-index: 1000;	
+}
+#maptitlediv {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: rgba(0,0,0,0.8);
+	color: #FFF;
+	font-weight: bold;
+	padding: 5px;
+	z-index: 1001;
+}
+#fdetails {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	color: #FFF;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding-left: 20px;
+	padding-right: 20px;
+	z-index: 1002;
+}
+#fdetails .fshaded {
+	background: rgba(0,0,0,0.8);
+}
+#fdetails span {
+	color: #0ff;
+}
+
+/* xs < 768 */
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 1.2em;
+    }
+}
+
+/* sm */
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 1em;
+    }
+}
+
+/* md */
+@media screen and (min-width: 992px) {
+    body {
+        font-size: 1.2em;
+    }
+}
+
+/* lg */
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 1.3em;
+    }
+}
+#ls-overlay-layers {
+	padding-left: 20px;
+}
+
+#ls-base-layers {
+	padding-left: 20px;
+}
