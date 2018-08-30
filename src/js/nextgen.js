@@ -113,7 +113,7 @@ function setStatus(text){
 // Check the server for updated run information
 function checkDates(){
 	$.ajax({
-		url: '/geojson/timedomain.py?scenario=0',
+		url: BACKEND + '/geojson/timedomain.py?scenario=0',
 		fail: function(jqXHR, textStatus){
 			setStatus("New data check failed "+ textStatus);
 		},
@@ -271,7 +271,7 @@ function updateDetails(huc12){
 
 function getGeoJSONURL(){
 	// Generate the TMS URL given the current settings
-	var uri = '/geojson/huc12.py?date='+formatDate("yy-mm-dd", appstate.date);
+	var uri = BACKEND + '/geojson/huc12.py?date=' + formatDate("yy-mm-dd", appstate.date);
 	if (appstate.date2 !== null){
 		uri = uri + "&date2="+ formatDate("yy-mm-dd", appstate.date2);
 	} 
@@ -412,7 +412,7 @@ function viewEvents(huc12, mode){
 	$('#eventsres').html('<p><img src="/images/wait24trans.gif" /> Loading...</p>');
 	$.ajax({
 		method: 'GET',
-		url: '/geojson/huc12_events.py',
+		url: BACKEND + '/geojson/huc12_events.py',
 		data: {huc12: huc12, mode: mode}
 	}).done(function(res){
 		var myfunc = ((mode == 'yearly')? 'setYearInterval(': 'setDateFromString(');
@@ -448,7 +448,7 @@ function doHUC12Search(){
 	var txt = $('#huc12searchtext').val();
 	$.ajax({
 		method: 'GET',
-		url: '/geojson/hsearch.py',
+		url: BACKEND + '/geojson/hsearch.py',
 		data: {q: txt}
 	}).done(function(res){
 		var tbl = "<table class='table table-striped'><thead><tr><th>ID</th><th>Name</th></tr></thead>";
@@ -601,7 +601,7 @@ function displayFeatureInfo(evt) {
 };
 var featureDisplayFunc = displayFeatureInfo;
 
-$(document).ready(function(){
+function build() {
 	try{
 		readWindowHash();
 	} catch(e){
@@ -940,4 +940,4 @@ $(document).ready(function(){
     window.setInterval(checkDates, 600000);
     makeLayerSwitcher();
     
-}); // End of document.ready()
+}; // End of build
