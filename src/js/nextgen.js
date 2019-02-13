@@ -842,8 +842,8 @@ function build() {
     });
 
     $("#datepicker2").datepicker('setDate', (appstate.date2) ?
-    		formatDate(myDateFormat, appstate.date2):
-    		formatDate(myDateFormat, appstate.lastdate));
+    		formatDate(myDateFormat, appstate.date2 || new Date()):
+    		formatDate(myDateFormat, appstate.lastdate || new Date()));
     
     $("#radio").buttonset();
     $("#radio input[type=radio]").change(function(){
@@ -866,10 +866,10 @@ function build() {
         	$("#dp2").css('visibility', 'hidden');    		
         	remap();
     	} else {
+				$("#dp2").css('visibility', 'visible');
     		var dt = $("#datepicker2").datepicker("getDate");
     		appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth()+1,
     							dt.getUTCDate());
-        	$("#dp2").css('visibility', 'visible');
     	}
     });
 
