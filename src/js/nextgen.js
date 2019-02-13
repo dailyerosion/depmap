@@ -129,6 +129,8 @@ function checkDates(){
 						{maxDate: formatDate(myDateFormat, newdate)});
 					$('#datepicker2').datepicker("change",
 							{maxDate: formatDate(myDateFormat, newdate)});
+					// If we have no current date, don't show the modal
+					if (appstate.date != null){
 					$('#newdate-thedate').html(formatDate(myDateFormat,
 														newdate));
 				    $( "#newdate-message" ).dialog({
@@ -150,7 +152,14 @@ function checkDates(){
 				                $( this ).dialog( "close" );
 				              }
 				        }]
-				      });
+							});
+						} else {
+							setDate(
+								appstate.lastdate.getFullYear(),
+								appstate.lastdate.getMonth()+1,
+								appstate.lastdate.getDate()
+							);
+						}
 				}				
 			}
 			
