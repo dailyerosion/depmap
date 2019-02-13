@@ -265,7 +265,7 @@ function updateDetails(huc12){
 	$('#details_hidden').css('display', 'none');
 	$('#details_details').css('display', 'none');
 	$('#details_loading').css('display', 'block');
-    $.get('nextgen-details.php', {
+    $.get(BACKEND + '/huc12-details.php', {
     	huc12: huc12,
 		date: formatDate("yy-mm-dd", appstate.date),
 		date2: formatDate("yy-mm-dd", appstate.date2)
