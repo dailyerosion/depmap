@@ -418,7 +418,7 @@ function viewEvents(huc12, mode){
 	}
 	var lbl = ((mode == 'daily') ? 'Daily events': 'Yearly summary (# daily events)');
 	$('#eventsModalLabel').html(lbl + " for " + huc12);
-	$('#eventsres').html('<p><img src="/images/wait24trans.gif" /> Loading...</p>');
+	$('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
 	$.ajax({
 		method: 'GET',
 		url: BACKEND + '/geojson/huc12_events.py',
@@ -453,7 +453,7 @@ function viewEvents(huc12, mode){
 }
 
 function doHUC12Search(){
-	$('#huc12searchres').html('<p><img src="/images/wait24trans.gif" /> Searching...</p>');
+	$('#huc12searchres').html('<p><img src="images/wait24trans.gif" /> Searching...</p>');
 	var txt = $('#huc12searchtext').val();
 	$.ajax({
 		method: 'GET',
