@@ -1,6 +1,6 @@
 // Our bootstrapping
 var tilecache = "https://mesonet.agron.iastate.edu";
-var BACKEND = "http://depbackend.local";
+var BACKEND = (window.location.host.indexOf(".local") > 0) ? "http://depbackend.local" : "https://mesonet-dep.agron.iastate.edu";
 var appstate = {
 	lastdate: null,
 	lat: null,
