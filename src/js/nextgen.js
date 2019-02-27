@@ -110,8 +110,8 @@ function setStatus(text){
 	$.toaster({ message : text, priority : 'info' });
 }
 
-// Check the server for updated run information
 function checkDates(){
+	// Check the server for updated run information
 	$.ajax({
 		url: BACKEND + '/geojson/timedomain.py?scenario=0',
 		fail: function(jqXHR, textStatus){
@@ -294,6 +294,11 @@ function rerender_vectors(){
 }
 
 function remap(){
+	// Our main function for updating the map data
+
+	// Abort if we have no date set
+	if (appstate.date == null) return;
+
 	//console.log("remap() called"+ detailedFeature);
 	if (appstate.date2 != null && appstate.date2 <= appstate.date){
 		setStatus("Please ensure that 'To Date' is later than 'Date'");
