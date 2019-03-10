@@ -244,7 +244,7 @@ function get_shapefile(){
 	$("input[name='dlstates']:checked").each(function (idx, v){
 		states.push($(v).val());
 	});
-	var uri = '/dl/shapefile.py?dt='+dt+'&states='+ states.join(",");
+	var uri = BACKEND + '/dl/shapefile.py?dt='+dt+'&states='+ states.join(",");
 	if (appstate.date2 !== null){
 		uri = uri + '&dt2='+ formatDate("yy-mm-dd", appstate.date2);
 	}
