@@ -66,7 +66,7 @@ def main():
     # Open browser to see what we have
     subprocess.call("gio open http://depmap-releases.local/", shell=True)
     if input("Process with push? y/[n]") == "y":
-        subprocess.call("git push --tags", shell=True)
+        subprocess.call("git push --all", shell=True)
     else:
         print("ABORT git push.")
 
