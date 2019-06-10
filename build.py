@@ -6,12 +6,16 @@ import sys
 import datetime
 import subprocess
 
+print("DISABLED in dev")
+sys.exit()
 RELPATH = "/home/akrherz/projects/depmap-releases"
 RELEASE = "v%s" % (datetime.datetime.now().strftime("%Y%m%dT%H%M"), )
 JSINC = [
     'js/appvars.js',
+    'js/lib.js',
     'js/nextgen.js',
-    'js/start.js'
+    'js/ui.js',
+    'js/main.js'
 ]
 
 

@@ -74,28 +74,6 @@ var vartitle = {
 	avg_delivery: 'Hillslope Soil Loss'
 };
 
-var currentTab = null;
-function handleClick(target){
-	$("#buttontabs .btn").removeClass('active');
-	for (i=1;i<5;i++){
-		$('#q'+i).hide();
-	}
-	$('#q'+target).show();
-	// 1. If no currentTab, show the offcanvas
-	if ( currentTab == null){		
-		$("#btnq"+target).toggleClass('active');
-		$('.row-offcanvas').toggleClass("active");
-		currentTab = target;
-	}
-	// 2. current tab was clicked again
-	else if (currentTab == target ){
-		$('.row-offcanvas').toggleClass("active");
-		currentTab = null;
-	} else {
-		$("#btnq"+target).toggleClass('active');
-		currentTab = target;
-	}
-}
 
 function formatDate(fmt, dt){
 	return $.datepicker.formatDate(fmt, dt)
@@ -190,37 +168,6 @@ function setWindowHash(){
 }
 
 // Reads the hash and away we go!
-function readWindowHash(){
-	var tokens = window.location.hash.split("/");
-	// careful, we have the # char here to deal with
-	if (tokens.length > 0 && tokens[0] != '' &&
-		tokens[0] != '#' && tokens[0] != '#NaNNaNNaN'){
-		appstate.date = makeDate(tokens[0].substr(1,4), tokens[0].substr(5,2),
-									tokens[0].substr(7,2));
-	}
-	if (tokens.length > 1 && tokens[1] != '' && tokens[1] != 'NaNNaNNaN'){
-		appstate.date2 = makeDate(tokens[1].substr(0,4), tokens[1].substr(4,2),
-									tokens[1].substr(6,2));
-	}
-	if (tokens.length > 2 && tokens[2] != ''){
-		appstate.ltype = tokens[2];
-		$( '#radio input[value='+tokens[2]+']').prop('checked', true);
-	}
-	if (tokens.length > 5 && tokens[3] != '' && tokens[4] != '' &&
-		tokens[5] != ''){
-		defaultCenter = ol.proj.transform([parseFloat(tokens[3]), parseFloat(tokens[4])], 'EPSG:4326', 'EPSG:3857');
-		defaultZoom = parseFloat(tokens[5]);
-	}
-	if (tokens.length > 6 && tokens[6].length == 12){
-		detailedFeatureIn = tokens[6];
-	}
-	if (tokens.length > 7 && tokens[7].length == 1){
-		appstate.metric = parseInt(tokens[7]);
-		$( '#units_radio input[value='+tokens[7]+']').prop('checked', true);
-	}
-	
-}
-
 // Sets the date back to today
 function setToday(){
 	setDate(appstate.lastdate.getFullYear(),
@@ -616,28 +563,7 @@ function displayFeatureInfo(evt) {
 var featureDisplayFunc = displayFeatureInfo;
 
 function build() {
-	try{
-		readWindowHash();
-	} catch(e){
-		setStatus("An error occurred reading the hash link...");
-		//console.log(e);
-	}
 	
-	  $('[data-target="q1"]').click(function (event) {
-		    handleClick(1);
-		  });
-	  $('[data-target="q2"]').click(function (event) {
-		    handleClick(2);
-		  });
-	  $('[data-target="q3"]').click(function (event) {
-		    handleClick(3);
-		  });
-	  $('[data-target="q4"]').click(function (event) {
-		    handleClick(4);
-		  });
-	  $("#close_sidebar").click(function(){
-		 handleClick(currentTab); 
-	  });
 	
 	var style = new ol.style.Style({
 		  fill: new ol.style.Fill({
