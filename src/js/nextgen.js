@@ -22,11 +22,12 @@ var multipliers = {
 	'avg_loss': [1, 2.2417],
 	'avg_delivery': [1, 2.2417]
 };
+// english ramp, metric ramp, english max, metric max
 var levels = {
-	'qc_precip': [[], []],
-	'avg_runoff': [[], []],
-	'avg_loss': [[], []],
-	'avg_delivery': [[], []]
+	'qc_precip': [[], [], 0, 0],
+	'avg_runoff': [[], [], 0, 0],
+	'avg_loss': [[], [], 0, 0],
+	'avg_delivery': [[], [], 0, 0]
 };
 var colors = {
   'qc_precip': ['#FFFF80', '#CDFA64', '#98F046', '#61E827', '#3BD923', '#3FC453',
@@ -263,9 +264,11 @@ function remap(){
 			// we also do the unit conversion so that we have levels in metric
 			for(var i=0; i<varnames.length; i++){
 				levels[varnames[i]][0] = json.jenks[varnames[i]];
+				levels[varnames[i]][2] = json.max_values[varnames[i]];
 				for(var j=0; j<levels[varnames[i]][0].length; j++) {
 					levels[varnames[i]][1][j] = levels[varnames[i]][0][j] * multipliers[varnames[i]][1];
 				}
+				levels[varnames[i]][3] = json.max_values[varnames[i]] * multipliers[varnames[i]][1];
 				
 			}
 			drawColorbar();
@@ -447,7 +450,8 @@ function drawColorbar(){
     var pos = 20;
     $.each(levels[appstate.ltype][appstate.metric], function(idx, level){
     	if (idx == (levels[appstate.ltype][appstate.metric].length - 1)){
-    	    var txt = "Max: "+ level.toFixed((level < 100) ? 2 : 0);
+			var maxval = levels[appstate.ltype][appstate.metric + 2];
+			var txt = "Max: "+ maxval.toFixed((maxval < 100) ? 2 : 0);
     	    ctx.font = 'bold 10pt Calibri';
     	    ctx.fillStyle = 'yellow';
     	    metrics = ctx.measureText(txt);
