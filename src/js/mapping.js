@@ -13,7 +13,7 @@ map.on("load", function() {
     });
 
     map.addLayer({
-        id: 'depdata-layer',
+        id: 'depdata-data',
         source: 'depdata',
         type: 'fill',
         paint: {
@@ -33,4 +33,28 @@ map.on("load", function() {
             ]
         }
     });
+
+    map.addLayer({
+        id: "depdata-label",
+        type: "symbol",
+        source: "depdata",
+        layout: {
+            "icon-allow-overlap": true, // speed optimization
+            "text-field": "{avg_runoff}",
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 12
+        }
+    });
+
+    map.on('click', 'depdata-data', function (e) {
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(renderHUC12PopupHTML(e.features[0].properties))
+            .addTo(map);
+        });
+
 });
+
+function renderHUC12PopupHTML(props){
+    return "<p><strong>Avg Runoff:</strong> " + props.avg_runoff + "</p>";
+};
