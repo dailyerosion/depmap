@@ -588,7 +588,7 @@ function displayFeatureInfo(evt) {
       var features = map.getFeaturesAtPixel(map.getEventPixel(evt.originalEvent));
       var feature;
       var info = document.getElementById('info');
-      if (features) {
+      if (features.length > 0) {
     	  feature = features[0];
     	  $('#info-huc12').html( feature.getId() );
     	  $('#info-loss').html( (feature.get('avg_loss') * multipliers['avg_loss'][appstate.metric]).toFixed(2) + ' '+ varunits['avg_loss'][appstate.metric]);
@@ -664,8 +664,9 @@ function build() {
 		  })
 		});
 
-	vectorLayer = new ol.layer.Vector({
-		title : 'DEP Data Layer',
+	vectorLayer = new ol.layer.VectorImage({
+        title : 'DEP Data Layer',
+        imageRatio: 2,
 		source: new ol.source.Vector({
             format: new ol.format.GeoJSON(),
             projection : ol.proj.get('EPSG:4326')
@@ -680,9 +681,8 @@ function build() {
 			      if (val >= levels[appstate.ltype][appstate.metric][i]){
 			    	 c = colors[appstate.ltype][i];
 			    	 break;
-			      }
-			      
-			  }			  
+                  }
+              }
 			  style.getFill().setColor(c); 
 			  style.getStroke().setColor((resolution < 1250) ? '#000000' : c);
 		      style.getText().setText(resolution < 160 ? val.toFixed(2) : '');
