@@ -497,6 +497,10 @@ function drawColorbar(){
 
     var pos = 20;
     $.each(levels[appstate.ltype][appstate.metric], function(idx, level){
+        // Confusion with pyIEM levels
+        if (idx >= colors[appstate.ltype].length) {
+            return;
+        }
         ctx.beginPath();
         ctx.rect(5, canvas.height - pos - 10, 20, 20);
         ctx.fillStyle = colors[appstate.ltype][idx];
