@@ -30,30 +30,17 @@ var levels = {
 	'avg_delivery': [[], [], 0, 0]
 };
 var colors = {
-  'qc_precip': ['#FFFF80', '#CDFA64', '#98F046', '#61E827', '#3BD923', '#3FC453',
-  		        '#37AD7A', '#26989E', '#217AA3', '#215394', '#1B3187', '#0C1078'],     
-  'avg_runoff': ['#FFFF80', '#CDFA64', '#98F046', '#61E827', '#3BD923', '#3FC453',
-  				 '#37AD7A', '#26989E', '#217AA3', '#215394', '#1B3187', '#0C1078'],
-  // james2
-  'avg_loss': ['#FFFF80', '#FFEE70', '#FCDD60', '#FACD52', '#F7BE43', '#F5AF36',
-  			   '#E69729', '#CC781F', '#B35915', '#9C400E', '#822507', '#6B0000'],
-  'avg_delivery': ['#FFFF80', '#FFEE70', '#FCDD60', '#FACD52', '#F7BE43', '#F5AF36',
-  				   '#E69729', '#CC781F', '#B35915', '#9C400E', '#822507', '#6B0000']
+  'qc_precip': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
+                '#37AD7A', '#26989E', '#215394', '#0C1078'],
+  'avg_runoff': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
+                 '#37AD7A', '#26989E', '#215394', '#0C1078'],
+  // DEJ circa 11 Dec 2020
+  'avg_loss': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
+               '#1A818F', '#003075'],
+  'avg_delivery': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
+                   '#1A818F', '#003075']
 };
 
-/*
-var colors = ['rgba(0, 0, 255, 1)',
-
-			  'rgba(0, 212, 255, 1)',
-
-			  'rgba(102, 255, 153, 1)',
-
-			  'rgba(204, 255, 0, 1)',
-
-			  'rgba(255, 232, 0, 1)',
-
-			  'rgba(255, 153, 0, 1)'];
-*/
 
 var vardesc = {
 	avg_runoff: 'Runoff is the average amount of water that left the hillslopes via above ground transport.',
@@ -489,8 +476,9 @@ function drawColorbar(){
 	//console.log("drawColorbar called...");
     var canvas = document.getElementById('colorbar');
     var ctx = canvas.getContext('2d');
-    
-    canvas.height = colors[appstate.ltype].length * 20 + 10;
+
+    // 20px for each color, 10 pixels on bottom, 40 on top
+    canvas.height = colors[appstate.ltype].length * 20 + 10 + 40;
     
     // Clear out the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -499,29 +487,16 @@ function drawColorbar(){
     ctx.fillStyle = 'white';
     var metrics = ctx.measureText('Legend');
     ctx.fillText('Legend', (canvas.width / 2) - (metrics.width / 2), 14);
-    
+
+    var maxval = levels[appstate.ltype][appstate.metric + 2];
+    var txt = "Max: "+ maxval.toFixed((maxval < 100) ? 2 : 0);
+    ctx.font = 'bold 10pt Calibri';
+    ctx.fillStyle = 'yellow';
+    metrics = ctx.measureText(txt);
+    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
+
     var pos = 20;
     $.each(levels[appstate.ltype][appstate.metric], function(idx, level){
-    	if (idx == (levels[appstate.ltype][appstate.metric].length - 1)){
-			var maxval = levels[appstate.ltype][appstate.metric + 2];
-			var txt = "Max: "+ maxval.toFixed((maxval < 100) ? 2 : 0);
-    	    ctx.font = 'bold 10pt Calibri';
-    	    ctx.fillStyle = 'yellow';
-    	    metrics = ctx.measureText(txt);
-    	    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
-    	
-    	    // All zeros
-    	    if (idx == 0){
-        	    var txt = "All Zeros";
-        	    ctx.font = 'bold 10pt Calibri';
-        	    ctx.fillStyle = 'white';
-        	    metrics = ctx.measureText(txt);
-        	    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 50);
-    	    }
-    	    
-    		return;
-    	}
-    	
         ctx.beginPath();
         ctx.rect(5, canvas.height - pos - 10, 20, 20);
         ctx.fillStyle = colors[appstate.ltype][idx];
