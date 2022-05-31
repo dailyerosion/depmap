@@ -31,13 +31,13 @@
       <script src="lib/respond.min.js"></script>
     <![endif]-->
     <meta name="twitter:card" content="summary">
-	  <meta name="twitter:image:src" content="https://dailyerosion.org/images/logo.png">
-	  <meta name="twitter:title" content="DEP :: Map Interface">
-	  <meta name="twitter:description" content="Daily Erosion Project of Iowa State University">
-  	<meta name="twitter:url" content="https://dailyerosion.org">
-	  <meta name="twitter:creator" content="@akrherz">
-	  <meta name="twitter:image:width" content="85">
-	  <meta name="twitter:image:height" content="65">
+      <meta name="twitter:image:src" content="https://dailyerosion.org/images/logo.png">
+      <meta name="twitter:title" content="DEP :: Map Interface">
+      <meta name="twitter:description" content="Daily Erosion Project of Iowa State University">
+      <meta name="twitter:url" content="https://dailyerosion.org">
+      <meta name="twitter:creator" content="@akrherz">
+      <meta name="twitter:image:width" content="85">
+      <meta name="twitter:image:height" content="65">
 
   </head>
 
@@ -47,7 +47,7 @@
   <p>
     <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
     The realtime processing has finished and new data is available for date:
-	<span id="newdate-thedate"></span>.
+    <span id="newdate-thedate"></span>.
   </p>
 </div>
 
@@ -59,17 +59,17 @@
         <h4 class="modal-title" id="eventsModalLabel">Listing of Daily Events</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
-		<div id="eventsres"></div>
-		
-	  </div>
+        <div id="eventsres"></div>
+        
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-		
-		
+        
+        
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -78,17 +78,17 @@
         <h4 class="modal-title" id="myModalLabel">Search for Watershed by Name</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
-		<p>Enter some case-insensitive text to search for a watershed by name.</p>
+        <p>Enter some case-insensitive text to search for a watershed by name.</p>
       <form name="huc12search">
-		<input type="text" name="q" id="huc12searchtext">
-		<button type="button" class="btn btn-default" id="huc12searchbtn">
+        <input type="text" name="q" id="huc12searchtext">
+        <button type="button" class="btn btn-default" id="huc12searchbtn">
   <i class="fa fa-search"></i>
 </button>
-		</form>
-		<hr />
-		<div id="huc12searchres"></div>
-		
-	  </div>
+        </form>
+        <hr />
+        <div id="huc12searchres"></div>
+        
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -101,7 +101,7 @@
  <div class="row row-offcanvas row-offcanvas-right fill">
   <div class="col-xs-12 fill">
     <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
-	<canvas id="colorbar" width="100" height="150"></canvas>
+    <canvas id="colorbar" width="100" height="150"></canvas>
    </div>
    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
      <div class="pull-left" id="buttontabs">
@@ -122,34 +122,34 @@
 
     <div class="pull-right" id="sidebar-content">
       <div class="pull-right">
-    	<button id="close_sidebar" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
- 	  </div>
- 	  <div class="clearfix"></div>
+        <button id="close_sidebar" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
+       </div>
+       <div class="clearfix"></div>
  
     <div id="q1">  
         <h4>What to View:</h4>
-		<div id="radio">
-		  <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
-		  <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
-		  <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
-		  <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
-		</div>
+        <div id="radio">
+          <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
+          <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
+          <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
+          <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
+        </div>
 
-    	<div id="variable_desc" class="well"></div>
+        <div id="variable_desc" class="well"></div>
 
         <h4>Time Display Options:</h4>
-    	<div id="units_radio">
-		  <input type="radio" id="english_opt" name="units" value="0" checked="checked"><label for="english_opt">English</label>
-		  <input type="radio" id="metric_opt" name="units" value="1"><label for="metric_opt">Metric</label>
-		</div>
+        <div id="units_radio">
+          <input type="radio" id="english_opt" name="units" value="0" checked="checked"><label for="english_opt">English</label>
+          <input type="radio" id="metric_opt" name="units" value="1"><label for="metric_opt">Metric</label>
+        </div>
 
         <h4>Preset Map Views:</h4>
         <button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
         <button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
-	    <button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
-	    <button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
-	    <button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
-		<br clear="all" />    
+        <button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
+        <button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
+        <button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
+        <br clear="all" />    
     </div><!-- ./q1 -->
 
     <div id="q2">
@@ -157,26 +157,26 @@
         <div class="panel panel-default">
           <div class="panel-heading">Date Options</div>
           <div class="panel-body">
-			<div id="t">
-			<input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
-			<input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
-			</div>
-    	<h4>Date:</h4>
-			<div class="input-group">
-			<span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
-			<input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-			<span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
-			</div>
+            <div id="t">
+            <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
+            <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
+            </div>
+        <h4>Date:</h4>
+            <div class="input-group">
+            <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
+            <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
+            <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
+            </div>
 
-		<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
-		</div>
+        <div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
+        </div>
 
-		<div style="visibility: hidden;" id="dp2">
-			<h4>To Date:</h4>
-			<div class="input-group">
-			  <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
-			</div>
-		</div>
+        <div style="visibility: hidden;" id="dp2">
+            <h4>To Date:</h4>
+            <div class="input-group">
+              <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
+            </div>
+        </div>
 
           </div>
         </div>
@@ -185,9 +185,9 @@
           <div class="panel-heading">Tools</div>
           <div class="panel-body">
 
-		 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal"><i class="fa fa-search"></i> Search</button>
-		 <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() - 0.1);" class="btn btn-default" type="button"><i class="fa fa-minus"></i> Decrease Opacity</button>
-		 <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() + 0.1);" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Increase Opacity</button>
+         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal"><i class="fa fa-search"></i> Search</button>
+         <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() - 0.1);" class="btn btn-default" type="button"><i class="fa fa-minus"></i> Decrease Opacity</button>
+         <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() + 0.1);" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Increase Opacity</button>
 
           </div>
         </div>
@@ -205,18 +205,18 @@
             <br /><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label>
             <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
             </p>
-		 <button onclick="javascript: get_shapefile();" class="btn btn-default" type="button"><i class="fa fa-download"></i> Download Data</button>
+         <button onclick="javascript: get_shapefile();" class="btn btn-default" type="button"><i class="fa fa-download"></i> Download Data</button>
           </div>
         </div>        
 
-    	</div><!-- ./q2 -->
+        </div><!-- ./q2 -->
     <div id="q3">
       <div id="detailsContainer">
-		<div id="clickDetails" class="well">
-		  <div id="details_loading" style="display: none;"><img src="images/wait24trans.gif" /> Loading...</div>
-		  <div id="details_details"></div>
-		  <div id="details_hidden">Double click on a watershed to load detailed data</div>
-		</div>
+        <div id="clickDetails" class="well">
+          <div id="details_loading" style="display: none;"><img src="images/wait24trans.gif" /> Loading...</div>
+          <div id="details_details"></div>
+          <div id="details_hidden">Double click on a watershed to load detailed data</div>
+        </div>
       </div><!-- ./detailsContainer -->
     </div><!-- ./q3 -->
     <div id="q4">
@@ -242,11 +242,11 @@
     <div class="row">
       <div class="col-xs-12 col-md-4">
         <div class="row fshaded">
-        	<div class="col-xs-12">HUC12: <span id="info-huc12"></span></div>
-        	<div class="col-xs-6 col-md-12">Precipitation: <span class="visible-xs-inline"><br></span><span id="info-precip"></span></div>
-        	<div class="col-xs-6 col-md-12">Water Runoff: <span class="visible-xs-inline"><br></span><span id="info-runoff"></span></div>
-        	<div class="col-xs-6 col-md-12">Soil Detachment: <span class="visible-xs-inline"><br></span><span id="info-loss"></span></div>
-        	<div class="col-xs-6 col-md-12">Hillslope Soil Loss: <span class="visible-xs-inline"><br></span><span id="info-delivery"></span></div>
+            <div class="col-xs-12">HUC12: <span id="info-huc12"></span></div>
+            <div class="col-xs-6 col-md-12">Precipitation: <span class="visible-xs-inline"><br></span><span id="info-precip"></span></div>
+            <div class="col-xs-6 col-md-12">Water Runoff: <span class="visible-xs-inline"><br></span><span id="info-runoff"></span></div>
+            <div class="col-xs-6 col-md-12">Soil Detachment: <span class="visible-xs-inline"><br></span><span id="info-loss"></span></div>
+            <div class="col-xs-6 col-md-12">Hillslope Soil Loss: <span class="visible-xs-inline"><br></span><span id="info-delivery"></span></div>
         </div><!-- ./inner row container -->
        </div><!-- ./column container -->
     </div><!-- ./outer row container -->
@@ -256,8 +256,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
- 	<script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.js"></script>
- 	<script src='lib/jquery.toaster.js'></script>
+     <script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.js"></script>
+     <script src='lib/jquery.toaster.js'></script>
   <script src="js/appvars.js"></script><!-- replaceme -->
   <script src="js/nextgen.js"></script><!-- replaceme -->
   <script src="js/start.js"></script><!-- replaceme -->
