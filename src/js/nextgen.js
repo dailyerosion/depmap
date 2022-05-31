@@ -901,13 +901,18 @@ function build() {
     	}
     });
 
+    $('#il').on('click', function(){
+        map.getView().setCenter(ol.proj.transform([-88.75, 40.14], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setZoom(7);
+        $(this).blur();
+    });
     $('#ia').on('click', function(){
     	map.getView().setCenter(ol.proj.transform([-93.5, 42.07], 'EPSG:4326', 'EPSG:3857'));
     	map.getView().setZoom(7);
     	$(this).blur();
     });
     $('#mn').on('click', function(){
-    	map.getView().setCenter(ol.proj.transform([-94.31, 44.3], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(ol.proj.transform([-93.21, 46.05], 'EPSG:4326', 'EPSG:3857'));
     	map.getView().setZoom(7);
     	$(this).blur();
     });

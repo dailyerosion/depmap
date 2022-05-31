@@ -13,7 +13,7 @@
      rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
      crossorigin="anonymous">
     <link type="text/css"
-     href="https://mesonet.agron.iastate.edu/vendor/openlayers/6.4.3/ol.css"
+     href="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.css"
      rel="stylesheet" />
     <link
      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
@@ -144,10 +144,11 @@
 		</div>
 
         <h4>Preset Map Views:</h4>
-    	<button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
-		<button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
-		<button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
-		<button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
+        <button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
+        <button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
+	    <button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
+	    <button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
+	    <button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
 		<br clear="all" />    
     </div><!-- ./q1 -->
 
@@ -196,6 +197,7 @@
           <div class="panel-body">
             <p>Request a GIS Shapefile of the current data presented.<p>
             <p>Include States:
+            <br /><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label>
             <br /><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label>
             <br /><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label>
             <br /><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label>
@@ -254,7 +256,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
- 	<script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.4.3/ol.js"></script>
+ 	<script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.js"></script>
  	<script src='lib/jquery.toaster.js'></script>
   <script src="js/appvars.js"></script><!-- replaceme -->
   <script src="js/nextgen.js"></script><!-- replaceme -->
