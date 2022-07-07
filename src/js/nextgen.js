@@ -538,9 +538,12 @@ function makeLayerSwitcher(){
     $.each(map.getLayers().getArray(), function(i, lyr){
         var lyrTitle = lyr.get('title');
         if (lyrTitle === undefined) return;
+        var lid = 'oll' + i;
         var li = document.createElement('li');
         var input = document.createElement('input');
-        var span = document.createElement('span');
+        input.id = lid;
+        var label = document.createElement('label');
+        label.htmlFor = lid;
         if (lyr.get('type') === 'base') {
             input.type = 'radio';
             input.name = 'base';
@@ -551,9 +554,9 @@ function makeLayerSwitcher(){
         input.onchange = function(e) {
             layerVisible(lyr, e.target.checked);
         };
-        span.innerHTML = lyrTitle;
+        label.innerHTML = " " + lyrTitle;
         li.appendChild(input);
-        li.appendChild(span);        
+        li.appendChild(label);
         if (lyr.get('type') === 'base') {
             base_elem.appendChild(li);
         } else {
@@ -691,7 +694,7 @@ function build() {
             vectorLayer,
             make_iem_tms('US Counties', 'c-900913', false, ''),
             make_iem_tms('US States', 's-900913', true, ''),
-            make_iem_tms('Hydrology', 'iahydrology-900913', false, ''),
+            // make_iem_tms('Hydrology', 'iahydrology-900913', false, ''),
             make_iem_tms('HUC 8', 'huc8-900913', false, '')
         ],
         view: new ol.View({
