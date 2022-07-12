@@ -109,14 +109,34 @@
 </div>
 
 <div class="container-fluid">
- <div class="row row-offcanvas row-offcanvas-left fill">
-  <div class="col-xs-12 fill">
-    <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
+
+    <div class="row row-offcanvas row-offcanvas-left fill">
+        <div class="col-xs-12 fill">
+            <div id="headerdiv">
+                <img src="images/deplogo.png"
+                     height="50" class="pull-left">
+                <ul class="nav nav-pills" style="margin-top: 5px;">
+                    <li>
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                    <li>
+                        <a href="/people" class="nav-link">People</a>
+                    </li>
+                    <li>
+                        <a href="/faq" class="nav-link">FAQ</a>
+                    </li>
+                    <li class="active">
+                        <a href="https://dailyerosion.org/map" class="nav-link">Interactive Map</a>
+                    </li>
+                 </ul>
+            </div>
+        
+            <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
     <canvas id="colorbar" width="100" height="150"></canvas>
   </div>
    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
      <div class="pull-right" id="buttontabs">
-        <button id="btnq1" style="margin-top: 30px;" data-target="q1"
+        <button id="btnq1" style="margin-top: 60px;" data-target="q1"
          class="btn btn-sq-sm btn-danger"><i class="fa fa-bars"></i></button>
      </div><!-- ./pull-right buttons -->
     
@@ -126,18 +146,18 @@
  
     <div id="q1">
         <!-- Search box -->
-        <form name="search">
-            <div class="row">
-                <div class="col-xs-12">
-                    <input type="text" placeholder="HUC ID, watershed name, address">
-                    <input type="submit" value="Search">
+        <form name="search" class="form-inline">
+            <div class="row well">
+                <div class="col-xs-11">
+                    <input type="text" class="form-control" placeholder="HUC ID, watershed name, address">
+                    <input type="submit" value="Search" class="btn btn-default">
                 </div>
             </div>
         </form>
 
         <!-- Sidebar tabs -->
         <div id="thetabs">
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
                 <li><a href="#1a" data-toggle="tab">Data</a></li>
                 <li class="active"><a href="#2a" data-toggle="tab">Map</a></li>
             </ul>
@@ -161,32 +181,7 @@
 <button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
 <br clear="all" />    
 
-<div class="panel panel-default">
-    <div class="panel-heading">Date Options</div>
-    <div class="panel-body">
-    <div id="t">
-    <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
-    <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
-    </div>
-<h4>Date:</h4>
-    <div class="input-group">
-    <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
-    <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-    <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
-    </div>
 
-<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
-</div>
-
-<div style="visibility: hidden;" id="dp2">
-    <h4>To Date:</h4>
-    <div class="input-group">
-        <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
-    </div>
-</div>
-
-    </div>
-</div>
 
 <div class="panel panel-default">
     <div class="panel-heading">Tools</div>
@@ -233,13 +228,38 @@
                     </div><!-- ./tab1a -->
                     <div class="tab-pane active" id="2a">
 
-<h4>View:</h4>
-<div id="radio">
-    <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
-    <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
-    <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
-    <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
+<div class="panel panel-default">
+    <div class="panel-heading">Date Options</div>
+    <div class="panel-body">
+    <div id="t">
+    <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
+    <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
+    </div>
+<h4>Date:</h4>
+    <div class="input-group">
+    <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
+    <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
+    <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
+    </div>
+
+<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
 </div>
+
+    <div style="visibility: hidden;" id="dp2">
+    <h4>To Date:</h4>
+    <div class="input-group">
+        <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
+    </div>
+    </div>
+
+    </div><!-- ./panel-body -->
+</div><!-- ./panel -->
+
+<h4>View:</h4>
+<input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
+<br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
+<br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
+<br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
                         
                     </div><!-- ./tab2a -->
                 </div><!-- tabcontent -->

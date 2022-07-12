@@ -119,9 +119,15 @@ width: 300px;
     z-index: 1000;
     width: 100px;
 }
+#headerdiv {
+    height: 55px;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
 #maptitlediv {
 	position: absolute;
-	top: 0px;
+	top: 65px;
     width: 100%;
 	padding: 0px;
 	z-index: 1001;
