@@ -7,7 +7,7 @@
     <title>DEP :: Map Interface</title>
     <meta name="description" content="Iowa State University, Daily Erosion Project">
     <meta name="author" content="daryl herzmann akrherz@iastate.edu">
-    <link rel="shortcut icon" href="https://www.dailyerosion.org/sites/all/themes/suitcase_interim/images/favicon.ico" type="image/vnd.microsoft.icon" />
+    <link rel="shortcut icon" href="https://www.dailyerosion.org/themes/isubit/iastate8_theme/favicon.ico" type="image/vnd.microsoft.icon" />
 
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
      rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
@@ -25,24 +25,18 @@
     <!-- Custom styles for app -->
     <link href="css/nextgen.css" rel="stylesheet">
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="lib/html5shiv.js"></script>
-      <script src="lib/respond.min.js"></script>
-    <![endif]-->
     <meta name="twitter:card" content="summary">
-      <meta name="twitter:image:src" content="https://dailyerosion.org/images/logo.png">
-      <meta name="twitter:title" content="DEP :: Map Interface">
-      <meta name="twitter:description" content="Daily Erosion Project of Iowa State University">
-      <meta name="twitter:url" content="https://dailyerosion.org">
-      <meta name="twitter:creator" content="@akrherz">
-      <meta name="twitter:image:width" content="85">
-      <meta name="twitter:image:height" content="65">
+    <meta name="twitter:image:src" content="https://dailyerosion.org/images/logo.png">
+    <meta name="twitter:title" content="DEP :: Map Interface">
+    <meta name="twitter:description" content="Daily Erosion Project of Iowa State University">
+    <meta name="twitter:url" content="https://dailyerosion.org">
+    <meta name="twitter:creator" content="@akrherz">
+    <meta name="twitter:image:width" content="85">
+    <meta name="twitter:image:height" content="65">
+</head>
+<body>
 
-  </head>
-
-  <body>
-  <!-- Modals -->
+    <!-- Modals -->
 <div id="newdate-message" title="Updated data available" style="display: none;">
   <p>
     <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
@@ -95,139 +89,163 @@
     </div>
   </div>
 </div>
-  <!-- End of modals -->
-  
+<!-- End of modals -->
+
+<div id="mapcontrols">
+
+<button class="btn btn-sq-sm btn-danger pull-left active" id="mappointer">
+    <i class="fa fa-mouse-pointer"></i></button>
+<button class="btn btn-sq-sm btn-danger pull-left" id="mapsquare">
+    <i class="fa fa-square-o"></i></button>
+<button class="btn btn-sq-sm btn-danger pull-left" id="mapplus">
+    <i class="fa fa-search-plus"></i></button>
+<button class="btn btn-sq-sm btn-danger pull-left" id="mapminus">
+    <i class="fa fa-search-minus"></i></button>
+<button class="btn btn-sq-sm btn-danger pull-left" id="mapinfo">
+    <i class="fa fa-info-circle"></i></button>
+<button class="btn btn-sq-sm btn-danger pull-left" id="maprefresh">
+    <i class="fa fa-refresh"></i></button>
+    
+</div>
+
 <div class="container-fluid">
- <div class="row row-offcanvas row-offcanvas-right fill">
+ <div class="row row-offcanvas row-offcanvas-left fill">
   <div class="col-xs-12 fill">
     <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
     <canvas id="colorbar" width="100" height="150"></canvas>
-   </div>
+  </div>
    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
-     <div class="pull-left" id="buttontabs">
-        <button id="btnq1" style="margin-top: 30px;" data-target="q1" class="btn btn-sq-sm btn-danger">
-              <i class="fa fa-map"></i></button><br />
-        <button id="btnq2" data-target="q2" class="btn btn-sq-sm btn-danger">
-              <i class="fa fa-wrench"></i></button><br />
-        <button id="btnq3" data-target="q3" class="btn btn-sq-sm btn-danger">
-              <i class="fa fa-info-circle"></i></button><br />
-        <button id="btnq4" data-target="q4" class="btn btn-sq-sm btn-danger">
-              <i class="fa fa-bars"></i></button><br />
-        <button style="margin-top: 30px;" class="btn btn-sq-sm btn-danger" id="mapplus">
-              <i class="fa fa-search-plus"></i></button><br />
-        <button class="btn btn-sq-sm btn-danger" id="mapminus">
-              <i class="fa fa-search-minus"></i></button><br />
-     </div><!-- ./pull-left buttons -->
+     <div class="pull-right" id="buttontabs">
+        <button id="btnq1" style="margin-top: 30px;" data-target="q1"
+         class="btn btn-sq-sm btn-danger"><i class="fa fa-bars"></i></button>
+     </div><!-- ./pull-right buttons -->
     
 
-    <div class="pull-right" id="sidebar-content">
-      <div class="pull-right">
-        <button id="close_sidebar" class="btn btn-default" type="button"><i class="fa fa-close"></i></button>
-       </div>
-       <div class="clearfix"></div>
+    <div class="pull-left" id="sidebar-content">
+      <div class="pull-left">
  
-    <div id="q1">  
-        <h4>What to View:</h4>
-        <div id="radio">
-          <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
-          <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
-          <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
-          <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
-        </div>
+    <div id="q1">
+        <!-- Search box -->
+        <form name="search">
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="text" placeholder="HUC ID, watershed name, address">
+                    <input type="submit" value="Search">
+                </div>
+            </div>
+        </form>
 
-        <div id="variable_desc" class="well"></div>
+        <!-- Sidebar tabs -->
+        <div id="thetabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li><a href="#1a" data-toggle="tab">Data</a></li>
+                <li class="active"><a href="#2a" data-toggle="tab">Map</a></li>
+            </ul>
+            <div class="tab-content clearfix">
+                <div class="tab-pane" id="1a">
 
-        <h4>Time Display Options:</h4>
-        <div id="units_radio">
-          <input type="radio" id="english_opt" name="units" value="0" checked="checked"><label for="english_opt">English</label>
-          <input type="radio" id="metric_opt" name="units" value="1"><label for="metric_opt">Metric</label>
-        </div>
 
-        <h4>Preset Map Views:</h4>
-        <button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
-        <button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
-        <button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
-        <button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
-        <button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
-        <br clear="all" />    
+<div id="variable_desc" class="well"></div>
+
+<h4>Time Display Options:</h4>
+<div id="units_radio">
+    <input type="radio" id="english_opt" name="units" value="0" checked="checked"><label for="english_opt">English</label>
+    <input type="radio" id="metric_opt" name="units" value="1"><label for="metric_opt">Metric</label>
+</div>
+
+<h4>Preset Map Views:</h4>
+<button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
+<button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
+<button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
+<button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
+<button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
+<br clear="all" />    
+
+<div class="panel panel-default">
+    <div class="panel-heading">Date Options</div>
+    <div class="panel-body">
+    <div id="t">
+    <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
+    <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
+    </div>
+<h4>Date:</h4>
+    <div class="input-group">
+    <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
+    <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
+    <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
+    </div>
+
+<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
+</div>
+
+<div style="visibility: hidden;" id="dp2">
+    <h4>To Date:</h4>
+    <div class="input-group">
+        <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
+    </div>
+</div>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Tools</div>
+    <div class="panel-body">
+
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal"><i class="fa fa-search"></i> Search</button>
+    <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() - 0.1);" class="btn btn-default" type="button"><i class="fa fa-minus"></i> Decrease Opacity</button>
+    <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() + 0.1);" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Increase Opacity</button>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Shapefile Data Download</div>
+    <div class="panel-body">
+    <p>Request a GIS Shapefile of the current data presented.<p>
+    <p>Include States:
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
+    <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
+    </p>
+    <button onclick="javascript: get_shapefile();" class="btn btn-default" type="button"><i class="fa fa-download"></i> Download Data</button>
+    </div>
+</div>        
+
+<div id="detailsContainer">
+<div id="clickDetails" class="well">
+    <div id="details_loading" style="display: none;"><img src="images/wait24trans.gif" /> Loading...</div>
+    <div id="details_details"></div>
+    <div id="details_hidden">Double click on a watershed to load detailed data</div>
+</div>
+</div><!-- ./detailsContainer -->
+
+<h4>Map Base Layers</h4>
+<ul id="ls-base-layers" class="list-unstyled"></ul>
+<h4>Map Overlay Layers</h4>
+<ul id="ls-overlay-layers" class="list-unstyled"></ul>
+
+                    </div><!-- ./tab1a -->
+                    <div class="tab-pane active" id="2a">
+
+<h4>View:</h4>
+<div id="radio">
+    <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
+    <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
+    <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
+    <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
+</div>
+                        
+                    </div><!-- ./tab2a -->
+                </div><!-- tabcontent -->
+            </div><!-- ./thetabs -->
     </div><!-- ./q1 -->
 
-    <div id="q2">
-
-        <div class="panel panel-default">
-          <div class="panel-heading">Date Options</div>
-          <div class="panel-body">
-            <div id="t">
-            <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
-            <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
-            </div>
-        <h4>Date:</h4>
-            <div class="input-group">
-            <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
-            <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-            <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
-            </div>
-
-        <div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
-        </div>
-
-        <div style="visibility: hidden;" id="dp2">
-            <h4>To Date:</h4>
-            <div class="input-group">
-              <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
-            </div>
-        </div>
-
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading">Tools</div>
-          <div class="panel-body">
-
-         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal"><i class="fa fa-search"></i> Search</button>
-         <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() - 0.1);" class="btn btn-default" type="button"><i class="fa fa-minus"></i> Decrease Opacity</button>
-         <button onclick="javascript: vectorLayer.setOpacity(vectorLayer.getOpacity() + 0.1);" class="btn btn-default" type="button"><i class="fa fa-plus"></i> Increase Opacity</button>
-
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading">Shapefile Data Download</div>
-          <div class="panel-body">
-            <p>Request a GIS Shapefile of the current data presented.<p>
-            <p>Include States:
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
-            <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
-            </p>
-         <button onclick="javascript: get_shapefile();" class="btn btn-default" type="button"><i class="fa fa-download"></i> Download Data</button>
-          </div>
-        </div>        
-
-        </div><!-- ./q2 -->
-    <div id="q3">
-      <div id="detailsContainer">
-        <div id="clickDetails" class="well">
-          <div id="details_loading" style="display: none;"><img src="images/wait24trans.gif" /> Loading...</div>
-          <div id="details_details"></div>
-          <div id="details_hidden">Double click on a watershed to load detailed data</div>
-        </div>
-      </div><!-- ./detailsContainer -->
-    </div><!-- ./q3 -->
-    <div id="q4">
-
-    <h4>Map Base Layers</h4>
-        <ul id="ls-base-layers" class="list-unstyled"></ul>
-    <h4>Map Overlay Layers</h4>
-        <ul id="ls-overlay-layers" class="list-unstyled"></ul>
-
-    </div><!-- ./q4 -->
 </div><!-- ./sidebar-content -->
 
   </div><!--/.sidebar-->
@@ -235,9 +253,7 @@
 </div><!--/.container-fluid -->
 
 <div id="maptitlediv">
-    <div class="row">
-        <div class="col-xs-12"><span id="maptitle">DEP Map</span></div>
-    </div>
+    <span id="maptitle">DEP Map</span>
 </div>
 <div id="fdetails">
     <div class="row">
