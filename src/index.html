@@ -146,20 +146,20 @@
  
     <div id="q1">
         <!-- Search box -->
+        <p>
         <form name="search" class="form-inline">
-            <div class="row well">
-                <div class="col-xs-11">
-                    <input type="text" class="form-control" placeholder="HUC ID, watershed name, address">
-                    <input type="submit" value="Search" class="btn btn-default">
-                </div>
+            <div class="form-group">
+                <input type="text" class="form-control pull-left" style="width: auto;" placeholder="HUC ID, watershed name, address">
+                <input type="submit" value="Search" class="btn btn-default">
             </div>
         </form>
+        </p>
 
         <!-- Sidebar tabs -->
         <div id="thetabs">
             <ul class="nav nav-tabs nav-justified" role="tablist">
-                <li><a href="#1a" data-toggle="tab">Data</a></li>
-                <li class="active"><a href="#2a" data-toggle="tab">Map</a></li>
+                <li role="presentation"><a href="#1a" role="tab" data-toggle="tab">Data</a></li>
+                <li role="presentation" class="active"><a href="#2a" role="tab" data-toggle="tab">Map</a></li>
             </ul>
             <div class="tab-content clearfix">
                 <div class="tab-pane" id="1a">

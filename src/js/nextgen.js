@@ -94,7 +94,8 @@ function checkDates() {
                 var s = data['last_date'];
                 var newdate = makeDate(s.substr(0, 4), s.substr(5, 2),
                     s.substr(8, 2))
-                if (newdate > appstate.lastdate && newdate.getTime() !== appstate.date.getTime()) {
+                if (newdate > appstate.lastdate && (
+                    appstate.date == null || newdate.getTime() !== appstate.date.getTime())) {
                     appstate.lastdate = newdate;
                     $('#datepicker').datepicker("change",
                         { maxDate: formatDate(myDateFormat, newdate) });
@@ -467,14 +468,14 @@ function drawColorbar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.font = 'bold 12pt Calibri';
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'black';
     var metrics = ctx.measureText('Legend');
     ctx.fillText('Legend', (canvas.width / 2) - (metrics.width / 2), 14);
 
     var maxval = levels[appstate.ltype][appstate.metric + 2];
     var txt = "Max: " + maxval.toFixed((maxval < 100) ? 2 : 0);
     ctx.font = 'bold 10pt Calibri';
-    ctx.fillStyle = 'yellow';
+    ctx.fillStyle = 'black';
     metrics = ctx.measureText(txt);
     ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
 
@@ -490,7 +491,7 @@ function drawColorbar() {
         ctx.fill();
 
         ctx.font = 'bold 12pt Calibri';
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = 'black';
         var leveltxt = level.toFixed((level < 100) ? 2 : 0);
         if (level == 0.001) {
             leveltxt = 0.001;
