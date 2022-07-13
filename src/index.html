@@ -165,22 +165,13 @@
                 <div class="tab-pane" id="1a">
 
 
-<div id="variable_desc" class="well"></div>
+
 
 <h4>Time Display Options:</h4>
 <div id="units_radio">
     <input type="radio" id="english_opt" name="units" value="0" checked="checked"><label for="english_opt">English</label>
     <input type="radio" id="metric_opt" name="units" value="1"><label for="metric_opt">Metric</label>
 </div>
-
-<h4>Preset Map Views:</h4>
-<button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
-<button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
-<button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
-<button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
-<button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
-<br clear="all" />    
-
 
 
 <div class="panel panel-default">
@@ -220,14 +211,9 @@
 </div>
 </div><!-- ./detailsContainer -->
 
-<h4>Map Base Layers</h4>
-<ul id="ls-base-layers" class="list-unstyled"></ul>
-<h4>Map Overlay Layers</h4>
-<ul id="ls-overlay-layers" class="list-unstyled"></ul>
-
                     </div><!-- ./tab1a -->
                     <div class="tab-pane active" id="2a">
-
+<!-- MAP PANE -->
 <div class="panel panel-default">
     <div class="panel-heading">Date Options</div>
     <div class="panel-body">
@@ -260,7 +246,22 @@
 <br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
 <br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
 <br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
-                        
+
+<div id="variable_desc" class="well"></div>
+
+<h4>Imagery:</h4>
+<ul id="ls-base-layers" class="list-unstyled"></ul>
+<h4>Layers:</h4>
+<ul id="ls-overlay-layers" class="list-unstyled"></ul>
+
+<h4>View US State:</h4>
+<button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
+<button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
+<button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
+<button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
+<button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
+<br clear="all" />
+
                     </div><!-- ./tab2a -->
                 </div><!-- tabcontent -->
             </div><!-- ./thetabs -->
@@ -293,8 +294,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-     <script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.js"></script>
-     <script src='lib/jquery.toaster.js'></script>
+  <script src="https://mesonet.agron.iastate.edu/vendor/openlayers/6.14.1/ol.js"></script>
+  <script src='lib/jquery.toaster.js'></script>
   <script src="js/appvars.js"></script><!-- replaceme -->
   <script src="js/nextgen.js"></script><!-- replaceme -->
   <script src="js/start.js"></script><!-- replaceme -->

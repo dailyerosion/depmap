@@ -250,13 +250,11 @@ function updateDetails(huc12) {
 
 }
 
-function getGeoJSONURL() {
+function getJSONURL() {
     // Generate the TMS URL given the current settings
-    var uri = BACKEND + '/geojson/huc12.py?date=' + formatDate("yy-mm-dd", appstate.date);
-    if (appstate.date2 !== null) {
-        uri = uri + "&date2=" + formatDate("yy-mm-dd", appstate.date2);
-    }
-    return uri;
+    return BACKEND + '/auto/' + formatDate("yymmdd", appstate.date) + '_' +
+    formatDate("yymmdd", (appstate.date2 !== null) ? appstate.date2: appstate.date) +
+    '.json';
 }
 function rerender_vectors() {
     drawColorbar();
@@ -278,16 +276,30 @@ function remap() {
     }
     setStatus("Fetching new data to display...");
     $.ajax({
-        url: getGeoJSONURL(),
+        url: getJSONURL(),
         dataType: 'json',
         success: function (json) {
-            // clear out old content
-            vectorLayer.getSource().clear();
+            var vsource = vectorLayer.getSource();
+            // Zero out current data
+            vsource.getFeatures().forEach(function(feat){
+                feat.setProperties({
+                    'avg_delivery': 0,
+                    'qc_precip': 0
+                }, true);
+            });
+            // Merge in JSON provided data
+            json.data.forEach(function(entry){
+                var feat = vsource.getFeatureById(entry.huc_12);
+                if (feat === null){
+                    return;
+                }
+                feat.setProperties(entry, true);
+            });
 
             // Setup what was provided to use by the JSON service for levels,
             // we also do the unit conversion so that we have levels in metric
             for (var i = 0; i < varnames.length; i++) {
-                levels[varnames[i]][0] = json.jenks[varnames[i]];
+                levels[varnames[i]][0] = json.ramps[varnames[i]];
                 levels[varnames[i]][2] = json.max_values[varnames[i]];
                 for (var j = 0; j < levels[varnames[i]][0].length; j++) {
                     levels[varnames[i]][1][j] = levels[varnames[i]][0][j] * multipliers[varnames[i]][1];
@@ -297,11 +309,6 @@ function remap() {
             }
             drawColorbar();
 
-            vectorLayer.getSource().addFeatures(
-                new ol.format.GeoJSON().readFeatures(json, {
-                    featureProjection: ol.proj.get('EPSG:3857')
-                })
-            );
             if (detailedFeature) {
                 clickOverlayLayer.getSource().removeFeature(detailedFeature);
                 detailedFeature = vectorLayer.getSource().getFeatureById(detailedFeature.getId());
@@ -309,6 +316,7 @@ function remap() {
                 updateDetails(detailedFeature.getId());
             }
             drawColorbar();
+            vectorLayer.changed();
         }
     });
     setTitle();
@@ -627,6 +635,7 @@ function build() {
         title: 'DEP Data Layer',
         imageRatio: 2,
         source: new ol.source.Vector({
+            url: BACKEND + "/geojson/huc12.geojson",
             format: new ol.format.GeoJSON(),
             projection: ol.proj.get('EPSG:4326')
         }),
@@ -648,7 +657,9 @@ function build() {
             return [style];
         }
     });
-
+    vectorLayer.getSource().on("featuresloadend", function(){
+        remap();
+    });
     // Create map instance
     map = new ol.Map({
         target: 'map',
@@ -912,10 +923,6 @@ function build() {
     //$("#mapminus").click(function () {
     //    map.getView().setZoom(map.getView().getZoom() - 1);
     //});
-
-    remap();
-
-    drawColorbar();
 
     checkDates();
     window.setInterval(checkDates, 600000);
