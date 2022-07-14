@@ -365,6 +365,7 @@ function make_iem_tms(title, layername, visible, type) {
         title: title,
         visible: visible,
         type: type,
+        maxZoom: (layername == 'depmask') ? 9 : 21,
         source: new ol.source.XYZ({
             url: tilecache + '/c/tile.py/1.0.0/' + layername + '/{z}/{x}/{y}.png'
         })
@@ -681,7 +682,8 @@ function build() {
             })
         }),
         make_iem_tms('Iowa 100m Hillshade', 'iahshd-900913', false, 'base'),
-            vectorLayer,
+        vectorLayer,
+        make_iem_tms('Domain Mask', 'depmask', true, ''),
         make_iem_tms('US Counties', 'c-900913', false, ''),
         make_iem_tms('US States', 's-900913', true, ''),
         // make_iem_tms('Hydrology', 'iahydrology-900913', false, ''),
