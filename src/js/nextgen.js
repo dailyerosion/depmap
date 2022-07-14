@@ -176,7 +176,7 @@ function readWindowHash() {
     }
     if (tokens.length > 2 && tokens[2] != '') {
         appstate.ltype = tokens[2];
-        $('#radio input[value=' + tokens[2] + ']').prop('checked', true);
+        $('input[value=' + tokens[2] + ']').prop('checked', true);
     }
     if (tokens.length > 5 && tokens[3] != '' && tokens[4] != '' &&
         tokens[5] != '') {
@@ -223,10 +223,6 @@ function get_shapefile() {
     window.location.href = uri;
 }
 
-function setType(t) {
-    $('#' + t + '_opt').click();
-}
-
 function hideDetails() {
     $('#details_hidden').css('display', 'block');
     $('#details_details').css('display', 'none');
@@ -234,6 +230,12 @@ function hideDetails() {
 }
 
 function updateDetails(huc12) {
+    // Show side panel
+    if (! appstate.sidebarOpen){
+        handleSideBarClick();
+    }
+    // Show Data Tab in side bar
+    $("#datatablink").click();
     $('#details_hidden').css('display', 'none');
     $('#details_details').css('display', 'none');
     $('#details_loading').css('display', 'block');
@@ -543,9 +545,9 @@ function makeLayerSwitcher() {
             input.type = 'checkbox';
         }
         input.checked = lyr.get('visible');
-        input.onchange = function (e) {
-            layerVisible(lyr, e.target.checked);
-        };
+        input.addEventListener("change", function (e) {
+                layerVisible(lyr, e.target.checked);
+            });
         label.innerHTML = " " + lyrTitle;
         li.appendChild(input);
         li.appendChild(label);
@@ -761,7 +763,7 @@ function build() {
         evt.stopPropagation();
         var pixel = map.getEventPixel(evt.originalEvent);
         var features = map.getFeaturesAtPixel(pixel);
-        if (features) {
+        if (features.length > 0) {
             makeDetailedFeature(features[0]);
         } else {
             setStatus("No features found for where you double clicked on the map.");
@@ -822,8 +824,7 @@ function build() {
         formatDate(myDateFormat, appstate.date2 || new Date()) :
         formatDate(myDateFormat, appstate.lastdate || new Date()));
 
-    $("#radio").buttonset();
-    $("#radio input[type=radio]").change(function () {
+    $("input[type=radio][name=whichlayer]").change(function () {
         //console.log("cb on radio this.value=" + this.value);
         appstate.ltype = this.value;
         rerender_vectors();

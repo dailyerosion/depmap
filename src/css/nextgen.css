@@ -120,10 +120,16 @@ width: 350px;
     width: 100px;
 }
 #headerdiv {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     height: 55px;
     overflow: hidden;
     margin: 0px;
     padding: 0px;
+    z-index:1000;
+    background-color: #FFF;
+    width: 100%;
 }
 #maptitlediv {
 	position: absolute;
