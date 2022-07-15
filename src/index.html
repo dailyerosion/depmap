@@ -197,45 +197,46 @@
                     </div><!-- ./tab1a -->
                     <div class="tab-pane active" id="2a">
 <!-- MAP PANE -->
-<div class="panel panel-default">
-    <div class="panel-heading">Date Options</div>
-    <div class="panel-body">
-    <div id="t">
-    <input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
-    <input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
-    </div>
-<h4>Date:</h4>
-    <div class="input-group">
-    <span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
-    <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-    <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
-    </div>
+<h4>Date Selection:</h4>
+<div id="t">
+<input type="radio" id="single" name="t" value="single" checked="checked"><label for="single">Single</label>
+<input type="radio" id="multi" name="t" value="multi"><label for="multi">Multi</label>
+</div>
+
+<div class="input-group">
+<span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
+<input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
+<span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
+</div>
 
 <div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
 </div>
 
-    <div style="visibility: hidden;" id="dp2">
-    <h4>To Date:</h4>
-    <div class="input-group">
-        <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
-    </div>
-    </div>
-
-    </div><!-- ./panel-body -->
-</div><!-- ./panel -->
+<div style="display: none;" id="dp2">
+<h4>To Date:</h4>
+<div class="input-group">
+    <input type="text" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
+</div>
+</div>
 
 <h4>View:</h4>
-<input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked"><label for="precip-in2_opt">Precipitation</label>
-<br /><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"><label for="runoff2_opt">Runoff</label>
-<br /><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"><label for="loss2_opt">Detachment</label>
-<br /><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"><label for="delivery2_opt">Hillslope Soil Loss</label>
+<ul class="list-unstyled deplist">
+<li><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
+<label for="precip-in2_opt">Precipitation</label></li>
+<li><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff">
+<label for="runoff2_opt">Runoff</label></li>
+<li><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss">
+<label for="loss2_opt">Detachment</label></li>
+<li><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery">
+<label for="delivery2_opt">Hillslope Soil Loss</label></li>
+</ul>
 
-<div id="variable_desc" class="well"></div>
+<p><span id="variable_desc"></span></p>
 
 <h4>Imagery:</h4>
-<ul id="ls-base-layers" class="list-unstyled"></ul>
+<ul id="ls-base-layers" class="list-unstyled deplist"></ul>
 <h4>Layers:</h4>
-<ul id="ls-overlay-layers" class="list-unstyled"></ul>
+<ul id="ls-overlay-layers" class="list-unstyled deplist"></ul>
 
 <h4>View US State:</h4>
 <button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>

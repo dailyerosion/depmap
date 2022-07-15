@@ -3,7 +3,9 @@ body {
     height:100%;
     overflow-x: hidden; /* Prevent scroll on narrow devices */
 }
-
+.tab-pane {
+    padding-left: 10px;
+}
 .modal .modal-body {
     max-height: 420px;
     overflow-y: auto;
@@ -196,10 +198,6 @@ width: 350px;
         font-size: 1.3em;
     }
 }
-#ls-overlay-layers {
-	padding-left: 20px;
-}
-
-#ls-base-layers {
-	padding-left: 20px;
+.deplist {
+    padding-left: 20px;
 }

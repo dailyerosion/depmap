@@ -335,7 +335,7 @@ function setYearInterval(syear) {
         appstate.date2));
     $('#multi').prop('checked', true).button('refresh');
     remap();
-    $("#dp2").css('visibility', 'visible');
+    $("#dp2").css('display', 'block');
 }
 
 function setDateFromString(s) {
@@ -353,7 +353,7 @@ function setDate(year, month, day) {
     // Called from top 10 listing, so disable the period
     $('#single').prop('checked', true).button('refresh');
     appstate.date2 = null;
-    $("#dp2").css('visibility', 'hidden');
+    $("#dp2").css('display', 'none');
     remap();
 }
 function zoom_iowa() {
@@ -549,7 +549,7 @@ function makeLayerSwitcher() {
         input.addEventListener("change", function (e) {
                 layerVisible(lyr, e.target.checked);
             });
-        label.innerHTML = " " + lyrTitle;
+        label.innerHTML = "&nbsp; " + lyrTitle;
         li.appendChild(input);
         li.appendChild(label);
         if (lyr.get('type') === 'base') {
@@ -843,10 +843,10 @@ function build() {
     $("#t input[type=radio]").change(function () {
         if (this.value == 'single') {
             appstate.date2 = null;
-            $("#dp2").css('visibility', 'hidden');
+            $("#dp2").css('display', 'none');
             remap();
         } else {
-            $("#dp2").css('visibility', 'visible');
+            $("#dp2").css('display', 'block');
             var dt = $("#datepicker2").datepicker("getDate");
             appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
                 dt.getUTCDate());
@@ -854,7 +854,7 @@ function build() {
     });
 
     if (appstate.date2) {
-        $("#dp2").css('visibility', 'visible');
+        $("#dp2").css('display', 'block');
     }
 
     $('#huc12searchtext').on('keypress', function (event) {
