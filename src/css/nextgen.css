@@ -154,18 +154,13 @@ width: 350px;
 	z-index: 1001;
 }
 #fdetails {
-	position: absolute;
-	bottom: 0px;
-	width: 100%;
-	color: #FFF;
-	font-weight: bold;
-	font-size: 1.2em;
-	padding-left: 20px;
-	padding-right: 20px;
-	z-index: 1002;
-}
-#fdetails .fshaded {
-	background: rgba(0,0,0,0.8);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #FFF;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding-left: 20px;
+    padding-right: 20px;
+    z-index: 1002;
 }
 #fdetails span {
 	color: #0ff;
