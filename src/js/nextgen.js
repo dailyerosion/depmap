@@ -927,12 +927,12 @@ function build() {
     });
 
     $("#mapcontrols button").click(handleMapControlsClick);
-    //$("#mapplus").click(function () {
-    //    map.getView().setZoom(map.getView().getZoom() + 1);
-    //});
-    //$("#mapminus").click(function () {
-    //    map.getView().setZoom(map.getView().getZoom() - 1);
-    //});
+    $("#mapplus").click(function () {
+        map.getView().setZoom(map.getView().getZoom() + 1);
+    });
+    $("#mapminus").click(function () {
+        map.getView().setZoom(map.getView().getZoom() - 1);
+    });
 
     checkDates();
     window.setInterval(checkDates, 600000);

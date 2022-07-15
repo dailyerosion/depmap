@@ -107,19 +107,18 @@ width: 350px;
     outline: none;
 }
 #colorbar {
-	position: absolute;
-	right: 0px;
-	bottom: 25%;
-	background: #FFF;
-	z-index: 1000;	
+    position: absolute;
+    right: 0px;
+    bottom: 50px;
+    background: #FFF;
+    z-index: 1000;
 }
 #mapcontrols {
     position: absolute;
     right: 0px;
-    bottom: 50%;
-    background: #FFF;
+    top: 100px;
     z-index: 1000;
-    width: 100px;
+    width: 50px;
 }
 #headerdiv {
     position: absolute;
