@@ -432,7 +432,7 @@ function viewEvents(huc12, mode) {
         tbl += "</table>";
         if (mode == 'yearly') {
             tbl += "<h4>Monthly Average Detachment</h4>";
-            tbl += "<p><img src=\"/auto/huc12_bymonth.py?huc12=" + huc12 + "\" class=\"img img-responsive\" /></p>";
+            tbl += "<p><img src=\"" + BACKEND + "/auto/huc12_bymonth.py?huc12=" + huc12 + "\" class=\"img img-responsive\" /></p>";
         }
 
         $('#eventsres').html(tbl);
