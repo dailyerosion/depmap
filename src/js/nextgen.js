@@ -204,8 +204,8 @@ function setToday() {
 function setTitle() {
     dt = formatDate(myDateFormat, appstate.date);
     dtextra = (appstate.date2 === null) ? '' : ' to ' + formatDate(myDateFormat, appstate.date2);
-    $('#maptitle').html("Viewing " + vartitle[appstate.ltype] + " [" +
-        varunits[appstate.ltype][appstate.metric] + "] for " + dt + " " + dtextra);
+    $('#maptitle').html("Viewing " + vartitle[appstate.ltype] +
+        " for " + dt + " " + dtextra);
     $('#variable_desc').html(vardesc[appstate.ltype]);
 }
 
@@ -472,8 +472,8 @@ function drawColorbar() {
     var canvas = document.getElementById('colorbar');
     var ctx = canvas.getContext('2d');
 
-    // 20px for each color, 10 pixels on bottom, 40 on top
-    canvas.height = colors[appstate.ltype].length * 20 + 10 + 40;
+    // 20px for each color, 40 pixels on bottom, 40 on top
+    canvas.height = colors[appstate.ltype].length * 20 + 40 + 40;
 
     // Clear out the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -497,7 +497,7 @@ function drawColorbar() {
             return;
         }
         ctx.beginPath();
-        ctx.rect(5, canvas.height - pos - 10, 20, 20);
+        ctx.rect(5, canvas.height - pos - 40, 20, 20);
         ctx.fillStyle = colors[appstate.ltype][idx];
         ctx.fill();
 
@@ -508,10 +508,17 @@ function drawColorbar() {
             leveltxt = 0.001;
         }
         metrics = ctx.measureText(leveltxt);
-        ctx.fillText(leveltxt, 45 - (metrics.width / 2), canvas.height - (pos - 20) - 4);
+        ctx.fillText(
+            leveltxt, 45 - (metrics.width / 2),
+            canvas.height - (pos + 10) - 4);
 
         pos = pos + 20;
     });
+
+    // Title of what the legend is for
+    txt = varunits[appstate.ltype][appstate.metric];
+    metrics = ctx.measureText(txt);
+    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), canvas.height - 5);
 
 }
 
