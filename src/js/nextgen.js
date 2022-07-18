@@ -940,6 +940,12 @@ function build() {
     $("#mapminus").click(function () {
         map.getView().setZoom(map.getView().getZoom() - 1);
     });
+    $("#mapprint").click(function () {
+        // construct URL
+        var url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
+        "_" + formatDate("yymmdd", (appstate.date2 === null)? appstate.date: appstate.date2) + "_0_" + appstate.ltype +".png"
+        window.open(url);
+    });
 
     checkDates();
     window.setInterval(checkDates, 600000);
