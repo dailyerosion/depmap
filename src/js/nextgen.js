@@ -58,7 +58,7 @@ var varunits = {
 var vartitle = {
     avg_runoff: 'Water Runoff',
     avg_loss: 'Soil Detachment',
-    qc_precip: 'Total Precipitation',
+    qc_precip: 'Precipitation',
     avg_delivery: 'Hillslope Soil Loss'
 };
 
