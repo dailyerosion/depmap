@@ -575,6 +575,7 @@ function displayFeatureInfo(evt) {
         feature = features[0];
         popup.element.hidden = false;
         popup.setPosition(evt.coordinate);
+        $('#info-name').html(feature.get('name'));
         $('#info-huc12').html(feature.getId());
         $('#info-loss').html((feature.get('avg_loss') * multipliers['avg_loss'][appstate.metric]).toFixed(2) + ' ' + varunits['avg_loss'][appstate.metric]);
         $('#info-runoff').html((feature.get('avg_runoff') * multipliers['avg_runoff'][appstate.metric]).toFixed(2) + ' ' + varunits['avg_runoff'][appstate.metric]);
@@ -582,6 +583,7 @@ function displayFeatureInfo(evt) {
         $('#info-precip').html((feature.get('qc_precip') * multipliers['qc_precip'][appstate.metric]).toFixed(2) + ' ' + varunits['qc_precip'][appstate.metric]);
     } else {
         popup.element.hidden = true;
+        $('#info-name').html('&nbsp;');
         $('#info-huc12').html('&nbsp;');
         $('#info-loss').html('&nbsp;');
         $('#info-runoff').html('&nbsp;');
