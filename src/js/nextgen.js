@@ -13,6 +13,7 @@ var defaultCenter = ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
 var defaultZoom = 6;
 var popup;
 
+// Those provided by the data service.
 var varnames = ['qc_precip', 'avg_runoff', 'avg_loss', 'avg_delivery'];
 // How to get english units to metric, when appstate.metric == 1
 // multipliers[appstate.varname][appstate.metric]
@@ -20,14 +21,16 @@ var multipliers = {
     'qc_precip': [1, 25.4],
     'avg_runoff': [1, 25.4],
     'avg_loss': [1, 2.2417],
-    'avg_delivery': [1, 2.2417]
+    'avg_delivery': [1, 2.2417],
+    'dt': [1, 1],
 };
 // english ramp, metric ramp, english max, metric max
 var levels = {
     'qc_precip': [[], [], 0, 0],
     'avg_runoff': [[], [], 0, 0],
     'avg_loss': [[], [], 0, 0],
-    'avg_delivery': [[], [], 0, 0]
+    'avg_delivery': [[], [], 0, 0],
+    'dt': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 6, 6]
 };
 var colors = {
     'qc_precip': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
@@ -38,7 +41,8 @@ var colors = {
     'avg_loss': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
         '#1A818F', '#003075'],
     'avg_delivery': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
-        '#1A818F', '#003075']
+        '#1A818F', '#003075'],
+    'dt': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568']
 };
 
 
@@ -47,19 +51,22 @@ var vardesc = {
     avg_loss: 'Soil Detachment is the average amount of soil disturbed on the modelled hillslopes.',
     qc_precip: 'Precipitation is the average amount of rainfall and melted snow received on the hillslopes.',
     avg_delivery: 'Hillslope Soil Loss is the average amount of soil transported to the bottom of the modelled hillslopes.',
+    dt: "Dominant Tillage Code is an index value with increasing values indicating increasing tillage intensity."
 }
 
 var varunits = {
     avg_runoff: ['inches', 'mm'],
     avg_loss: ['tons per acre', 'tonnes per ha'],
     qc_precip: ['inches', 'mm'],
-    avg_delivery: ['tons per acre', 'tonnes per ha']
+    avg_delivery: ['tons per acre', 'tonnes per ha'],
+    dt: [' ', ' '],
 };
 var vartitle = {
     avg_runoff: 'Water Runoff',
     avg_loss: 'Soil Detachment',
     qc_precip: 'Precipitation',
-    avg_delivery: 'Hillslope Soil Loss'
+    avg_delivery: 'Hillslope Soil Loss',
+    dt: 'Dominant Tillage'
 };
 
 function handleSideBarClick() {
@@ -503,15 +510,22 @@ function drawColorbar() {
 
         ctx.font = 'bold 12pt Calibri';
         ctx.fillStyle = 'black';
-        var leveltxt = level.toFixed((level < 100) ? 2 : 0);
+        var precision = (level < 100) ? 2 : 0;
+        if (appstate.ltype == "dt"){
+            precision = 0;
+        }
+        var leveltxt = level.toFixed(precision);
         if (level == 0.001) {
             leveltxt = 0.001;
         }
         metrics = ctx.measureText(leveltxt);
-        ctx.fillText(
-            leveltxt, 45 - (metrics.width / 2),
-            canvas.height - (pos + 10) - 4);
-
+        if (appstate.ltype == "dt"){
+            ctx.fillText(leveltxt, 10, canvas.height - (pos + 26));
+        } else {
+            ctx.fillText(
+                leveltxt, 45 - (metrics.width / 2),
+                canvas.height - (pos + 10) - 4);
+        }
         pos = pos + 20;
     });
 
