@@ -409,6 +409,7 @@ function viewEvents(huc12, mode) {
         if (mode == 'daily') return "";
         return " (" + val + ")";
     }
+    var colLabel = (mode == 'daily') ? "Date": "Year";
     var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
     $('#eventsModalLabel').html(lbl + " for " + huc12);
     $('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
@@ -419,7 +420,7 @@ function viewEvents(huc12, mode) {
     }).done(function (res) {
         var myfunc = ((mode == 'yearly') ? 'setYearInterval(' : 'setDateFromString(');
         var tbl = "<table class='table table-striped header-fixed'>" +
-            "<thead><tr><th>Date</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
+            "<thead><tr><th>" + colLabel +"</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Runoff [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Detach [" + varunits['avg_loss'][appstate.metric] +
             "]</th><th>Hillslope Soil Loss [" + varunits['avg_loss'][appstate.metric] +
@@ -434,8 +435,8 @@ function viewEvents(huc12, mode) {
         });
         tbl += "</table>";
         if (mode == 'yearly') {
-            tbl += "<h4>Monthly Average Detachment</h4>";
-            tbl += "<p><img src=\"" + BACKEND + "/auto/huc12_bymonth.py?huc12=" + huc12 + "\" class=\"img img-responsive\" /></p>";
+            tbl += "<h4>Monthly Averages</h4>";
+            tbl += '<p><img src="' + BACKEND + '/auto/huc12_bymonth.py?huc12=' + huc12 + '" class="img img-responsive"></p>';
         }
 
         $('#eventsres').html(tbl);
