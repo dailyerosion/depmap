@@ -1,6 +1,5 @@
 var map;
 var vectorLayer;
-var iaextent;
 var scenario = 0;
 var myDateFormat = 'M d, yy';
 var geojsonFormat = new ol.format.GeoJSON();
@@ -91,7 +90,7 @@ function setStatus(text) {
 function checkDates() {
     // Check the server for updated run information
     $.ajax({
-        url: BACKEND + '/geojson/timedomain.py?scenario=0',
+        url: BACKEND + '/geojson/timedomain.py?scenario=' + scenario,
         fail: function (jqXHR, textStatus) {
             setStatus("New data check failed " + textStatus);
         },
@@ -363,9 +362,6 @@ function setDate(year, month, day) {
     $("#dp2").css('display', 'none');
     remap();
 }
-function zoom_iowa() {
-    map.zoomToExtent(iaextent);
-}
 
 function make_iem_tms(title, layername, visible, type) {
     return new ol.layer.Tile({
@@ -468,12 +464,6 @@ function doHUC12Search() {
     });
 }
 
-function changeMapHeight(delta) {
-    var sz = map.getSize();
-    map.setSize([sz[0], sz[1] + (sz[1] * delta)]);
-}
-
-
 function drawColorbar() {
     //console.log("drawColorbar called...");
     var canvas = document.getElementById('colorbar');
@@ -495,8 +485,9 @@ function drawColorbar() {
     ctx.font = 'bold 10pt Calibri';
     ctx.fillStyle = 'black';
     metrics = ctx.measureText(txt);
-    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
-
+    if (appstate.ltype != "dt"){
+        ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
+    }
     var pos = 20;
     $.each(levels[appstate.ltype][appstate.metric], function (idx, level) {
         // Confusion with pyIEM levels

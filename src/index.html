@@ -62,8 +62,44 @@
     </div>
   </div>
 </div>
-        
-        
+
+<!-- Dominant Tillage Modal -->
+<div class="modal fade" id="dtModal" tabindex="-1" role="dialog"
+    aria-labelledby="dtModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="dtModalLabel">DEP Tillage Codes</h4>
+        </div>
+        <div class="modal-body" onkeypress="return event.keyCode != 13;">
+
+<p>DEP uses remotely sensed and other data to derive a tillage practice for each
+    modelled hillslope point. This practice is expressed as a code with increasing
+    values implying more intense tillage.  Here are how these codes translate to
+    actual operations for the primary crops we model.
+</p>
+
+<table class="table table-condensed table-striped">
+    <thead><tr><th>Code</th><th>Corn</th><th>Soy</th></tr></thead>
+    <tbody>
+        <tr><td>1</td><td>No-Till</td><td>No-Till</td></tr>
+        <tr><td>2</td><td>Fall Chisel</td><td>Fall Chisel</td></tr>
+        <tr><td>3</td><td>Fall Chisel, Spring Disk</td><td>Fall Chisel, Spring Disk</td></tr>
+        <tr><td>4</td><td>Fall Chisel, Spring Disk</td><td>Fall Chisel, Spring Disk</td></tr>
+        <tr><td>5</td><td>Molboard Plow</td><td>Molboard Plow</td></tr>
+        <tr><td>6</td><td>Molboard Plow</td><td>Molboard Plow</td></tr>
+    </tbody>
+</table>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -238,7 +274,9 @@
 <h4>View Metadata:</h4>
 <ul class="list-unstyled deplist">
 <li><input type="radio" id="dt_opt" name="whichlayer" value="dt">
-<label for="dt_opt">Dominant Tillage Practice</label></li>
+<label for="dt_opt">Dominant Tillage Practice</label>
+ <button type="button" class="btn btn-default" data-toggle="modal" data-target="#dtModal"><i class="fa fa-info"></i></button>
+</li>
 </ul>
 
 <p><span id="variable_desc"></span></p>
