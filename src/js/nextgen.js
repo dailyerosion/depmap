@@ -419,14 +419,17 @@ function viewEvents(huc12, mode) {
         data: { huc12: huc12, mode: mode }
     }).done(function (res) {
         var myfunc = ((mode == 'yearly') ? 'setYearInterval(' : 'setDateFromString(');
-        var tbl = "<table class='table table-striped header-fixed'>" +
+        var tbl = '<button class="btn btn-primary" ' +
+            'onclick="javascript: window.open(\''+ BACKEND +'/geojson/huc12_events.py?huc12='+huc12+'&amp;mode='+mode+'&amp;format=xlsx\');">' +
+            '<i class="fa fa-download"></i> Excel Download</button><br />' +
+            '<table class="table table-striped header-fixed" id="depdt">' +
             "<thead><tr><th>" + colLabel +"</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Runoff [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Detach [" + varunits['avg_loss'][appstate.metric] +
             "]</th><th>Hillslope Soil Loss [" + varunits['avg_loss'][appstate.metric] +
             "]</th></tr></thead>";
         $.each(res.results, function (idx, result) {
-            var dt = ((mode == 'daily') ? result.date : result.date.substring(6, 10));
+            var dt = ((mode == 'daily') ? result.date : result.date.substring(1, 4));
             tbl += "<tr><td><a href=\"javascript: " + myfunc + "'" + dt + "');\">" + dt + "</a></td><td>" +
                 pprint(result.qc_precip * multipliers['qc_precip'][appstate.metric]) + pprint2(result.qc_precip_events, mode) + "</td><td>" +
                 pprint(result.avg_runoff * multipliers['avg_runoff'][appstate.metric]) + pprint2(result.avg_runoff_events, mode) + "</td><td>" +
@@ -440,6 +443,7 @@ function viewEvents(huc12, mode) {
         }
 
         $('#eventsres').html(tbl);
+        $("#depdt").DataTable();
     }).fail(function (res) {
         $('#eventsres').html("<p>Something failed, sorry</p>");
     });
@@ -953,6 +957,9 @@ function build() {
         var url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
         "_" + formatDate("yymmdd", (appstate.date2 === null)? appstate.date: appstate.date2) + "_0_" + appstate.ltype +".png"
         window.open(url);
+    });
+    $("#mapinfo").click(function() {
+        setStatus("Double click HUC12 for detailed data.");
     });
 
     checkDates();
