@@ -77,19 +77,25 @@
 
 <p>DEP uses remotely sensed and other data to derive a tillage practice for each
     modelled hillslope point. This practice is expressed as a code with increasing
-    values implying more intense tillage.  Here are how these codes translate to
-    actual operations for the primary crops we model.
+    values implying more intense tillage.  Here's a brief summary of what each
+    code implies.
 </p>
 
 <table class="table table-condensed table-striped">
-    <thead><tr><th>Code</th><th>Corn</th><th>Soy</th></tr></thead>
+    <thead><tr><th>Code</th><th>Label</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td>1</td><td>No-Till</td><td>No-Till</td></tr>
-        <tr><td>2</td><td>Fall Chisel</td><td>Fall Chisel</td></tr>
-        <tr><td>3</td><td>Fall Chisel, Spring Disk</td><td>Fall Chisel, Spring Disk</td></tr>
-        <tr><td>4</td><td>Fall Chisel, Spring Disk</td><td>Fall Chisel, Spring Disk</td></tr>
-        <tr><td>5</td><td>Molboard Plow</td><td>Molboard Plow</td></tr>
-        <tr><td>6</td><td>Molboard Plow</td><td>Molboard Plow</td></tr>
+        <tr><td>1</td><td>No till</td>
+<td>No tillage except by no till planter.</td></tr>
+        <tr><td>2</td><td>Very high mulch</td>
+<td>Spring field cultivate, plant (includes fall chisel plow for corn)</td></tr>
+        <tr><td>3</td><td>High mulch</td>
+<td>Fall chisel plow, spring field cultivate, plant (includes disk for corn, disk was substituted for field cultivate for sorghum).</td></tr>
+        <tr><td>4</td><td>Medium mulch</td>
+<td>Fall chisel plow, spring disk, field cultivate, plant (included an additional spring disking for corn).</td></tr>
+        <tr><td>5</td><td>Low mulch</td>
+<td>Fall chisel plow, two spring disk, field cultivate, plant (for corn, moldboard plow was substituted for chisel plow, and no spring disk).</td></tr>
+        <tr><td>6</td><td>Fall moldboard plow</td>
+<td>Fall moldboard plow, spring disk, spring field cultivate, plant (no spring disk for corn silage).</td></tr>
     </tbody>
 </table>
           
