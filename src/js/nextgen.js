@@ -615,6 +615,9 @@ function displayFeatureInfo(evt) {
     }
 
 };
+function changeOpacity(amount){
+    vectorLayer.setOpacity(vectorLayer.getOpacity() + amount);
+}
 
 function handleMapControlsClick(event){
     var btnid = event.target.id;
