@@ -429,7 +429,7 @@ function viewEvents(huc12, mode) {
             "]</th><th>Hillslope Soil Loss [" + varunits['avg_loss'][appstate.metric] +
             "]</th></tr></thead>";
         $.each(res.results, function (idx, result) {
-            var dt = ((mode == 'daily') ? result.date : result.date.substring(1, 4));
+            var dt = ((mode == 'daily') ? result.date : result.date.substring(0, 4));
             tbl += "<tr><td><a href=\"javascript: " + myfunc + "'" + dt + "');\">" + dt + "</a></td><td>" +
                 pprint(result.qc_precip * multipliers['qc_precip'][appstate.metric]) + pprint2(result.qc_precip_events, mode) + "</td><td>" +
                 pprint(result.avg_runoff * multipliers['avg_runoff'][appstate.metric]) + pprint2(result.avg_runoff_events, mode) + "</td><td>" +
