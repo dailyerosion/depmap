@@ -22,6 +22,7 @@ var multipliers = {
     'avg_loss': [1, 2.2417],
     'avg_delivery': [1, 2.2417],
     'dt': [1, 1],
+    'slp': [100, 100]
 };
 // english ramp, metric ramp, english max, metric max
 var levels = {
@@ -29,7 +30,8 @@ var levels = {
     'avg_runoff': [[], [], 0, 0],
     'avg_loss': [[], [], 0, 0],
     'avg_delivery': [[], [], 0, 0],
-    'dt': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 6, 6]
+    'dt': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 6, 6],
+    'slp': [[1, 2, 3, 5, 10, 20], [1, 2, 3, 5, 10, 20], -1, -1]
 };
 var colors = {
     'qc_precip': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
@@ -41,7 +43,8 @@ var colors = {
         '#1A818F', '#003075'],
     'avg_delivery': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
         '#1A818F', '#003075'],
-    'dt': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568']
+    'dt': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568'],
+    'slp': ['#16B568', '#21DE00', '#DDFA00', '#BF8347', '#E0A870', '#FFEBAF']
 };
 
 
@@ -50,7 +53,8 @@ var vardesc = {
     avg_loss: 'Soil Detachment is the average amount of soil disturbed on the modelled hillslopes.',
     qc_precip: 'Precipitation is the average amount of rainfall and melted snow received on the hillslopes.',
     avg_delivery: 'Hillslope Soil Loss is the average amount of soil transported to the bottom of the modelled hillslopes.',
-    dt: "Dominant Tillage Code is an index value with increasing values indicating increasing tillage intensity."
+    dt: "Dominant Tillage Code is an index value with increasing values indicating increasing tillage intensity.",
+    slp: "Average hillslope bulk slope."
 }
 
 var varunits = {
@@ -59,13 +63,15 @@ var varunits = {
     qc_precip: ['inches', 'mm'],
     avg_delivery: ['tons per acre', 'tonnes per ha'],
     dt: [' ', ' '],
+    slp: ['%', '%']
 };
 var vartitle = {
     avg_runoff: 'Water Runoff',
     avg_loss: 'Soil Detachment',
     qc_precip: 'Precipitation',
     avg_delivery: 'Hillslope Soil Loss',
-    dt: 'Dominant Tillage'
+    dt: 'Dominant Tillage',
+    slp: 'Bulk Slope'
 };
 
 function handleSideBarClick() {
@@ -490,7 +496,7 @@ function drawColorbar() {
     ctx.font = 'bold 10pt Calibri';
     ctx.fillStyle = 'black';
     metrics = ctx.measureText(txt);
-    if (appstate.ltype != "dt"){
+    if (appstate.ltype != "dt" && appstate.ltype != "slp"){
         ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
     }
     var pos = 20;
@@ -666,11 +672,9 @@ function build() {
             projection: ol.proj.get('EPSG:4326')
         }),
         style: function (feature, resolution) {
-            val = feature.get(appstate.ltype);
-            if (appstate.metric == 1) {
-                val = val * multipliers[appstate.ltype][1];
-            }
-            var c = 'rgba(255, 255, 255, 0)'; //hallow
+            let val = feature.get(appstate.ltype);
+            val = val * multipliers[appstate.ltype][appstate.metric];
+            let c = 'rgba(255, 255, 255, 0)'; //hallow
             for (var i = (levels[appstate.ltype][appstate.metric].length - 2); i >= 0; i--) {
                 if (val >= levels[appstate.ltype][appstate.metric][i]) {
                     c = colors[appstate.ltype][i];
