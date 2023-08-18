@@ -931,6 +931,11 @@ function build() {
         map.getView().setZoom(7);
         $(this).blur();
     });
+    $('#wi').on('click', () => {
+        map.getView().setCenter(ol.proj.transform([-91.2, 45.11], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setZoom(7);
+        $(this).blur();
+    });
     $('#ia').on('click', function () {
         map.getView().setCenter(ol.proj.transform([-93.5, 42.07], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
