@@ -93,6 +93,24 @@ function setStatus(text) {
     $.toaster({ message: text, priority: 'info' });
 }
 
+function showVersions(){
+    // Update the UI with what versions we have at play here.
+    $.ajax({
+        url: BACKEND + '/auto/version.py?scenario=' + scenario,
+        fail: function (jqXHR, textStatus) {
+            setStatus("DEP version check failed " + textStatus);
+        },
+        success: (data) => {
+            $("#dv_label").text(data["label"]);
+            $("#dv_wepp").text(data["wepp"]);
+            $("#dv_acpf").text(data["acpf"]);
+            $("#dv_flowpath").text(data["flowpath"]);
+            $("#dv_gssurgo").text(data["gssurgo"]);
+            $("#dv_software").text(data["software"]);
+        }
+    });
+
+}
 function checkDates() {
     // Check the server for updated run information
     $.ajax({
@@ -977,5 +995,6 @@ function build() {
     checkDates();
     window.setInterval(checkDates, 600000);
     makeLayerSwitcher();
+    showVersions();
 
 }; // End of build
