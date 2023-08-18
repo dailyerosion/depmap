@@ -40,6 +40,9 @@ def indexhtml():
         donework = False
         with open("src/index.html", 'r', encoding="utf-8") as ifh:
             for line in ifh:
+                if line.find("WEB_INTERFACE_VERSION") > -1:
+                    fh.write(line.replace("WEB_INTERFACE_VERSION", RELEASE))
+                    continue
                 if line.find("<!-- replaceme -->") == -1:
                     fh.write(line)
                 elif not donework:
