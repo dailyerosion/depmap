@@ -107,6 +107,7 @@ function showVersions(){
             $("#dv_flowpath").text(data["flowpath"]);
             $("#dv_gssurgo").text(data["gssurgo"]);
             $("#dv_software").text(data["software"]);
+            $("#dv_tillage").text(data["tillage"]);
         }
     });
 
