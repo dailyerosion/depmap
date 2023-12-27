@@ -241,7 +241,7 @@ function setTitle() {
 }
 
 // When user clicks the "Get Shapefile" Button
-function get_shapefile() {
+function getShapefile() {
     dt = formatDate("yy-mm-dd", appstate.date);
     var states = [];
     $("input[name='dlstates']:checked").each(function (idx, v) {
@@ -250,6 +250,9 @@ function get_shapefile() {
     var uri = BACKEND + '/dl/shapefile.py?dt=' + dt + '&states=' + states.join(",");
     if (appstate.date2 !== null) {
         uri = uri + '&dt2=' + formatDate("yy-mm-dd", appstate.date2);
+    }
+    if (appstate.metric == 0){
+        uri = uri + '&conv=english';
     }
     window.location.href = uri;
 }
