@@ -1,6 +1,5 @@
-"""Build this into a release for depmap-releases.
+"""Build this into a release for depmap-releases."""
 
-"""
 import datetime
 import os
 import subprocess
