@@ -1,6 +1,7 @@
 """Build this into a release for depmap-releases."""
 
 import datetime
+import glob
 import os
 import subprocess
 import sys
@@ -50,22 +51,31 @@ def main():
     # assemble javascript into release
     buildjs()
     # git tag this repo
-    subprocess.call(f"git tag {RELEASE}", shell=True)
+    subprocess.call(["git", "tag", RELEASE])
     # Edit index.html
     indexhtml()
     # Copy files
     subprocess.call(
-        f"rsync -av --delete src/css src/images src/lib {RELPATH}", shell=True
+        [
+            "rsync",
+            "-a",
+            "-v",
+            "--delete",
+            "src/css",
+            "src/images",
+            "src/lib",
+            RELPATH,
+        ]
     )
     # git commit, tag, and push to github
     os.chdir(RELPATH)
-    subprocess.call("git add *", shell=True)
-    subprocess.call(f'git commit -m "depmap release {RELEASE}"', shell=True)
-    subprocess.call(f"git tag {RELEASE}", shell=True)
+    subprocess.call(["git", "add", *glob.glob("*")])
+    subprocess.call(["git", "commit", "-m", f"depmap release {RELEASE}"])
+    subprocess.call(["git", "tag", RELEASE])
     # Open browser to see what we have
-    subprocess.call("gio open http://depmap-releases.local/", shell=True)
+    subprocess.call(["gio", "open", "http://depmap-releases.local/"])
     if input("Process with push? y/[n]") == "y":
-        subprocess.call("git push --all", shell=True)
+        subprocess.call(["git", "push", "--all"])
     else:
         print("ABORT git push.")
 

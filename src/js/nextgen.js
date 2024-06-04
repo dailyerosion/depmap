@@ -1,15 +1,15 @@
 var map;
 var vectorLayer;
 var scenario = 0;
-var myDateFormat = 'M d, yy';
+const myDateFormat = 'M d, yy';
 var geojsonFormat = new ol.format.GeoJSON();
 var quickFeature;
 var detailedFeature;
 var detailedFeatureIn;
 var hoverOverlayLayer;
 var clickOverlayLayer;
-var defaultCenter = ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
-var defaultZoom = 6;
+let defaultCenter = ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
+let defaultZoom = 6;
 var popup;
 
 // Those provided by the data service.
