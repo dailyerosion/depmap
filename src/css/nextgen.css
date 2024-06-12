@@ -1,111 +1,71 @@
 html,
 body {
-    height:100%;
-    overflow-x: hidden; /* Prevent scroll on narrow devices */
+    height: 100%;
+    overflow-x: hidden;
+    /* Prevent scroll on narrow devices */
 }
-.tab-pane {
-    padding-left: 10px;
-}
+
 .modal .modal-body {
     max-height: 420px;
     overflow-y: auto;
 }
-.ui-datepicker{
-	z-index: 99999 !important;
-}
-.ui-datepicker-month{
-	color: #000 !important;
-}
-.ui-datepicker-year{
-	color: #000 !important;
-}
-.ui-widget{
-    font-size: 1em !important;
-}
-.dp {
-border: 0px;
-font-weight: bolder;
-width: 149px;
-float: left;
-}
-.row-offcanvas {
-position: relative;
--webkit-transition: all .25s ease-out;
--o-transition: all .25s ease-out;
-transition: all .25s ease-out;
+
+.ui-datepicker {
+    z-index: 99999 !important;
 }
 
-.row-offcanvas-left {
-    left: 0;
+.ui-datepicker-month {
+    color: #000 !important;
 }
-  
-.row-offcanvas-left
-.sidebar-offcanvas {
-    left: -298px; 
+
+.ui-datepicker-year {
+    color: #000 !important;
 }
-  
-.row-offcanvas-left.active
-.sidebar-offcanvas
-{
-    left: 0px; 
+
+.ui-widget {
+    font-size: 1em !important;
 }
-  
-.sidebar-offcanvas {
-z-index: 1004;
-position: absolute;
-top: 0;
-width: 350px;
--webkit-transition: all .25s ease-out;
-        -o-transition: all .25s ease-out;
-        transition: all .25s ease-out;
+
+.dp {
+    border: 0px;
+    font-weight: bolder;
+    width: 149px;
+    float: left;
 }
 
 .container-fluid {
-    height:100%;
+    height: 100%;
     width: 100%;
     padding: 0px !important;
     margin: 0px !important;
 }
 
-.fill{
-    width:100%;
-    height:100%;
-    min-height:100%;
+.fill {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
     padding: 0px !important;
     margin: 0px !important;
 }
+
 #map {
-	z-index: 2;
-}
-#sidebar {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    min-height: 100%;
-    overflow-y: hidden;
-    overflow-x: hidden;
-}
-#sidebar-content {
-    position: absolute;
-    top: 0px;
-    background-color: #fff;
-    height: 100%;
-    width: 298px;
-    margin-right: 52px;
-    min-height: 100%;
-    overflow-y: scroll;
+    z-index: 2;
 }
 
 .btn-sq-sm {
-  width: 50px !important;
-  height: 50px !important;
-  font-size: 2em !important;
-  z-index: 1003;
+    font-size: 1.5em !important;
+    z-index: 1003;
 }
-.btn:focus,.btn:active:focus,.btn.active:focus,
-.btn.focus,.btn:active.focus,.btn.active.focus {
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
     outline: none;
 }
+
 #colorbar {
     position: absolute;
     right: 0px;
@@ -113,6 +73,7 @@ width: 350px;
     background: #FFF;
     z-index: 1000;
 }
+
 #mapcontrols {
     position: absolute;
     right: 0px;
@@ -120,78 +81,54 @@ width: 350px;
     z-index: 1000;
     width: 50px;
 }
+
 #headerdiv {
     position: absolute;
     top: 0px;
     left: 0px;
     height: 55px;
-    overflow: hidden;
     margin: 0px;
     padding: 0px;
-    z-index:1000;
+    z-index: 1000;
     background-color: #FFF;
     width: 100%;
 }
+
 #maptitlediv {
-    position: absolute;
+    position: relative;
     top: 65px;
     width: 100%;
     padding: 0px;
-    z-index: 1001;
+    z-index: 101;
     text-align: center;
 }
+
 #maptitle {
     color: #000;
     font-weight: bold;
-    font-size: larger;
     margin: 0px;
     padding: 10px;
     border-radius: 0px 0px 5px 5px;
     border: 1px solid #000;
     background: #FFF;
     text-align: center;
-    z-index: 1001;
+    z-index: 101;
 }
+
 #fdetails {
     background-color: rgba(0, 0, 0, 0.75);
     color: #FFF;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1em;
     padding-left: 20px;
     padding-right: 20px;
     z-index: 1002;
 }
+
 #fdetails span {
     color: #0ff;
 }
 
-/* xs < 768 */
-@media screen and (max-width: 767px) {
-    body {
-        font-size: 1.2em;
-    }
-}
-
-/* sm */
-@media screen and (min-width: 768px) {
-    body {
-        font-size: 1em;
-    }
-}
-
-/* md */
-@media screen and (min-width: 992px) {
-    body {
-        font-size: 1.2em;
-    }
-}
-
-/* lg */
-@media screen and (min-width: 1200px) {
-    body {
-        font-size: 1.3em;
-    }
-}
 .deplist {
     padding-left: 20px;
 }
