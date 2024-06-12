@@ -449,7 +449,7 @@ function viewEvents(huc12, mode) {
         var myfunc = ((mode == 'yearly') ? 'setYearInterval(' : 'setDateFromString(');
         var tbl = '<button class="btn btn-primary" ' +
             'onclick="javascript: window.open(\''+ BACKEND +'/geojson/huc12_events.py?huc12='+huc12+'&amp;mode='+mode+'&amp;format=xlsx\');">' +
-            '<i class="fa fa-download"></i> Excel Download</button><br />' +
+            '<i class="bi-download"></i> Excel Download</button><br />' +
             '<table class="table table-striped header-fixed" id="depdt">' +
             "<thead><tr><th>" + colLabel +"</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Runoff [" + varunits['qc_precip'][appstate.metric] +

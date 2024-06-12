@@ -9,15 +9,14 @@
     <meta name="author" content="daryl herzmann akrherz@iastate.edu">
     <link rel="shortcut icon" href="https://www.dailyerosion.org/themes/isubit/iastate8_theme/favicon.ico" type="image/vnd.microsoft.icon" />
 
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-     rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-     crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link type="text/css"
-     href="https://mesonet.agron.iastate.edu/vendor/openlayers/8.2.0/ol.css"
+     href="https://mesonet.agron.iastate.edu/vendor/openlayers/9.2.4/ol.css"
      rel="stylesheet" />
-    <link
-     href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
-     rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+     rel="stylesheet"
+     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+     crossorigin="anonymous">
      <link type="text/css"
      href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"
      rel="stylesheet" />
@@ -31,7 +30,7 @@
     <meta name="twitter:title" content="DEP :: Map Interface">
     <meta name="twitter:description" content="Daily Erosion Project of Iowa State University">
     <meta name="twitter:url" content="https://dailyerosion.org">
-    <meta name="twitter:creator" content="@akrherz">
+    <meta name="twitter:creator" content="@dailyerosion">
     <meta name="twitter:image:width" content="85">
     <meta name="twitter:image:height" content="65">
 </head>
@@ -46,11 +45,13 @@
   </p>
 </div>
 
-<div class="modal fade" id="eventsModal" tabindex="-1" role="dialog" aria-labelledby="eventsModalLabel" aria-hidden="true">
+<div class="modal fade" id="eventsModal" tabindex="-1" role="dialog"
+ aria-labelledby="eventsModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-bs-dismiss="modal"
+         aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="eventsModalLabel">Listing of Daily Events</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
@@ -58,7 +59,7 @@
         
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -70,7 +71,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="dtModalLabel">DEP Tillage Codes</h4>
         </div>
         <div class="modal-body" onkeypress="return event.keyCode != 13;">
@@ -101,7 +102,7 @@
           
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -111,7 +112,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Search for Watershed by Name</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
@@ -119,7 +120,7 @@
       <form name="huc12search">
         <input type="text" name="q" id="huc12searchtext">
         <button type="button" class="btn btn-default" id="huc12searchbtn">
-  <i class="fa fa-search"></i>
+  <i class="bi-search"></i>
 </button>
         </form>
         <hr />
@@ -127,7 +128,7 @@
         
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -137,19 +138,19 @@
 <div id="mapcontrols">
 <button class="btn btn-sq-sm btn-danger pull-left active" id="mappointer"
     title="Interact with Map.">
-    <i class="fa fa-mouse-pointer"></i></button>
+    <i class="bi-hand-index-fill"></i></button>
 <button class="btn btn-sq-sm btn-danger pull-left active" id="mapinfo"
     title="Double Click HUC12 for Detailed Data.">
-    <i class="fa fa-info-circle"></i></button>
+    <i class="bi-info-circle"></i></button>
 <button class="btn btn-sq-sm btn-danger pull-left" id="mapplus"
     title="Zoom Map In.">
-    <i class="fa fa-search-plus"></i></button>
+    <i class="bi-zoom-in"></i></button>
 <button class="btn btn-sq-sm btn-danger pull-left" id="mapminus"
     title="Zoom Map Out.">
-    <i class="fa fa-search-minus"></i></button>
+    <i class="bi-zoom-out"></i></button>
 <button class="btn btn-sq-sm btn-danger pull-left" id="mapprint"
     title="Create PNG image of map.">
-    <i class="fa fa-print"></i></button>
+    <i class="bi-printer"></i></button>
 </div>
 
 <div id="fdetails">
@@ -162,11 +163,32 @@
 </div>
 
 <div id="headerdiv">
+    <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
-        <div class="col-lg-8 col-md-8 col-sm-11 col-xs-11">
-    <img src="images/deplogo.png" height="50" class="pull-left visible-xs visible-sm hidden-md hidden-lg">
-    <img src="images/deplogo_large.png" height="50" class="pull-left hidden-xs hidden-sm visible-md visible-lg">
+        <div class="col-2 col-md-1">
+        <button id="btnq1" data-bs-toggle="offcanvas"
+         class="btn btn-sq-sm btn-danger" title="Show Menu."
+         data-bs-target="#sidebar" aria-controls="sidebar">
+         <i class="bi-list"></i></button>
+        </div>
+        <div class="col-2 col-md-1">
+            <a href="/"><img src="images/deplogo.png" height="50"></a>
+        </div>
+        <!-- show this button on mobile -->
+        <div class="col-8 col-md-3">
+            <div class="btn-group" style="z-index: 3000;">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    Water Erosion on Ag Land
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#">Water Erosion on Ag Land</a></li>
+    <li><a class="dropdown-item disabled" href="#">Water Erosion on Pasture Land (soon)</a></li>
+    <li><a class="dropdown-item disabled" href="#">Wind Erosion on Ag Land (soon)</a></li>
+    <li><a class="dropdown-item disabled" href="#">Water Erosion on Forest Land (soon)</a></li>
+  </ul>
+</div><!-- ./btn-group -->
+        </div>
+        <div class="col-7 d-none d-md-block">
 <ul class="nav nav-pills" style="margin-top: 5px;">
    <li>
        <a href="/" class="nav-link">Home</a>
@@ -178,46 +200,46 @@
        <a href="/faq" class="nav-link">FAQ</a>
    </li>
    <li class="active">
-       <a href="https://dailyerosion.org/map" class="nav-link">Interactive Map</a>
+       <a href="/map" class="nav-link">Interactive Map</a>
    </li>
 </ul>
     </div><!-- ./content -->
     </div><!-- ./row -->
+    </div><!-- ./container-fluid -->
 </div><!-- ./headerdiv -->
 
 <canvas id="colorbar" width="100" height="150"></canvas>
 
 <div class="container-fluid">
+    <div id="maptitlediv"><span id="maptitle">DEP Map</span></div>
 
-    <div class="row row-offcanvas row-offcanvas-left fill">
-        <div class="col-xs-12 fill">
-        
-            <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
-  </div>
-   <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
-     <div class="pull-right" id="buttontabs">
-        <button id="btnq1" style="margin-top: 100px;" data-target="q1"
-         class="btn btn-sq-sm btn-danger" title="Show Menu."><i class="fa fa-bars"></i></button>
-     </div><!-- ./pull-right buttons -->
-    
-
-    <div class="pull-left" id="sidebar-content">
-      <div class="pull-left">
+    <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
+   <div class="offcanvas offcanvas-start" id="sidebar"
+    data-bs-scroll="true" data-bs-backdrop="false">
+    <div class="offcanvas-title">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" style="overflow-y: scroll;">
  
-    <div id="q1">
         <!-- Search box -->
         <p>
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal"><i class="fa fa-search"></i> Search</button>
+        <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi-search"></i> Search</button>
         </p>
 
-        <!-- Sidebar tabs -->
-        <div id="thetabs">
-            <ul class="nav nav-tabs nav-justified" role="tablist">
-                <li role="presentation"><a id="datatablink" href="#1a" role="tab" data-toggle="tab">Data</a></li>
-                <li role="presentation" class="active"><a id="maptablink" href="#2a" role="tab" data-toggle="tab">Map</a></li>
+        <ul class="nav nav-tabs nav-justified" role="tablist" id="myTab">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="data-tab" data-bs-toggle="tab"
+                 data-bs-target="#data-pane" type="button" role="tab"
+                 aria-controls="data-pane" aria-selected="true">Data</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="map-tab" data-bs-toggle="tab"
+                 data-bs-target="#map-pane" type="button" role="tab"
+                 aria-controls="map-pane" aria-selected="true">Map</button>
+            </li>
             </ul>
-            <div class="tab-content clearfix">
-                <div class="tab-pane" id="1a">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" id="data-pane">
 <!-- Data pane stuff -->
 
 <div id="detailsContainer" style="background: #eee;">
@@ -243,7 +265,7 @@
 <br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
 <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
 </p>
-<button onclick="javascript: getShapefile();" class="btn btn-default" type="button"><i class="fa fa-download"></i> Download Data</button>
+<button onclick="javascript: getShapefile();" class="btn btn-default" type="button"><i class="bi-download"></i> Download Data</button>
 
 <h4>Current DEP Version</h4>
 
@@ -258,8 +280,8 @@
 <tr><th>Web Interface</th><td><span>WEB_INTERFACE_VERSION</span></td></tr>
 </tbody></table>
 
-                    </div><!-- ./tab1a -->
-                    <div class="tab-pane active" id="2a">
+            </div><!-- ./data-pane -->
+            <div class="tab-pane fade show active" id="map-pane">
 <!-- MAP PANE -->
 <h4>Date Selection:</h4>
 <div id="t">
@@ -268,12 +290,12 @@
 </div>
 
 <div class="input-group">
-<span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-left"></i></button></span>
+<span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="bi-arrow-left"></i></button></span>
 <input type="text" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-<span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="fa fa-arrow-right"></i></button></span>
+<span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="bi-arrow-right"></i></button></span>
 </div>
 
-<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="fa fa-chevron-left"></i> Back to Latest Date</a>
+<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="bi-chevron-left"></i> Back to Latest Date</a>
 </div>
 
 <div style="display: none;" id="dp2">
@@ -283,8 +305,8 @@
 </div>
 </div>
 
-<h4>View Outputs: <button onclick="changeOpacity(-0.1);" class="btn btn-default" type="button" title="Decrease Opacity"><i class="fa fa-sun-o"></i> -</button>
-    <button onclick="changeOpacity(0.1);" class="btn btn-default" type="button" title="Increase Opacity"><i class="fa fa-moon-o"></i> +</button></h4>
+<h4>View Outputs: <button onclick="changeOpacity(-0.1);" class="btn btn-default" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
+    <button onclick="changeOpacity(0.1);" class="btn btn-default" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
 <ul class="list-unstyled deplist">
 <li><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
 <label for="precip-in2_opt">Precipitation</label></li>
@@ -302,7 +324,7 @@
 <label for="slp_opt">Average Slope [%]</label></li>
 <li><input type="radio" id="dt_opt" name="whichlayer" value="dt">
 <label for="dt_opt">Dominant Tillage Practice</label>
- <button type="button" class="btn btn-default" data-toggle="modal" data-target="#dtModal"><i class="fa fa-info"></i></button>
+ <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
 </li>
 </ul>
 
@@ -314,37 +336,31 @@
 <ul id="ls-overlay-layers" class="list-unstyled deplist"></ul>
 
 <h4>View US State:</h4>
-<button id="il" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Illinois</button>
-<button id="ia" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Iowa</button>
-<button id="ks" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Kansas</button>
-<button id="mn" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Minnesota</button>
-<button id="ne" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Nebraska</button>
-<button id="wi" class="btn btn-default" type="button"><i class="fa fa-search-plus"></i> Wisconsin</button>
+<button id="il" class="btn btn-default" type="button"><i class="bi-search"></i> Illinois</button>
+<button id="ia" class="btn btn-default" type="button"><i class="bi-search"></i> Iowa</button>
+<button id="ks" class="btn btn-default" type="button"><i class="bi-search"></i> Kansas</button>
+<button id="mn" class="btn btn-default" type="button"><i class="bi-search"></i> Minnesota</button>
+<button id="ne" class="btn btn-default" type="button"><i class="bi-search"></i> Nebraska</button>
+<button id="wi" class="btn btn-default" type="button"><i class="bi-search"></i> Wisconsin</button>
 <br clear="all" />
 
 <p>&nbsp;</p>
 
-                    </div><!-- ./tab2a -->
-                </div><!-- tabcontent -->
-            </div><!-- ./thetabs -->
-    </div><!-- ./q1 -->
-
-</div><!-- ./sidebar-content -->
-
-  </div><!--/.sidebar-->
- </div><!--/.row -->
+                </div><!-- ./map-pane -->
+            </div><!-- tabcontent -->
+        </div><!-- ./sidebar-content -->
+    </div><!--/.sidebar-->
 </div><!--/.container-fluid -->
 
-<div id="maptitlediv">
-    <span id="maptitle">DEP Map</span>
-</div>
 
 
   <!-- Careful of the order here as buttonset conflicts from jquery and bs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+   integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+   crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-  <script src="https://mesonet.agron.iastate.edu/vendor/openlayers/8.2.0/ol.js"></script>
+  <script src="https://mesonet.agron.iastate.edu/vendor/openlayers/9.2.4/ol.js"></script>
   <script src='https://mesonet.agron.iastate.edu/vendor/jquery-datatables/1.10.20/datatables.min.js'></script>
   <script src='lib/jquery.toaster.js'></script>
   <script src="js/appvars.js"></script><!-- replaceme -->
