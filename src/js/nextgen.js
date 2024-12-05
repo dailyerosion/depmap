@@ -1,3 +1,4 @@
+/* global appstate, BACKEND */
 var map;
 var vectorLayer;
 var scenario = 0;
@@ -242,12 +243,12 @@ function setTitle() {
 
 // When user clicks the "Get Shapefile" Button
 function getShapefile() {
-    dt = formatDate("yy-mm-dd", appstate.date);
-    var states = [];
+    const dt = formatDate("yy-mm-dd", appstate.date);
+    const states = [];
     $("input[name='dlstates']:checked").each(function (idx, v) {
         states.push($(v).val());
     });
-    var uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
+    let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
     if (appstate.date2 !== null) {
         uri = `${uri}&dt2=${formatDate("yy-mm-dd", appstate.date2)}`;
     }
@@ -433,17 +434,17 @@ function makeDetailedFeature(feature) {
 
 /**
  * Create popup table for given huc12
- * @param {*} huc12 
- * @param {*} mode 
+ * @param {*} huc12
+ * @param {*} mode
  */
 function viewEvents(huc12, mode) {
-    function pprint(val, mode) {
+    function pprint(val, _mode) {
         if (val == null) return "0";
         return val.toFixed(2);
     }
-    function pprint2(val, mode) {
-        if (mode == 'daily') return "";
-        return " (" + val + ")";
+    function pprint2(val, _mode) {
+        if (_mode === 'daily') return "";
+        return ` (${val})`;
     }
     var colLabel = (mode == 'daily') ? "Date": "Year";
     var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
