@@ -247,13 +247,11 @@ function getShapefile() {
     $("input[name='dlstates']:checked").each(function (idx, v) {
         states.push($(v).val());
     });
-    var uri = BACKEND + '/dl/shapefile.py?dt=' + dt + '&states=' + states.join(",");
+    var uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
     if (appstate.date2 !== null) {
-        uri = uri + '&dt2=' + formatDate("yy-mm-dd", appstate.date2);
+        uri = `${uri}&dt2=${formatDate("yy-mm-dd", appstate.date2)}`;
     }
-    if (appstate.metric == 0){
-        uri = uri + '&conv=english';
-    }
+    uri = `${uri}&conv=${(appstate.metric == 0) ? 'english': 'metric'}`;
     window.location.href = uri;
 }
 
@@ -263,20 +261,26 @@ function hideDetails() {
     $('#details_loading').css('display', 'none');
 }
 
+/**
+ * Update the HUC12 details widget panel
+ * @param {String} huc12
+ */
 function updateDetails(huc12) {
     // Show side panel
     if (! appstate.sidebarOpen){
+        $("#btnq1").click();
         handleSideBarClick();
     }
     // Show Data Tab in side bar
-    $("#datatablink").click();
+    $("#data-tab").click();
     $('#details_hidden').css('display', 'none');
     $('#details_details').css('display', 'none');
     $('#details_loading').css('display', 'block');
-    $.get(BACKEND + '/huc12-details.php', {
+    $.get(`${BACKEND}/huc12-details.php`, {
         huc12: huc12,
         date: formatDate("yy-mm-dd", appstate.date),
-        date2: formatDate("yy-mm-dd", appstate.date2)
+        date2: formatDate("yy-mm-dd", appstate.date2),
+        metric: appstate.metric
     },
         function (data) {
             $('#details_details').css('display', 'block');
@@ -427,7 +431,11 @@ function makeDetailedFeature(feature) {
     setWindowHash();
 }
 
-// View daily or yearly output for a HUC12
+/**
+ * Create popup table for given huc12
+ * @param {*} huc12 
+ * @param {*} mode 
+ */
 function viewEvents(huc12, mode) {
     function pprint(val, mode) {
         if (val == null) return "0";
@@ -439,7 +447,7 @@ function viewEvents(huc12, mode) {
     }
     var colLabel = (mode == 'daily') ? "Date": "Year";
     var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
-    $('#eventsModalLabel').html(lbl + " for " + huc12);
+    $('#eventsModalLabel').html(`${lbl} for ${huc12}`);
     $('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
     $.ajax({
         method: 'GET',
@@ -685,10 +693,9 @@ function build() {
         readWindowHash();
     } catch (e) {
         setStatus("An error occurred reading the hash link...");
-        //console.log(e);
     }
 
-    $('[data-target="q1"]').click(function (event) {
+    $('[data-target="q1"]').click((event) => {
         handleSideBarClick();
     });
 
