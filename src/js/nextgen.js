@@ -1,3 +1,4 @@
+/* global appstate, BACKEND */
 var map;
 var vectorLayer;
 var scenario = 0;
@@ -219,7 +220,7 @@ function readWindowHash() {
     }
     if (tokens.length > 7 && tokens[7].length == 1) {
         appstate.metric = parseInt(tokens[7]);
-        $('#units_radio input[value=' + tokens[7] + ']').prop('checked', true);
+        $(`#units_radio input[value=${tokens[7]}]`).prop('checked', true);
     }
 
 }
@@ -242,18 +243,16 @@ function setTitle() {
 
 // When user clicks the "Get Shapefile" Button
 function getShapefile() {
-    dt = formatDate("yy-mm-dd", appstate.date);
-    var states = [];
+    const dt = formatDate("yy-mm-dd", appstate.date);
+    const states = [];
     $("input[name='dlstates']:checked").each(function (idx, v) {
         states.push($(v).val());
     });
-    var uri = BACKEND + '/dl/shapefile.py?dt=' + dt + '&states=' + states.join(",");
+    let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
     if (appstate.date2 !== null) {
-        uri = uri + '&dt2=' + formatDate("yy-mm-dd", appstate.date2);
+        uri = `${uri}&dt2=${formatDate("yy-mm-dd", appstate.date2)}`;
     }
-    if (appstate.metric == 0){
-        uri = uri + '&conv=english';
-    }
+    uri = `${uri}&conv=${(appstate.metric == 0) ? 'english': 'metric'}`;
     window.location.href = uri;
 }
 
@@ -263,20 +262,26 @@ function hideDetails() {
     $('#details_loading').css('display', 'none');
 }
 
+/**
+ * Update the HUC12 details widget panel
+ * @param {String} huc12
+ */
 function updateDetails(huc12) {
     // Show side panel
     if (! appstate.sidebarOpen){
+        $("#btnq1").click();
         handleSideBarClick();
     }
     // Show Data Tab in side bar
-    $("#datatablink").click();
+    $("#data-tab").click();
     $('#details_hidden').css('display', 'none');
     $('#details_details').css('display', 'none');
     $('#details_loading').css('display', 'block');
-    $.get(BACKEND + '/huc12-details.php', {
+    $.get(`${BACKEND}/huc12-details.php`, {
         huc12: huc12,
         date: formatDate("yy-mm-dd", appstate.date),
-        date2: formatDate("yy-mm-dd", appstate.date2)
+        date2: formatDate("yy-mm-dd", appstate.date2),
+        metric: appstate.metric
     },
         function (data) {
             $('#details_details').css('display', 'block');
@@ -427,19 +432,23 @@ function makeDetailedFeature(feature) {
     setWindowHash();
 }
 
-// View daily or yearly output for a HUC12
+/**
+ * Create popup table for given huc12
+ * @param {*} huc12
+ * @param {*} mode
+ */
 function viewEvents(huc12, mode) {
-    function pprint(val, mode) {
+    function pprint(val, _mode) {
         if (val == null) return "0";
         return val.toFixed(2);
     }
-    function pprint2(val, mode) {
-        if (mode == 'daily') return "";
-        return " (" + val + ")";
+    function pprint2(val, _mode) {
+        if (_mode === 'daily') return "";
+        return ` (${val})`;
     }
     var colLabel = (mode == 'daily') ? "Date": "Year";
     var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
-    $('#eventsModalLabel').html(lbl + " for " + huc12);
+    $('#eventsModalLabel').html(`${lbl} for ${huc12}`);
     $('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
     $.ajax({
         method: 'GET',
@@ -652,15 +661,42 @@ function handleMapControlsClick(event){
     $("#mapcontrols button").removeClass("active");
     $("#"+btnid).addClass("active");
 }
+
+/**
+ * Update the appstate.metric and re-render the vectors
+ * @param {*} newunit 
+ */
+function setUnits(newunit) {
+    appstate.metric = parseInt(newunit);
+    rerender_vectors();
+}
+
+/**
+ * Update the date selection type single or multi
+ * @param {*} newval
+ */
+function setDateSelection(newval){
+    if (newval === 'single') {
+        appstate.date2 = null;
+        $("#dp2").css('display', 'none');
+        remap();
+    } else {
+        $("#dp2").css('display', 'block');
+        var dt = $("#datepicker2").datepicker("getDate");
+        appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
+            dt.getUTCDate());
+    }
+}
+
+
 function build() {
     try {
         readWindowHash();
     } catch (e) {
         setStatus("An error occurred reading the hash link...");
-        //console.log(e);
     }
 
-    $('[data-target="q1"]').click(function (event) {
+    $('[data-target="q1"]').click((event) => {
         handleSideBarClick();
     });
 
@@ -886,27 +922,11 @@ function build() {
         appstate.ltype = this.value;
         rerender_vectors();
     });
-    $("#units_radio").buttonset();
     $("#units_radio input[type=radio]").change(function () {
-        appstate.metric = parseInt(this.value);
-        rerender_vectors();
     });
-    $("#t").buttonset();
     if (appstate.date2) {
         $('#t input[value=multi]').prop('checked', true).button('refresh');
     }
-    $("#t input[type=radio]").change(function () {
-        if (this.value == 'single') {
-            appstate.date2 = null;
-            $("#dp2").css('display', 'none');
-            remap();
-        } else {
-            $("#dp2").css('display', 'block');
-            var dt = $("#datepicker2").datepicker("getDate");
-            appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-                dt.getUTCDate());
-        }
-    });
 
     if (appstate.date2) {
         $("#dp2").css('display', 'block');
