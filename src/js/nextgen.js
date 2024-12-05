@@ -219,7 +219,7 @@ function readWindowHash() {
     }
     if (tokens.length > 7 && tokens[7].length == 1) {
         appstate.metric = parseInt(tokens[7]);
-        $('#units_radio input[value=' + tokens[7] + ']').prop('checked', true);
+        $(`#units_radio input[value=${tokens[7]}]`).prop('checked', true);
     }
 
 }
@@ -652,6 +652,34 @@ function handleMapControlsClick(event){
     $("#mapcontrols button").removeClass("active");
     $("#"+btnid).addClass("active");
 }
+
+/**
+ * Update the appstate.metric and re-render the vectors
+ * @param {*} newunit 
+ */
+function setUnits(newunit) {
+    appstate.metric = parseInt(newunit);
+    rerender_vectors();
+}
+
+/**
+ * Update the date selection type single or multi
+ * @param {*} newval
+ */
+function setDateSelection(newval){
+    if (newval === 'single') {
+        appstate.date2 = null;
+        $("#dp2").css('display', 'none');
+        remap();
+    } else {
+        $("#dp2").css('display', 'block');
+        var dt = $("#datepicker2").datepicker("getDate");
+        appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
+            dt.getUTCDate());
+    }
+}
+
+
 function build() {
     try {
         readWindowHash();
@@ -886,27 +914,11 @@ function build() {
         appstate.ltype = this.value;
         rerender_vectors();
     });
-    $("#units_radio").buttonset();
     $("#units_radio input[type=radio]").change(function () {
-        appstate.metric = parseInt(this.value);
-        rerender_vectors();
     });
-    $("#t").buttonset();
     if (appstate.date2) {
         $('#t input[value=multi]').prop('checked', true).button('refresh');
     }
-    $("#t input[type=radio]").change(function () {
-        if (this.value == 'single') {
-            appstate.date2 = null;
-            $("#dp2").css('display', 'none');
-            remap();
-        } else {
-            $("#dp2").css('display', 'block');
-            var dt = $("#datepicker2").datepicker("getDate");
-            appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-                dt.getUTCDate());
-        }
-    });
 
     if (appstate.date2) {
         $("#dp2").css('display', 'block');
