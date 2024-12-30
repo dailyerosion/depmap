@@ -657,7 +657,7 @@ function changeOpacity(amount){
 }
 
 function handleMapControlsClick(event){
-    var btnid = event.target.id;
+    const btnid = event.currentTarget.id;
     $("#mapcontrols button").removeClass("active");
     $("#"+btnid).addClass("active");
 }
@@ -1006,10 +1006,11 @@ function build() {
     $("#mapminus").click(function () {
         map.getView().setZoom(map.getView().getZoom() - 1);
     });
-    $("#mapprint").click(function () {
+    $("#mapprint").click(() => {
         // construct URL
-        var url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
-        "_" + formatDate("yymmdd", (appstate.date2 === null)? appstate.date: appstate.date2) + "_0_" + appstate.ltype +".png"
+        const url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
+        "_" + formatDate("yymmdd", (appstate.date2 === null)? appstate.date: appstate.date2) +
+        "_0_" + appstate.ltype +".png"
         window.open(url);
     });
     $("#mapinfo").click(function() {
