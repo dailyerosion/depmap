@@ -1,4 +1,4 @@
-// Our bootstrapping
-$(document).ready(function(){
+/* global $ */
+$(document).ready(() => {
     build();
 });

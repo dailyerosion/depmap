@@ -1,23 +1,23 @@
-/* global appstate, BACKEND */
-var map;
-var vectorLayer;
-var scenario = 0;
+/* global $, appstate, BACKEND */
+let map = null;
+let vectorLayer = null;
+let scenario = 0;
 const myDateFormat = 'M d, yy';
-var geojsonFormat = new ol.format.GeoJSON();
-var quickFeature;
-var detailedFeature;
-var detailedFeatureIn;
-var hoverOverlayLayer;
-var clickOverlayLayer;
+const geojsonFormat = new ol.format.GeoJSON();
+let quickFeature = null;
+let detailedFeature = null;
+let detailedFeatureIn = null;
+let hoverOverlayLayer = null;
+let clickOverlayLayer = null;
 let defaultCenter = ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
 let defaultZoom = 6;
-var popup;
+let popup = null;
 
 // Those provided by the data service.
-var varnames = ['qc_precip', 'avg_runoff', 'avg_loss', 'avg_delivery'];
+const varnames = ['qc_precip', 'avg_runoff', 'avg_loss', 'avg_delivery'];
 // How to get english units to metric, when appstate.metric == 1
 // multipliers[appstate.varname][appstate.metric]
-var multipliers = {
+const multipliers = {
     'qc_precip': [1, 25.4],
     'avg_runoff': [1, 25.4],
     'avg_loss': [1, 2.2417],
@@ -26,7 +26,7 @@ var multipliers = {
     'slp': [100, 100]
 };
 // english ramp, metric ramp, english max, metric max
-var levels = {
+const levels = {
     'qc_precip': [[], [], 0, 0],
     'avg_runoff': [[], [], 0, 0],
     'avg_loss': [[], [], 0, 0],
@@ -34,7 +34,7 @@ var levels = {
     'dt': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 6, 6],
     'slp': [[1, 2, 3, 5, 10, 20], [1, 2, 3, 5, 10, 20], -1, -1]
 };
-var colors = {
+const colors = {
     'qc_precip': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
         '#37AD7A', '#26989E', '#215394', '#0C1078'],
     'avg_runoff': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
@@ -49,7 +49,7 @@ var colors = {
 };
 
 
-var vardesc = {
+const vardesc = {
     avg_runoff: 'Runoff is the average amount of water that left the hillslopes via above ground transport.',
     avg_loss: 'Soil Detachment is the average amount of soil disturbed on the modelled hillslopes.',
     qc_precip: 'Precipitation is the average amount of rainfall and melted snow received on the hillslopes.',
@@ -58,7 +58,7 @@ var vardesc = {
     slp: "Average hillslope bulk slope."
 }
 
-var varunits = {
+const varunits = {
     avg_runoff: ['inches', 'mm'],
     avg_loss: ['tons per acre', 'tonnes per ha'],
     qc_precip: ['inches', 'mm'],
@@ -66,7 +66,7 @@ var varunits = {
     dt: [' ', ' '],
     slp: ['%', '%']
 };
-var vartitle = {
+const vartitle = {
     avg_runoff: 'Water Runoff',
     avg_loss: 'Soil Detachment',
     qc_precip: 'Precipitation',
@@ -86,7 +86,7 @@ function formatDate(fmt, dt) {
 }
 
 function makeDate(year, month, day) {
-    var s = month + "/" + day + "/" + year;
+    const s = `${month}/${day}/${year}`;
     return (new Date(s));
 }
 // Update the status box on the page with the given text
@@ -97,11 +97,11 @@ function setStatus(text) {
 function showVersions(){
     // Update the UI with what versions we have at play here.
     $.ajax({
-        url: BACKEND + '/auto/version.py?scenario=' + scenario,
-        fail: function (jqXHR, textStatus) {
-            setStatus("DEP version check failed " + textStatus);
+        url: `${BACKEND}/auto/version.py?scenario=${scenario}`,
+        fail(_jqXHR, textStatus) {
+            setStatus(`DEP version check failed ${textStatus}`);
         },
-        success: (data) => {
+        success(data) {
             $("#dv_label").text(data["label"]);
             $("#dv_wepp").text(data["wepp"]);
             $("#dv_acpf").text(data["acpf"]);
@@ -116,11 +116,11 @@ function showVersions(){
 function checkDates() {
     // Check the server for updated run information
     $.ajax({
-        url: BACKEND + '/geojson/timedomain.py?scenario=' + scenario,
-        fail: function (jqXHR, textStatus) {
+        url: `${BACKEND}/geojson/timedomain.py?scenario=${scenario}`,
+        fail(_jqXHR, textStatus) {
             setStatus("New data check failed " + textStatus);
         },
-        success: function (data) {
+        success(data) {
             if (data['last_date']) {
                 // Avoid ISO -> Badness
                 var s = data['last_date'];
@@ -195,30 +195,30 @@ function setWindowHash() {
 
 // Reads the hash and away we go!
 function readWindowHash() {
-    var tokens = window.location.hash.split("/");
+    const tokens = window.location.hash.split("/");
     // careful, we have the # char here to deal with
     if (tokens.length > 0 && tokens[0] != '' &&
         tokens[0] != '#' && tokens[0] != '#NaNNaNNaN') {
         appstate.date = makeDate(tokens[0].substr(1, 4), tokens[0].substr(5, 2),
             tokens[0].substr(7, 2));
     }
-    if (tokens.length > 1 && tokens[1] != '' && tokens[1] != 'NaNNaNNaN') {
+    if (tokens.length > 1 && tokens[1] != '' && tokens[1] !== 'NaNNaNNaN') {
         appstate.date2 = makeDate(tokens[1].substr(0, 4), tokens[1].substr(4, 2),
             tokens[1].substr(6, 2));
     }
     if (tokens.length > 2 && tokens[2] != '') {
         appstate.ltype = tokens[2];
-        $('input[value=' + tokens[2] + ']').prop('checked', true);
+        $(`input[value=${tokens[2]}]`).prop('checked', true);
     }
     if (tokens.length > 5 && tokens[3] != '' && tokens[4] != '' &&
-        tokens[5] != '') {
+        tokens[5] !== '') {
         defaultCenter = ol.proj.transform([parseFloat(tokens[3]), parseFloat(tokens[4])], 'EPSG:4326', 'EPSG:3857');
         defaultZoom = parseFloat(tokens[5]);
     }
-    if (tokens.length > 6 && tokens[6].length == 12) {
+    if (tokens.length > 6 && tokens[6].length === 12) {
         detailedFeatureIn = tokens[6];
     }
-    if (tokens.length > 7 && tokens[7].length == 1) {
+    if (tokens.length > 7 && tokens[7].length === 1) {
         appstate.metric = parseInt(tokens[7]);
         $(`#units_radio input[value=${tokens[7]}]`).prop('checked', true);
     }
@@ -236,8 +236,8 @@ function setToday() {
 function setTitle() {
     dt = formatDate(myDateFormat, appstate.date);
     dtextra = (appstate.date2 === null) ? '' : ' to ' + formatDate(myDateFormat, appstate.date2);
-    $('#maptitle').html("Viewing " + vartitle[appstate.ltype] +
-        " for " + dt + " " + dtextra);
+    $('#maptitle').html(`Viewing ${vartitle[appstate.ltype]}` +
+        ` for ${dt} ${dtextra}`);
     $('#variable_desc').html(vardesc[appstate.ltype]);
 }
 
@@ -245,7 +245,7 @@ function setTitle() {
 function getShapefile() {
     const dt = formatDate("yy-mm-dd", appstate.date);
     const states = [];
-    $("input[name='dlstates']:checked").each(function (idx, v) {
+    $("input[name='dlstates']:checked").each((_idx, v) => {
         states.push($(v).val());
     });
     let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
@@ -278,7 +278,7 @@ function updateDetails(huc12) {
     $('#details_details').css('display', 'none');
     $('#details_loading').css('display', 'block');
     $.get(`${BACKEND}/huc12-details.php`, {
-        huc12: huc12,
+        huc12,
         date: formatDate("yy-mm-dd", appstate.date),
         date2: formatDate("yy-mm-dd", appstate.date2),
         metric: appstate.metric
