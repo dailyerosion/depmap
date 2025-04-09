@@ -1,100 +1,61 @@
-/* global $, appstate, BACKEND */
+import './style.css';
+import $ from 'jquery';
+import 'bootstrap/dist/css/bootstrap.css';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import Overlay from 'ol/Overlay';
+import Collection from 'ol/Collection';
+import { Style, Fill, Stroke, Text } from 'ol/style';
+import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import { XYZ, Vector as VectorSource } from 'ol/source';
+import { transform } from 'ol/proj';
+import { createVectorLayer, createBaseLayers, defaultCenter, defaultZoom } from './mapConfig';
+import { tilecache, BACKEND, varnames, multipliers, levels, colors, vardesc, varunits, vartitle } from './constants';
+import { readUrlParams, setQueryParams } from './urlHandler';
+import { showToast } from './toaster';
+
+const appstate = {
+    sidebarOpen: false,
+    lastdate: null,
+    lat: null,
+    lon: null,
+    date: null,
+    date2: null,
+    metric: 0,
+    ltype: 'qc_precip'
+};
+
 let map = null;
 let vectorLayer = null;
 let scenario = 0;
 const myDateFormat = 'M d, yy';
-const geojsonFormat = new ol.format.GeoJSON();
 let quickFeature = null;
 let detailedFeature = null;
-let detailedFeatureIn = null;
 let hoverOverlayLayer = null;
 let clickOverlayLayer = null;
-let defaultCenter = ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
-let defaultZoom = 6;
 let popup = null;
-
-// Those provided by the data service.
-const varnames = ['qc_precip', 'avg_runoff', 'avg_loss', 'avg_delivery'];
-// How to get english units to metric, when appstate.metric == 1
-// multipliers[appstate.varname][appstate.metric]
-const multipliers = {
-    'qc_precip': [1, 25.4],
-    'avg_runoff': [1, 25.4],
-    'avg_loss': [1, 2.2417],
-    'avg_delivery': [1, 2.2417],
-    'dt': [1, 1],
-    'slp': [100, 100]
-};
-// english ramp, metric ramp, english max, metric max
-const levels = {
-    'qc_precip': [[], [], 0, 0],
-    'avg_runoff': [[], [], 0, 0],
-    'avg_loss': [[], [], 0, 0],
-    'avg_delivery': [[], [], 0, 0],
-    'dt': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 6, 6],
-    'slp': [[1, 2, 3, 5, 10, 20], [1, 2, 3, 5, 10, 20], -1, -1]
-};
-const colors = {
-    'qc_precip': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
-        '#37AD7A', '#26989E', '#215394', '#0C1078'],
-    'avg_runoff': ['#FFFF80', '#98F046', '#3BD923', '#3FC453',
-        '#37AD7A', '#26989E', '#215394', '#0C1078'],
-    // DEJ circa 11 Dec 2020
-    'avg_loss': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
-        '#1A818F', '#003075'],
-    'avg_delivery': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568',
-        '#1A818F', '#003075'],
-    'dt': ['#FFEBAF', '#E0A870', '#BF8347', '#DDFA00', '#21DE00', '#16B568'],
-    'slp': ['#16B568', '#21DE00', '#DDFA00', '#BF8347', '#E0A870', '#FFEBAF']
-};
-
-
-const vardesc = {
-    avg_runoff: 'Runoff is the average amount of water that left the hillslopes via above ground transport.',
-    avg_loss: 'Soil Detachment is the average amount of soil disturbed on the modelled hillslopes.',
-    qc_precip: 'Precipitation is the average amount of rainfall and melted snow received on the hillslopes.',
-    avg_delivery: 'Hillslope Soil Loss is the average amount of soil transported to the bottom of the modelled hillslopes.',
-    dt: "Dominant Tillage Code is an index value with increasing values indicating increasing tillage intensity.",
-    slp: "Average hillslope bulk slope."
-}
-
-const varunits = {
-    avg_runoff: ['inches', 'mm'],
-    avg_loss: ['tons per acre', 'tonnes per ha'],
-    qc_precip: ['inches', 'mm'],
-    avg_delivery: ['tons per acre', 'tonnes per ha'],
-    dt: [' ', ' '],
-    slp: ['%', '%']
-};
-const vartitle = {
-    avg_runoff: 'Water Runoff',
-    avg_loss: 'Soil Detachment',
-    qc_precip: 'Precipitation',
-    avg_delivery: 'Hillslope Soil Loss',
-    dt: 'Dominant Tillage',
-    slp: 'Bulk Slope'
-};
 
 function handleSideBarClick() {
     $("#buttontabs .btn").removeClass('focus');
     $('.row-offcanvas').toggleClass("active");
-    appstate.sidebarOpen = ! appstate.sidebarOpen;
+    appstate.sidebarOpen = !appstate.sidebarOpen;
 }
 
 function formatDate(fmt, dt) {
-    return $.datepicker.formatDate(fmt, dt)
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return dt.toLocaleDateString('en-US', options);
 }
 
 function makeDate(year, month, day) {
-    const s = `${month}/${day}/${year}`;
-    return (new Date(s));
-}
-// Update the status box on the page with the given text
-function setStatus(text) {
-    $.toaster({ message: text, priority: 'info' });
+    return new Date(year, month - 1, day);
 }
 
-function showVersions(){
+// Update the status box on the page with the given text
+function setStatus(text, type = 'info') {
+    showToast(text, type);
+}
+
+function showVersions() {
     // Update the UI with what versions we have at play here.
     $.ajax({
         url: `${BACKEND}/auto/version.py?scenario=${scenario}`,
@@ -122,21 +83,19 @@ function checkDates() {
         },
         success(data) {
             if (data['last_date']) {
-                // Avoid ISO -> Badness
-                var s = data['last_date'];
-                var newdate = makeDate(s.substr(0, 4), s.substr(5, 2),
-                    s.substr(8, 2))
+                const newdate = new Date(data['last_date']);
                 if (newdate > appstate.lastdate && (
                     appstate.date == null || newdate.getTime() !== appstate.date.getTime())) {
                     appstate.lastdate = newdate;
-                    $('#datepicker').datepicker("change",
-                        { maxDate: formatDate(myDateFormat, newdate) });
-                    $('#datepicker2').datepicker("change",
-                        { maxDate: formatDate(myDateFormat, newdate) });
+                    //$('#datepicker').datepicker("change",
+                    //    { maxDate: formatDate(myDateFormat, newdate) });
+                    //$('#datepicker2').datepicker("change",
+                    //    { maxDate: formatDate(myDateFormat, newdate) });
                     // If we have no current date, don't show the modal
                     if (appstate.date != null) {
                         $('#newdate-thedate').html(formatDate(myDateFormat,
                             newdate));
+                        /**
                         $("#newdate-message").dialog({
                             modal: true,
                             buttons: [{
@@ -157,6 +116,7 @@ function checkDates() {
                                 }
                             }]
                         });
+                        */
                     } else {
                         setDate(
                             appstate.lastdate.getFullYear(),
@@ -184,45 +144,13 @@ function setWindowHash() {
     }
     hash += "/" + appstate.ltype + "/";
     var center = map.getView().getCenter();
-    center = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
+    center = transform(center, 'EPSG:3857', 'EPSG:4326'),
         hash += center[0].toFixed(2) + "/" + center[1].toFixed(2) + "/" + map.getView().getZoom() + "/";
     if (detailedFeature) {
         hash += detailedFeature.getId();
     }
     hash += "/" + appstate.metric.toString() + "/";
     window.location.hash = hash;
-}
-
-// Reads the hash and away we go!
-function readWindowHash() {
-    const tokens = window.location.hash.split("/");
-    // careful, we have the # char here to deal with
-    if (tokens.length > 0 && tokens[0] != '' &&
-        tokens[0] != '#' && tokens[0] != '#NaNNaNNaN') {
-        appstate.date = makeDate(tokens[0].substr(1, 4), tokens[0].substr(5, 2),
-            tokens[0].substr(7, 2));
-    }
-    if (tokens.length > 1 && tokens[1] != '' && tokens[1] !== 'NaNNaNNaN') {
-        appstate.date2 = makeDate(tokens[1].substr(0, 4), tokens[1].substr(4, 2),
-            tokens[1].substr(6, 2));
-    }
-    if (tokens.length > 2 && tokens[2] != '') {
-        appstate.ltype = tokens[2];
-        $(`input[value=${tokens[2]}]`).prop('checked', true);
-    }
-    if (tokens.length > 5 && tokens[3] != '' && tokens[4] != '' &&
-        tokens[5] !== '') {
-        defaultCenter = ol.proj.transform([parseFloat(tokens[3]), parseFloat(tokens[4])], 'EPSG:4326', 'EPSG:3857');
-        defaultZoom = parseFloat(tokens[5]);
-    }
-    if (tokens.length > 6 && tokens[6].length === 12) {
-        detailedFeatureIn = tokens[6];
-    }
-    if (tokens.length > 7 && tokens[7].length === 1) {
-        appstate.metric = parseInt(tokens[7]);
-        $(`#units_radio input[value=${tokens[7]}]`).prop('checked', true);
-    }
-
 }
 
 // Sets the date back to today
@@ -234,6 +162,7 @@ function setToday() {
 }
 // Sets the title shown on the page for what is being viewed
 function setTitle() {
+    return;
     dt = formatDate(myDateFormat, appstate.date);
     dtextra = (appstate.date2 === null) ? '' : ' to ' + formatDate(myDateFormat, appstate.date2);
     $('#maptitle').html(`Viewing ${vartitle[appstate.ltype]}` +
@@ -252,7 +181,7 @@ function getShapefile() {
     if (appstate.date2 !== null) {
         uri = `${uri}&dt2=${formatDate("yy-mm-dd", appstate.date2)}`;
     }
-    uri = `${uri}&conv=${(appstate.metric == 0) ? 'english': 'metric'}`;
+    uri = `${uri}&conv=${(appstate.metric == 0) ? 'english' : 'metric'}`;
     window.location.href = uri;
 }
 
@@ -268,7 +197,7 @@ function hideDetails() {
  */
 function updateDetails(huc12) {
     // Show side panel
-    if (! appstate.sidebarOpen){
+    if (!appstate.sidebarOpen) {
         $("#btnq1").click();
         handleSideBarClick();
     }
@@ -294,13 +223,13 @@ function updateDetails(huc12) {
 function getJSONURL() {
     // Generate the TMS URL given the current settings
     return BACKEND + '/auto/' + formatDate("yymmdd", appstate.date) + '_' +
-    formatDate("yymmdd", (appstate.date2 !== null) ? appstate.date2: appstate.date) +
-    '.json';
+        formatDate("yymmdd", (appstate.date2 !== null) ? appstate.date2 : appstate.date) +
+        '.json';
 }
 function rerender_vectors() {
     drawColorbar();
     vectorLayer.changed();
-    setWindowHash();
+    setQueryParams(appstate, map);
     setTitle();
 }
 
@@ -322,16 +251,16 @@ function remap() {
         success: function (json) {
             var vsource = vectorLayer.getSource();
             // Zero out current data
-            vsource.getFeatures().forEach(function(feat){
+            vsource.getFeatures().forEach(function (feat) {
                 feat.setProperties({
                     'avg_delivery': 0,
                     'qc_precip': 0
                 }, true);
             });
             // Merge in JSON provided data
-            json.data.forEach(function(entry){
+            json.data.forEach(function (entry) {
                 var feat = vsource.getFeatureById(entry.huc_12);
-                if (feat === null){
+                if (feat === null) {
                     return;
                 }
                 feat.setProperties(entry, true);
@@ -361,18 +290,18 @@ function remap() {
         }
     });
     setTitle();
-    setWindowHash();
+    setQueryParams(appstate, map);
 }
 function setYearInterval(syear) {
     $('#eventsModal').modal('hide');
 
     appstate.date = makeDate(syear, 1, 1);
     appstate.date2 = makeDate(syear, 12, 31);
-    $('#datepicker').datepicker("setDate", formatDate(myDateFormat,
-        appstate.date));
-    $('#datepicker2').datepicker("setDate", formatDate(myDateFormat,
-        appstate.date2));
-    $('#multi').prop('checked', true).button('refresh');
+    //$('#datepicker').datepicker("setDate", formatDate(myDateFormat,
+    //    appstate.date));
+    //$('#datepicker2').datepicker("setDate", formatDate(myDateFormat,
+    //    appstate.date2));
+    //$('#multi').prop('checked', true).button('refresh');
     remap();
     $("#dp2").css('display', 'block');
 }
@@ -387,22 +316,22 @@ function setDateFromString(s) {
 
 function setDate(year, month, day) {
     appstate.date = makeDate(year, month, day);
-    $('#datepicker').datepicker("setDate", formatDate(myDateFormat,
-        appstate.date));
+    //$('#datepicker').datepicker("setDate", formatDate(myDateFormat,
+    //    appstate.date));
     // Called from top 10 listing, so disable the period
-    $('#single').prop('checked', true).button('refresh');
+    //$('#single').prop('checked', true).button('refresh');
     appstate.date2 = null;
     $("#dp2").css('display', 'none');
     remap();
 }
 
 function make_iem_tms(title, layername, visible, type) {
-    return new ol.layer.Tile({
+    return new TileLayer({
         title: title,
         visible: visible,
         type: type,
         maxZoom: (layername == 'depmask') ? 9 : 21,
-        source: new ol.source.XYZ({
+        source: new XYZ({
             url: tilecache + '/c/tile.py/1.0.0/' + layername + '/{z}/{x}/{y}.png'
         })
     })
@@ -429,7 +358,7 @@ function makeDetailedFeature(feature) {
         detailedFeature = feature;
     }
     updateDetails(feature.getId());
-    setWindowHash();
+    setQueryParams(appstate, map);
 }
 
 /**
@@ -446,7 +375,7 @@ function viewEvents(huc12, mode) {
         if (_mode === 'daily') return "";
         return ` (${val})`;
     }
-    var colLabel = (mode == 'daily') ? "Date": "Year";
+    var colLabel = (mode == 'daily') ? "Date" : "Year";
     var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
     $('#eventsModalLabel').html(`${lbl} for ${huc12}`);
     $('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
@@ -457,10 +386,10 @@ function viewEvents(huc12, mode) {
     }).done(function (res) {
         var myfunc = ((mode == 'yearly') ? 'setYearInterval(' : 'setDateFromString(');
         var tbl = '<button class="btn btn-primary" ' +
-            'onclick="javascript: window.open(\''+ BACKEND +'/geojson/huc12_events.py?huc12='+huc12+'&amp;mode='+mode+'&amp;format=xlsx\');">' +
+            'onclick="javascript: window.open(\'' + BACKEND + '/geojson/huc12_events.py?huc12=' + huc12 + '&amp;mode=' + mode + '&amp;format=xlsx\');">' +
             '<i class="bi-download"></i> Excel Download</button><br />' +
             '<table class="table table-striped header-fixed" id="depdt">' +
-            "<thead><tr><th>" + colLabel +"</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
+            "<thead><tr><th>" + colLabel + "</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Runoff [" + varunits['qc_precip'][appstate.metric] +
             "]</th><th>Detach [" + varunits['avg_loss'][appstate.metric] +
             "]</th><th>Hillslope Soil Loss [" + varunits['avg_loss'][appstate.metric] +
@@ -527,7 +456,7 @@ function drawColorbar() {
     ctx.font = 'bold 10pt Calibri';
     ctx.fillStyle = 'black';
     metrics = ctx.measureText(txt);
-    if (appstate.ltype != "dt" && appstate.ltype != "slp"){
+    if (appstate.ltype != "dt" && appstate.ltype != "slp") {
         ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
     }
     var pos = 20;
@@ -544,7 +473,7 @@ function drawColorbar() {
         ctx.font = 'bold 12pt Calibri';
         ctx.fillStyle = 'black';
         var precision = (level < 100) ? 2 : 0;
-        if (appstate.ltype == "dt"){
+        if (appstate.ltype == "dt") {
             precision = 0;
         }
         var leveltxt = level.toFixed(precision);
@@ -552,7 +481,7 @@ function drawColorbar() {
             leveltxt = 0.001;
         }
         metrics = ctx.measureText(leveltxt);
-        if (appstate.ltype == "dt"){
+        if (appstate.ltype == "dt") {
             ctx.fillText(leveltxt, 10, canvas.height - (pos + 26));
         } else {
             ctx.fillText(
@@ -601,8 +530,8 @@ function makeLayerSwitcher() {
         }
         input.checked = lyr.get('visible');
         input.addEventListener("change", function (e) {
-                layerVisible(lyr, e.target.checked);
-            });
+            layerVisible(lyr, e.target.checked);
+        });
         label.innerHTML = "&nbsp; " + lyrTitle;
         li.appendChild(input);
         li.appendChild(label);
@@ -652,14 +581,14 @@ function displayFeatureInfo(evt) {
     }
 
 };
-function changeOpacity(amount){
+function changeOpacity(amount) {
     vectorLayer.setOpacity(vectorLayer.getOpacity() + amount);
 }
 
-function handleMapControlsClick(event){
+function handleMapControlsClick(event) {
     const btnid = event.currentTarget.id;
     $("#mapcontrols button").removeClass("active");
-    $("#"+btnid).addClass("active");
+    $("#" + btnid).addClass("active");
 }
 
 /**
@@ -675,144 +604,97 @@ function setUnits(newunit) {
  * Update the date selection type single or multi
  * @param {*} newval
  */
-function setDateSelection(newval){
+function setDateSelection(newval) {
     if (newval === 'single') {
         appstate.date2 = null;
         $("#dp2").css('display', 'none');
         remap();
     } else {
         $("#dp2").css('display', 'block');
-        var dt = $("#datepicker2").datepicker("getDate");
-        appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-            dt.getUTCDate());
+        //var dt = $("#datepicker2").datepicker("getDate");
+        //appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
+        //    dt.getUTCDate());
     }
 }
 
 
 function build() {
-    try {
-        readWindowHash();
-    } catch (e) {
-        setStatus("An error occurred reading the hash link...");
-    }
+    readUrlParams(appstate, defaultCenter, defaultZoom);
+
 
     $('[data-target="q1"]').click((event) => {
         handleSideBarClick();
     });
 
-    var style = new ol.style.Style({
-        fill: new ol.style.Fill({
+    var style = new Style({
+        fill: new Fill({
             color: 'rgba(255, 255, 255, 0)'
         }),
-        text: new ol.style.Text({
+        text: new Text({
             font: '14px Calibri,sans-serif',
-            stroke: new ol.style.Stroke({
+            stroke: new Stroke({
                 color: '#fff',
                 width: 8
             }),
-            fill: new ol.style.Fill({
+            fill: new Fill({
                 color: '#000',
                 width: 3
             })
         }),
-        stroke: new ol.style.Stroke({
+        stroke: new Stroke({
             color: '#000000', //'#319FD3',
             width: 0.5
         })
     });
 
-    vectorLayer = new ol.layer.VectorImage({
-        title: 'DEP Data Layer',
-        imageRatio: 2,
-        source: new ol.source.Vector({
-            url: BACKEND + "/geojson/huc12.geojson",
-            format: new ol.format.GeoJSON(),
-            projection: ol.proj.get('EPSG:4326')
-        }),
-        style: function (feature, resolution) {
-            let val = feature.get(appstate.ltype);
-            val = val * multipliers[appstate.ltype][appstate.metric];
-            let c = 'rgba(255, 255, 255, 0)'; //hallow
-            for (var i = (levels[appstate.ltype][appstate.metric].length - 2); i >= 0; i--) {
-                if (val >= levels[appstate.ltype][appstate.metric][i]) {
-                    c = colors[appstate.ltype][i];
-                    break;
-                }
-            }
-            style.getFill().setColor(c);
-            style.getStroke().setColor((resolution < 1250) ? '#000000' : c);
-            style.getText().setText(resolution < 160 ? val.toFixed(2) : '');
-            return [style];
-        }
-    });
-    vectorLayer.getSource().on("featuresloadend", function(){
-        remap();
-    });
-    // Create map instance
-    map = new ol.Map({
+    vectorLayer = createVectorLayer(appstate, multipliers, levels, colors);
+
+    map = new Map({
         target: 'map',
         controls: [],
-        layers: [new ol.layer.Tile({
-            title: 'OpenStreetMap',
-            visible: true,
-            type: 'base',
-            source: new ol.source.OSM()
-        }),
-        new ol.layer.Tile({
-            title: "Global Imagery",
-            visible: false,
-            type: 'base',
-            source: new ol.source.XYZ({
-                url: 'https://s3.amazonaws.com/com.modestmaps.bluemarble/{z}-r{y}-c{x}.jpg'
-            })
-        }),
-        make_iem_tms('Iowa 100m Hillshade', 'iahshd-900913', false, 'base'),
-        vectorLayer,
-        make_iem_tms('Domain Mask', 'depmask', true, ''),
-        make_iem_tms('US Counties', 'c-900913', false, ''),
-        make_iem_tms('US States', 's-900913', true, ''),
-        // make_iem_tms('Hydrology', 'iahydrology-900913', false, ''),
-        make_iem_tms('HUC 8', 'huc8-900913', false, '')
+        layers: [
+            ...createBaseLayers(),
+            vectorLayer,
+            make_iem_tms('Domain Mask', 'depmask', true, ''),
+            make_iem_tms('US Counties', 'c-900913', false, ''),
+            make_iem_tms('US States', 's-900913', true, ''),
+            make_iem_tms('HUC 8', 'huc8-900913', false, '')
         ],
-        view: new ol.View({
+        view: new View({
             enableRotation: false,
-            projection: ol.proj.get('EPSG:3857'),
+            projection: 'EPSG:3857',
             center: defaultCenter,
             zoom: defaultZoom
         })
     });
 
     //  showing the position the user clicked
-    popup = new ol.Overlay({
+    popup = new Overlay({
         element: document.getElementById('fdetails'),
         offset: [7, 7],
-        autoPan: {
-            animation: {
-                duration: 250
-            }
-        }
+        autoPan: false // Disable auto-panning
     });
     map.addOverlay(popup);
 
-    var highlightStyle = [new ol.style.Style({
-        stroke: new ol.style.Stroke({
+    var highlightStyle = [new Style({
+        stroke: new Stroke({
             color: '#f00',
             width: 1
         }),
-        fill: new ol.style.Fill({
+        fill: new Fill({
             color: 'rgba(255,0,0,0.1)'
         })
     })];
-    var clickStyle = [new ol.style.Style({
-        stroke: new ol.style.Stroke({
+    var clickStyle = [new Style({
+        stroke: new Stroke({
             color: '#000',
             width: 2
         })
     })];
 
-    hoverOverlayLayer = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: new ol.Collection()
+    hoverOverlayLayer = new VectorLayer({
+        source: new VectorSource({
+            features: new Collection()
         }),
         style: function (feature, resolution) {
             return highlightStyle;
@@ -820,9 +702,9 @@ function build() {
     });
     map.addLayer(hoverOverlayLayer);  // makes unmanaged
 
-    clickOverlayLayer = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: new ol.Collection()
+    clickOverlayLayer = new VectorLayer({
+        source: new VectorSource({
+            features: new Collection()
         }),
         style: function (feature, resolution) {
             return clickStyle;
@@ -832,8 +714,7 @@ function build() {
 
     // fired when the map is done being moved around
     map.on('moveend', function () {
-        //set the hash
-        setWindowHash();
+        setQueryParams(appstate, map);
     });
     // fired as the pointer is moved over the map
     map.on('pointermove', function (evt) {
@@ -863,59 +744,31 @@ function build() {
         }
     });
 
-    $("#datepicker").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        dateFormat: myDateFormat,
-        minDate: new Date(2007, 0, 1),
-        maxDate: formatDate(myDateFormat, appstate.lastdate),
-        onSelect: function (dateText, inst) {
-            var dt = $("#datepicker").datepicker("getDate");
-            appstate.date = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-                dt.getUTCDate());
-            remap();
-            if (appstate.date != appstate.lastdate) {
-                $('#settoday').css('display', 'block');
-            }
-        }
-    });
-    $("#datepicker").on('change', function (e) {
-        var dt = $("#datepicker").datepicker("getDate");
-        appstate.date = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-            dt.getUTCDate());
+    const datepicker = document.getElementById('datepicker');
+    const datepicker2 = document.getElementById('datepicker2');
+
+    //datepicker.value = appstate.date ? appstate.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    //datepicker2.value = appstate.date2 ? appstate.date2.toISOString().split('T')[0] : (appstate.lastdate ? appstate.lastdate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+
+    datepicker.addEventListener('change', () => {
+        const [year, month, day] = datepicker.value.split('-');
+        appstate.date = makeDate(year, month, day);
         remap();
         if (appstate.date < appstate.lastdate) {
-            $('#settoday').css('display', 'block');
+            document.getElementById('settoday').style.display = 'block';
         }
     });
-    // careful here, because of UTC dates
-    $("#datepicker").datepicker('setDate',
-        formatDate(myDateFormat, appstate.date));
 
-    $("#datepicker2").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        disable: true,
-        dateFormat: myDateFormat,
-        minDate: new Date(2007, 0, 1),
-        maxDate: formatDate(myDateFormat, appstate.lastdate),
-        onSelect: function (dateText, inst) {
-            var dt = $("#datepicker2").datepicker("getDate");
-            appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-                dt.getUTCDate());
-            remap();
-        }
-    });
-    $("#datepicker2").on('change', function (e) {
-        var dt = $("#datepicker2").datepicker("getDate");
-        appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-            dt.getUTCDate());
+    datepicker2.addEventListener('change', () => {
+        const [year, month, day] = datepicker2.value.split('-');
+        appstate.date2 = makeDate(year, month, day);
         remap();
     });
 
-    $("#datepicker2").datepicker('setDate', (appstate.date2) ?
-        formatDate(myDateFormat, appstate.date2 || new Date()) :
-        formatDate(myDateFormat, appstate.lastdate || new Date()));
+    document.getElementById('settoday').addEventListener('click', () => {
+        setToday();
+    });
+
 
     $("input[type=radio][name=whichlayer]").change(function () {
         //console.log("cb on radio this.value=" + this.value);
@@ -925,7 +778,7 @@ function build() {
     $("#units_radio input[type=radio]").change(function () {
     });
     if (appstate.date2) {
-        $('#t input[value=multi]').prop('checked', true).button('refresh');
+        //$('#t input[value=multi]').prop('checked', true).button('refresh');
     }
 
     if (appstate.date2) {
@@ -943,6 +796,7 @@ function build() {
         doHUC12Search();
     });
 
+    /*
     $('#minus1d').on('click', function () {
         appstate.date.setDate(appstate.date.getDate() - 1);
         $("#datepicker").datepicker("setDate",
@@ -955,6 +809,7 @@ function build() {
             $('#settoday').css('display', 'block');
         }
     });
+    */
 
     $('#plus1d').on('click', function () {
         appstate.date.setDate(appstate.date.getDate() + 1);
@@ -962,39 +817,39 @@ function build() {
             $("#plus1d").prop("disabled", true);
             appstate.date.setDate(appstate.date.getDate() - 1);
         } else {
-            $("#datepicker").datepicker("setDate",
-                formatDate(myDateFormat, appstate.date));
+            //$("#datepicker").datepicker("setDate",
+            //    formatDate(myDateFormat, appstate.date));
             remap();
         }
     });
 
     $('#il').on('click', function () {
-        map.getView().setCenter(ol.proj.transform([-88.75, 40.14], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-88.75, 40.14], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
         $(this).blur();
     });
     $('#wi').on('click', () => {
-        map.getView().setCenter(ol.proj.transform([-91.2, 45.11], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-91.2, 45.11], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
         $(this).blur();
     });
     $('#ia').on('click', function () {
-        map.getView().setCenter(ol.proj.transform([-93.5, 42.07], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-93.5, 42.07], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
         $(this).blur();
     });
     $('#mn').on('click', function () {
-        map.getView().setCenter(ol.proj.transform([-93.21, 46.05], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-93.21, 46.05], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
         $(this).blur();
     });
     $('#ks').on('click', function () {
-        map.getView().setCenter(ol.proj.transform([-98.38, 38.48], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-98.38, 38.48], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(7);
         $(this).blur();
     });
     $('#ne').on('click', function () {
-        map.getView().setCenter(ol.proj.transform([-96.01, 40.55], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setCenter(transform([-96.01, 40.55], 'EPSG:4326', 'EPSG:3857'));
         map.getView().setZoom(8);
         $(this).blur();
     });
@@ -1009,11 +864,11 @@ function build() {
     $("#mapprint").click(() => {
         // construct URL
         const url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
-        "_" + formatDate("yymmdd", (appstate.date2 === null)? appstate.date: appstate.date2) +
-        "_0_" + appstate.ltype +".png"
+            "_" + formatDate("yymmdd", (appstate.date2 === null) ? appstate.date : appstate.date2) +
+            "_0_" + appstate.ltype + ".png"
         window.open(url);
     });
-    $("#mapinfo").click(function() {
+    $("#mapinfo").click(function () {
         setStatus("Double click HUC12 for detailed data.");
     });
 
@@ -1023,3 +878,51 @@ function build() {
     showVersions();
 
 }; // End of build
+
+function migrateHashToQueryParams() {
+    const hash = window.location.hash.substring(1); // Remove the '#' character
+    if (hash) {
+        const queryParams = new URLSearchParams(window.location.search);
+        const hashParts = hash.split('/');
+        if (hashParts.length > 0) queryParams.set('date', hashParts[0]);
+        if (hashParts.length > 1) queryParams.set('date2', hashParts[1]);
+        if (hashParts.length > 2) queryParams.set('ltype', hashParts[2]);
+        if (hashParts.length > 5) {
+            queryParams.set('lon', hashParts[3]);
+            queryParams.set('lat', hashParts[4]);
+            queryParams.set('zoom', hashParts[5]);
+        }
+        if (hashParts.length > 6) queryParams.set('feature', hashParts[6]);
+        if (hashParts.length > 7) queryParams.set('metric', hashParts[7]);
+
+        const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+        window.history.replaceState(null, '', newUrl);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    migrateHashToQueryParams();
+    build();
+
+    document.getElementById('huc12searchbtn').addEventListener('click', () => {
+        doHUC12Search();
+    });
+
+    document.getElementById('settoday').addEventListener('click', () => {
+        setToday();
+    });
+
+    document.getElementById('mapplus').addEventListener('click', () => {
+        map.getView().setZoom(map.getView().getZoom() + 1);
+    });
+
+    document.getElementById('mapminus').addEventListener('click', () => {
+        map.getView().setZoom(map.getView().getZoom() - 1);
+    });
+
+    document.getElementById('mapprint').addEventListener('click', () => {
+        const url = `${BACKEND}/auto/${formatDate("yymmdd", appstate.date)}_${formatDate("yymmdd", appstate.date2 || appstate.date)}_0_${appstate.ltype}.png`;
+        window.open(url);
+    });
+});
+

@@ -1,4 +1,0 @@
-/* global $ */
-$(document).ready(() => {
-    build();
-});

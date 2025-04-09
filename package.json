@@ -1,0 +1,17 @@
+{
+  "name": "src2",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.2.4"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.5",
+    "jquery": "^3.7.1",
+    "ol": "latest"
+  }
+}
