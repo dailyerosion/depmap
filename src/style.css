@@ -1,3 +1,5 @@
+@import "ol/ol.css";
+
 html,
 body {
     height: 100%;
@@ -131,4 +133,36 @@ body {
 
 .deplist {
     padding-left: 20px;
+}
+
+.toast {
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateY(0);
+}
+
+.toast-info {
+    background-color: #007bff;
+}
+
+.toast-success {
+    background-color: #28a745;
+}
+
+.toast-warning {
+    background-color: #ffc107;
+}
+
+.toast-error {
+    background-color: #dc3545;
+}
+
+.toast.fade-out {
+    opacity: 0;
+    transform: translateY(20px);
 }
