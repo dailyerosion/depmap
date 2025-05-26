@@ -1,34 +1,29 @@
 import './style.css';
-import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import Overlay from 'ol/Overlay';
-import Collection from 'ol/Collection';
-import { Style, Fill, Stroke, Text } from 'ol/style';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import { XYZ, Vector as VectorSource } from 'ol/source';
-import { transform } from 'ol/proj';
-import { createVectorLayer, createBaseLayers, defaultCenter, defaultZoom } from './mapConfig';
-import { tilecache, BACKEND, varnames, multipliers, levels, colors, vardesc, varunits, vartitle } from './constants';
-import { readUrlParams, setQueryParams } from './urlHandler';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Tile as TileLayer } from 'ol/layer';
+import { XYZ } from 'ol/source';
+import { defaultCenter, defaultZoom } from './mapConfig';
+import { tilecache, BACKEND, varnames, multipliers, levels, varunits } from './constants';
+import { readUrlParams, setQueryParams, migrateHashToQueryParams } from './urlHandler';
 import { showToast } from './toaster';
+import { formatDate, setDate, setYearInterval, setDateFromString, checkDates } from './dateUtils';
+import { drawColorbar, getJSONURL, rerender_vectors, setTitle } from './mapRenderer';
+import { doHUC12Search, updateDetails } from './huc12Utils';
+import { initializeMap, createOverlayLayers } from './mapInitializer';
+import { setupMapEventHandlers, setupDatePickerHandlers, setupRadioHandlers, setupSearchHandlers, setupStateNavigationHandlers, setupMapControlHandlers, setupInlineEventHandlers } from './eventHandlers';
+import { initializeBootstrapComponents } from './bootstrapComponents';
+import { getState, setState, StateKeys } from './state';
 
-const appstate = {
-    sidebarOpen: false,
-    lastdate: null,
-    lat: null,
-    lon: null,
-    date: null,
-    date2: null,
-    metric: 0,
-    ltype: 'qc_precip'
-};
+// Initialize Bootstrap components
+let eventsModal = null;
+let myModal = null;
+let dtModal = null;
+let sidebar = null;
 
 let map = null;
 let vectorLayer = null;
 let scenario = 0;
-const myDateFormat = 'M d, yy';
 let quickFeature = null;
 let detailedFeature = null;
 let hoverOverlayLayer = null;
@@ -36,18 +31,20 @@ let clickOverlayLayer = null;
 let popup = null;
 
 function handleSideBarClick() {
-    $("#buttontabs .btn").removeClass('focus');
-    $('.row-offcanvas').toggleClass("active");
-    appstate.sidebarOpen = !appstate.sidebarOpen;
+    // Toggle the sidebar state - Bootstrap handles the actual display
+    setState(StateKeys.SIDEBAR_OPEN, !getState(StateKeys.SIDEBAR_OPEN));
 }
 
-function formatDate(fmt, dt) {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return dt.toLocaleDateString('en-US', options);
-}
-
-function makeDate(year, month, day) {
-    return new Date(year, month - 1, day);
+function setupSidebarEvents() {
+    const sidebarElement = document.getElementById('sidebar');
+    if (sidebarElement) {
+        sidebarElement.addEventListener('shown.bs.offcanvas', () => {
+            setState(StateKeys.SIDEBAR_OPEN, true);
+        });
+        sidebarElement.addEventListener('hidden.bs.offcanvas', () => {
+            setState(StateKeys.SIDEBAR_OPEN, false);
+        });
+    }
 }
 
 // Update the status box on the page with the given text
@@ -57,198 +54,60 @@ function setStatus(text, type = 'info') {
 
 function showVersions() {
     // Update the UI with what versions we have at play here.
-    $.ajax({
-        url: `${BACKEND}/auto/version.py?scenario=${scenario}`,
-        fail(_jqXHR, textStatus) {
-            setStatus(`DEP version check failed ${textStatus}`);
-        },
-        success(data) {
-            $("#dv_label").text(data["label"]);
-            $("#dv_wepp").text(data["wepp"]);
-            $("#dv_acpf").text(data["acpf"]);
-            $("#dv_flowpath").text(data["flowpath"]);
-            $("#dv_gssurgo").text(data["gssurgo"]);
-            $("#dv_software").text(data["software"]);
-            $("#dv_tillage").text(data["tillage"]);
-        }
-    });
-
-}
-function checkDates() {
-    // Check the server for updated run information
-    $.ajax({
-        url: `${BACKEND}/geojson/timedomain.py?scenario=${scenario}`,
-        fail(_jqXHR, textStatus) {
-            setStatus("New data check failed " + textStatus);
-        },
-        success(data) {
-            if (data['last_date']) {
-                const newdate = new Date(data['last_date']);
-                if (newdate > appstate.lastdate && (
-                    appstate.date == null || newdate.getTime() !== appstate.date.getTime())) {
-                    appstate.lastdate = newdate;
-                    //$('#datepicker').datepicker("change",
-                    //    { maxDate: formatDate(myDateFormat, newdate) });
-                    //$('#datepicker2').datepicker("change",
-                    //    { maxDate: formatDate(myDateFormat, newdate) });
-                    // If we have no current date, don't show the modal
-                    if (appstate.date != null) {
-                        $('#newdate-thedate').html(formatDate(myDateFormat,
-                            newdate));
-                        /**
-                        $("#newdate-message").dialog({
-                            modal: true,
-                            buttons: [{
-                                text: 'Show Data!',
-                                icons: {
-                                    primary: "ui-icon-heart"
-                                },
-                                click: function () {
-                                    setDate(appstate.lastdate.getFullYear(),
-                                        appstate.lastdate.getMonth() + 1,
-                                        appstate.lastdate.getDate());
-                                    $(this).dialog("close");
-                                }
-                            }, {
-                                text: 'Ok',
-                                click: function () {
-                                    $(this).dialog("close");
-                                }
-                            }]
-                        });
-                        */
-                    } else {
-                        setDate(
-                            appstate.lastdate.getFullYear(),
-                            appstate.lastdate.getMonth() + 1,
-                            appstate.lastdate.getDate()
-                        );
-                    }
-                }
-            }
-
-        }
-    });
-}
-
-// Sets the permalink stuff
-// date/date2/ltype/lon/lat/zoom
-function setWindowHash() {
-    var hash = "";
-    if (appstate.date && appstate.date != 'Invalid Date') {
-        hash += formatDate("yymmdd", appstate.date);
-    }
-    hash += "/";
-    if (appstate.date2 && appstate.date2 != 'Invalid Date') {
-        hash += formatDate("yymmdd", appstate.date2)
-    }
-    hash += "/" + appstate.ltype + "/";
-    var center = map.getView().getCenter();
-    center = transform(center, 'EPSG:3857', 'EPSG:4326'),
-        hash += center[0].toFixed(2) + "/" + center[1].toFixed(2) + "/" + map.getView().getZoom() + "/";
-    if (detailedFeature) {
-        hash += detailedFeature.getId();
-    }
-    hash += "/" + appstate.metric.toString() + "/";
-    window.location.hash = hash;
-}
-
-// Sets the date back to today
-function setToday() {
-    setDate(appstate.lastdate.getFullYear(),
-        appstate.lastdate.getMonth() + 1,
-        appstate.lastdate.getDate());
-    $('#settoday').css('display', 'none');
-}
-// Sets the title shown on the page for what is being viewed
-function setTitle() {
-    return;
-    dt = formatDate(myDateFormat, appstate.date);
-    dtextra = (appstate.date2 === null) ? '' : ' to ' + formatDate(myDateFormat, appstate.date2);
-    $('#maptitle').html(`Viewing ${vartitle[appstate.ltype]}` +
-        ` for ${dt} ${dtextra}`);
-    $('#variable_desc').html(vardesc[appstate.ltype]);
-}
-
-// When user clicks the "Get Shapefile" Button
-function getShapefile() {
-    const dt = formatDate("yy-mm-dd", appstate.date);
-    const states = [];
-    $("input[name='dlstates']:checked").each((_idx, v) => {
-        states.push($(v).val());
-    });
-    let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
-    if (appstate.date2 !== null) {
-        uri = `${uri}&dt2=${formatDate("yy-mm-dd", appstate.date2)}`;
-    }
-    uri = `${uri}&conv=${(appstate.metric == 0) ? 'english' : 'metric'}`;
-    window.location.href = uri;
-}
-
-function hideDetails() {
-    $('#details_hidden').css('display', 'block');
-    $('#details_details').css('display', 'none');
-    $('#details_loading').css('display', 'none');
-}
-
-/**
- * Update the HUC12 details widget panel
- * @param {String} huc12
- */
-function updateDetails(huc12) {
-    // Show side panel
-    if (!appstate.sidebarOpen) {
-        $("#btnq1").click();
-        handleSideBarClick();
-    }
-    // Show Data Tab in side bar
-    $("#data-tab").click();
-    $('#details_hidden').css('display', 'none');
-    $('#details_details').css('display', 'none');
-    $('#details_loading').css('display', 'block');
-    $.get(`${BACKEND}/huc12-details.php`, {
-        huc12,
-        date: formatDate("yy-mm-dd", appstate.date),
-        date2: formatDate("yy-mm-dd", appstate.date2),
-        metric: appstate.metric
-    },
-        function (data) {
-            $('#details_details').css('display', 'block');
-            $('#details_loading').css('display', 'none');
-            $('#details_details').html(data);
+    fetch(`${BACKEND}/auto/version.py?scenario=${scenario}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("dv_label").textContent = data["label"];
+            document.getElementById("dv_wepp").textContent = data["wepp"];
+            document.getElementById("dv_acpf").textContent = data["acpf"];
+            document.getElementById("dv_flowpath").textContent = data["flowpath"];
+            document.getElementById("dv_gssurgo").textContent = data["gssurgo"];
+            document.getElementById("dv_software").textContent = data["software"];
+            document.getElementById("dv_tillage").textContent = data["tillage"];
+        })
+        .catch(error => {
+            setStatus(`DEP version check failed ${error.message}`);
         });
 
 }
 
-function getJSONURL() {
-    // Generate the TMS URL given the current settings
-    return BACKEND + '/auto/' + formatDate("yymmdd", appstate.date) + '_' +
-        formatDate("yymmdd", (appstate.date2 !== null) ? appstate.date2 : appstate.date) +
-        '.json';
-}
-function rerender_vectors() {
-    drawColorbar();
-    vectorLayer.changed();
-    setQueryParams(appstate, map);
-    setTitle();
+// When user clicks the "Get Shapefile" Button
+function getShapefile() {
+    const date = getState(StateKeys.DATE);
+    const date2 = getState(StateKeys.DATE2);
+    const metric = getState(StateKeys.METRIC);
+    
+    const dt = formatDate("yy-mm-dd", date);
+    const states = [];
+    document.querySelectorAll("input[name='dlstates']:checked").forEach(input => {
+        states.push(input.value);
+    });
+    let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
+    if (date2 !== null) {
+        uri = `${uri}&dt2=${formatDate("yy-mm-dd", date2)}`;
+    }
+    uri = `${uri}&conv=${(metric == 0) ? 'english' : 'metric'}`;
+    window.location.href = uri;
 }
 
 function remap() {
     // Our main function for updating the map data
+    const date = getState(StateKeys.DATE);
+    const date2 = getState(StateKeys.DATE2);
 
     // Abort if we have no date set
-    if (appstate.date == null) return;
+    if (date == null) return;
 
     //console.log("remap() called"+ detailedFeature);
-    if (appstate.date2 != null && appstate.date2 <= appstate.date) {
+    if (date2 != null && date2 <= date) {
         setStatus("Please ensure that 'To Date' is later than 'Date'");
         return;
     }
     setStatus("Fetching new data to display...");
-    $.ajax({
-        url: getJSONURL(),
-        dataType: 'json',
-        success: function (json) {
+    
+    fetch(getJSONURL())
+        .then(response => response.json())
+        .then(json => {
             var vsource = vectorLayer.getSource();
             // Zero out current data
             vsource.getFeatures().forEach(function (feat) {
@@ -287,42 +146,24 @@ function remap() {
             }
             drawColorbar();
             vectorLayer.changed();
-        }
-    });
-    setTitle();
-    setQueryParams(appstate, map);
-}
-function setYearInterval(syear) {
-    $('#eventsModal').modal('hide');
-
-    appstate.date = makeDate(syear, 1, 1);
-    appstate.date2 = makeDate(syear, 12, 31);
-    //$('#datepicker').datepicker("setDate", formatDate(myDateFormat,
-    //    appstate.date));
-    //$('#datepicker2').datepicker("setDate", formatDate(myDateFormat,
-    //    appstate.date2));
-    //$('#multi').prop('checked', true).button('refresh');
-    remap();
-    $("#dp2").css('display', 'block');
-}
-
-function setDateFromString(s) {
-    $('#eventsModal').modal('hide');
-    var dt = (new Date(s));
-    setDate(formatDate('yy', dt),
-        formatDate('mm', dt),
-        formatDate('dd', dt));
-}
-
-function setDate(year, month, day) {
-    appstate.date = makeDate(year, month, day);
-    //$('#datepicker').datepicker("setDate", formatDate(myDateFormat,
-    //    appstate.date));
-    // Called from top 10 listing, so disable the period
-    //$('#single').prop('checked', true).button('refresh');
-    appstate.date2 = null;
-    $("#dp2").css('display', 'none');
-    remap();
+        })
+        .catch(error => {
+            setStatus(`Failed to fetch map data: ${error.message}`, 'error');
+        });
+    
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    setTitle(currentState);
+    setQueryParams(currentState, map);
 }
 
 function make_iem_tms(title, layername, visible, type) {
@@ -339,7 +180,9 @@ function make_iem_tms(title, layername, visible, type) {
 function setHUC12(huc12) {
     feature = vectorLayer.getSource().getFeatureById(huc12);
     makeDetailedFeature(feature);
-    $('#myModal').modal('hide');
+    if (myModal) {
+        myModal.hide();
+    }
 }
 
 function makeDetailedFeature(feature) {
@@ -357,152 +200,28 @@ function makeDetailedFeature(feature) {
         }
         detailedFeature = feature;
     }
-    updateDetails(feature.getId());
-    setQueryParams(appstate, map);
-}
-
-/**
- * Create popup table for given huc12
- * @param {*} huc12
- * @param {*} mode
- */
-function viewEvents(huc12, mode) {
-    function pprint(val, _mode) {
-        if (val == null) return "0";
-        return val.toFixed(2);
-    }
-    function pprint2(val, _mode) {
-        if (_mode === 'daily') return "";
-        return ` (${val})`;
-    }
-    var colLabel = (mode == 'daily') ? "Date" : "Year";
-    var lbl = ((mode == 'daily') ? 'Daily events' : 'Yearly summary (# daily events)');
-    $('#eventsModalLabel').html(`${lbl} for ${huc12}`);
-    $('#eventsres').html('<p><img src="images/wait24trans.gif" /> Loading...</p>');
-    $.ajax({
-        method: 'GET',
-        url: BACKEND + '/geojson/huc12_events.py',
-        data: { huc12: huc12, mode: mode }
-    }).done(function (res) {
-        var myfunc = ((mode == 'yearly') ? 'setYearInterval(' : 'setDateFromString(');
-        var tbl = '<button class="btn btn-primary" ' +
-            'onclick="javascript: window.open(\'' + BACKEND + '/geojson/huc12_events.py?huc12=' + huc12 + '&amp;mode=' + mode + '&amp;format=xlsx\');">' +
-            '<i class="bi-download"></i> Excel Download</button><br />' +
-            '<table class="table table-striped header-fixed" id="depdt">' +
-            "<thead><tr><th>" + colLabel + "</th><th>Precip [" + varunits['qc_precip'][appstate.metric] +
-            "]</th><th>Runoff [" + varunits['qc_precip'][appstate.metric] +
-            "]</th><th>Detach [" + varunits['avg_loss'][appstate.metric] +
-            "]</th><th>Hillslope Soil Loss [" + varunits['avg_loss'][appstate.metric] +
-            "]</th></tr></thead>";
-        $.each(res.results, function (idx, result) {
-            var dt = ((mode == 'daily') ? result.date : result.date.substring(0, 4));
-            tbl += "<tr><td><a href=\"javascript: " + myfunc + "'" + dt + "');\">" + dt + "</a></td><td>" +
-                pprint(result.qc_precip * multipliers['qc_precip'][appstate.metric]) + pprint2(result.qc_precip_events, mode) + "</td><td>" +
-                pprint(result.avg_runoff * multipliers['avg_runoff'][appstate.metric]) + pprint2(result.avg_runoff_events, mode) + "</td><td>" +
-                pprint(result.avg_loss * multipliers['avg_loss'][appstate.metric]) + pprint2(result.avg_loss_events, mode) + "</td><td>" +
-                pprint(result.avg_delivery * multipliers['avg_delivery'][appstate.metric]) + pprint2(result.avg_delivery_events, mode) + "</td></tr>";
-        });
-        tbl += "</table>";
-        if (mode == 'yearly') {
-            tbl += "<h4>Monthly Averages</h4>";
-            tbl += '<p><img src="' + BACKEND + '/auto/huc12_bymonth.py?huc12=' + huc12 + '" class="img img-responsive"></p>';
-        }
-
-        $('#eventsres').html(tbl);
-        $("#depdt").DataTable();
-    }).fail(function (res) {
-        $('#eventsres').html("<p>Something failed, sorry</p>");
-    });
-
-}
-
-function doHUC12Search() {
-    $('#huc12searchres').html('<p><img src="images/wait24trans.gif" /> Searching...</p>');
-    var txt = $('#huc12searchtext').val();
-    $.ajax({
-        method: 'GET',
-        url: BACKEND + '/geojson/hsearch.py',
-        data: { q: txt }
-    }).done(function (res) {
-        var tbl = "<table class='table table-striped'><thead><tr><th>ID</th><th>Name</th></tr></thead>";
-        $.each(res.results, function (idx, result) {
-            tbl += "<tr><td><a href=\"javascript: setHUC12('" + result.huc_12 + "');\">" + result.huc_12 + "</a></td><td>" + result.name + "</td></tr>";
-        });
-        tbl += "</table>";
-        $('#huc12searchres').html(tbl);
-    }).fail(function (res) {
-        $('#huc12searchres').html("<p>Search failed, sorry</p>");
-    });
-}
-
-function drawColorbar() {
-    //console.log("drawColorbar called...");
-    var canvas = document.getElementById('colorbar');
-    var ctx = canvas.getContext('2d');
-
-    // 20px for each color, 40 pixels on bottom, 40 on top
-    canvas.height = colors[appstate.ltype].length * 20 + 40 + 40;
-
-    // Clear out the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = 'bold 12pt Calibri';
-    ctx.fillStyle = 'black';
-    var metrics = ctx.measureText('Legend');
-    ctx.fillText('Legend', (canvas.width / 2) - (metrics.width / 2), 14);
-
-    var maxval = levels[appstate.ltype][appstate.metric + 2];
-    var txt = "Max: " + maxval.toFixed((maxval < 100) ? 2 : 0);
-    ctx.font = 'bold 10pt Calibri';
-    ctx.fillStyle = 'black';
-    metrics = ctx.measureText(txt);
-    if (appstate.ltype != "dt" && appstate.ltype != "slp") {
-        ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), 32);
-    }
-    var pos = 20;
-    $.each(levels[appstate.ltype][appstate.metric], function (idx, level) {
-        // Confusion with pyIEM levels
-        if (idx >= colors[appstate.ltype].length) {
-            return;
-        }
-        ctx.beginPath();
-        ctx.rect(5, canvas.height - pos - 40, 20, 20);
-        ctx.fillStyle = colors[appstate.ltype][idx];
-        ctx.fill();
-
-        ctx.font = 'bold 12pt Calibri';
-        ctx.fillStyle = 'black';
-        var precision = (level < 100) ? 2 : 0;
-        if (appstate.ltype == "dt") {
-            precision = 0;
-        }
-        var leveltxt = level.toFixed(precision);
-        if (level == 0.001) {
-            leveltxt = 0.001;
-        }
-        metrics = ctx.measureText(leveltxt);
-        if (appstate.ltype == "dt") {
-            ctx.fillText(leveltxt, 10, canvas.height - (pos + 26));
-        } else {
-            ctx.fillText(
-                leveltxt, 45 - (metrics.width / 2),
-                canvas.height - (pos + 10) - 4);
-        }
-        pos = pos + 20;
-    });
-
-    // Title of what the legend is for
-    txt = varunits[appstate.ltype][appstate.metric];
-    metrics = ctx.measureText(txt);
-    ctx.fillText(txt, (canvas.width / 2) - (metrics.width / 2), canvas.height - 5);
-
+    
+    // Create a state object for the updateDetails function
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    updateDetails(feature.getId(), currentState);
+    setQueryParams(currentState, map);
 }
 
 function layerVisible(lyr, visible) {
     lyr.setVisible(visible);
     if (visible && lyr.get('type') === 'base') {
         // Hide all other base layers regardless of grouping
-        $.each(map.getLayers().getArray(), function (i, l) {
+        map.getLayers().getArray().forEach(function (l) {
             if (l != lyr && l.get('type') === 'base') {
                 l.setVisible(false);
             }
@@ -511,9 +230,9 @@ function layerVisible(lyr, visible) {
 
 }
 function makeLayerSwitcher() {
-    var base_elem = $("#ls-base-layers")[0];
-    var over_elem = $("#ls-overlay-layers")[0];
-    $.each(map.getLayers().getArray(), function (i, lyr) {
+    var base_elem = document.getElementById("ls-base-layers");
+    var over_elem = document.getElementById("ls-overlay-layers");
+    map.getLayers().getArray().forEach(function (lyr, i) {
         var lyrTitle = lyr.get('title');
         if (lyrTitle === undefined) return;
         var lid = 'oll' + i;
@@ -544,6 +263,7 @@ function makeLayerSwitcher() {
     });
 }
 function displayFeatureInfo(evt) {
+    const metric = getState(StateKeys.METRIC);
 
     var features = map.getFeaturesAtPixel(map.getEventPixel(evt.originalEvent));
     var feature;
@@ -551,20 +271,20 @@ function displayFeatureInfo(evt) {
         feature = features[0];
         popup.element.hidden = false;
         popup.setPosition(evt.coordinate);
-        $('#info-name').html(feature.get('name'));
-        $('#info-huc12').html(feature.getId());
-        $('#info-loss').html((feature.get('avg_loss') * multipliers['avg_loss'][appstate.metric]).toFixed(2) + ' ' + varunits['avg_loss'][appstate.metric]);
-        $('#info-runoff').html((feature.get('avg_runoff') * multipliers['avg_runoff'][appstate.metric]).toFixed(2) + ' ' + varunits['avg_runoff'][appstate.metric]);
-        $('#info-delivery').html((feature.get('avg_delivery') * multipliers['avg_delivery'][appstate.metric]).toFixed(2) + ' ' + varunits['avg_delivery'][appstate.metric]);
-        $('#info-precip').html((feature.get('qc_precip') * multipliers['qc_precip'][appstate.metric]).toFixed(2) + ' ' + varunits['qc_precip'][appstate.metric]);
+        document.getElementById('info-name').innerHTML = feature.get('name');
+        document.getElementById('info-huc12').innerHTML = feature.getId();
+        document.getElementById('info-loss').innerHTML = (feature.get('avg_loss') * multipliers['avg_loss'][metric]).toFixed(2) + ' ' + varunits['avg_loss'][metric];
+        document.getElementById('info-runoff').innerHTML = (feature.get('avg_runoff') * multipliers['avg_runoff'][metric]).toFixed(2) + ' ' + varunits['avg_runoff'][metric];
+        document.getElementById('info-delivery').innerHTML = (feature.get('avg_delivery') * multipliers['avg_delivery'][metric]).toFixed(2) + ' ' + varunits['avg_delivery'][metric];
+        document.getElementById('info-precip').innerHTML = (feature.get('qc_precip') * multipliers['qc_precip'][metric]).toFixed(2) + ' ' + varunits['qc_precip'][metric];
     } else {
         popup.element.hidden = true;
-        $('#info-name').html('&nbsp;');
-        $('#info-huc12').html('&nbsp;');
-        $('#info-loss').html('&nbsp;');
-        $('#info-runoff').html('&nbsp;');
-        $('#info-delivery').html('&nbsp;');
-        $('#info-precip').html('&nbsp;');
+        document.getElementById('info-name').innerHTML = '&nbsp;';
+        document.getElementById('info-huc12').innerHTML = '&nbsp;';
+        document.getElementById('info-loss').innerHTML = '&nbsp;';
+        document.getElementById('info-runoff').innerHTML = '&nbsp;';
+        document.getElementById('info-delivery').innerHTML = '&nbsp;';
+        document.getElementById('info-precip').innerHTML = '&nbsp;';
     }
 
     // Keep only one selected
@@ -587,17 +307,30 @@ function changeOpacity(amount) {
 
 function handleMapControlsClick(event) {
     const btnid = event.currentTarget.id;
-    $("#mapcontrols button").removeClass("active");
-    $("#" + btnid).addClass("active");
+    document.querySelectorAll("#mapcontrols button").forEach(btn => btn.classList.remove("active"));
+    document.getElementById(btnid).classList.add("active");
 }
 
 /**
- * Update the appstate.metric and re-render the vectors
+ * Update the metric and re-render the vectors
  * @param {*} newunit 
  */
 function setUnits(newunit) {
-    appstate.metric = parseInt(newunit);
-    rerender_vectors();
+    setState(StateKeys.METRIC, parseInt(newunit));
+    
+    // Create a state object for functions that still expect it
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    rerender_vectors(currentState, map, vectorLayer, () => setTitle(currentState));
 }
 
 /**
@@ -606,11 +339,11 @@ function setUnits(newunit) {
  */
 function setDateSelection(newval) {
     if (newval === 'single') {
-        appstate.date2 = null;
-        $("#dp2").css('display', 'none');
+        setState(StateKeys.DATE2, null);
+        document.getElementById("dp2").style.display = 'none';
         remap();
     } else {
-        $("#dp2").css('display', 'block');
+        document.getElementById("dp2").style.display = 'block';
         //var dt = $("#datepicker2").datepicker("getDate");
         //appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
         //    dt.getUTCDate());
@@ -619,286 +352,66 @@ function setDateSelection(newval) {
 
 
 function build() {
-    readUrlParams(appstate, defaultCenter, defaultZoom);
+    // Create a state object for functions that still expect it during initialization
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    readUrlParams(defaultCenter, defaultZoom);
 
-
-    $('[data-target="q1"]').click((event) => {
+    document.getElementById('btnq1').addEventListener('click', (event) => {
         handleSideBarClick();
     });
 
-    var style = new Style({
-        fill: new Fill({
-            color: 'rgba(255, 255, 255, 0)'
-        }),
-        text: new Text({
-            font: '14px Calibri,sans-serif',
-            stroke: new Stroke({
-                color: '#fff',
-                width: 8
-            }),
-            fill: new Fill({
-                color: '#000',
-                width: 3
-            })
-        }),
-        stroke: new Stroke({
-            color: '#000000', //'#319FD3',
-            width: 0.5
-        })
-    });
+    // Initialize map and layers
+    const mapResult = initializeMap(make_iem_tms);
+    map = mapResult.map;
+    vectorLayer = mapResult.vectorLayer;
+    popup = mapResult.popup;
 
-    vectorLayer = createVectorLayer(appstate, multipliers, levels, colors);
+    // Create overlay layers
+    const overlayResult = createOverlayLayers(map);
+    hoverOverlayLayer = overlayResult.hoverOverlayLayer;
+    clickOverlayLayer = overlayResult.clickOverlayLayer;
 
-    map = new Map({
-        target: 'map',
-        controls: [],
-        layers: [
-            ...createBaseLayers(),
-            vectorLayer,
-            make_iem_tms('Domain Mask', 'depmask', true, ''),
-            make_iem_tms('US Counties', 'c-900913', false, ''),
-            make_iem_tms('US States', 's-900913', true, ''),
-            make_iem_tms('HUC 8', 'huc8-900913', false, '')
-        ],
-        view: new View({
-            enableRotation: false,
-            projection: 'EPSG:3857',
-            center: defaultCenter,
-            zoom: defaultZoom
-        })
-    });
+    // Setup event handlers
+    setupMapEventHandlers(map, setStatus, makeDetailedFeature, displayFeatureInfo);
+    setupDatePickerHandlers(remap);
+    setupRadioHandlers(map, vectorLayer);
+    setupSearchHandlers();
+    setupStateNavigationHandlers(map);
+    setupMapControlHandlers(map, handleMapControlsClick, setStatus);
+    setupInlineEventHandlers(getShapefile, setUnits, setDateSelection, changeOpacity);
+    setupSidebarEvents();
 
-    //  showing the position the user clicked
-    popup = new Overlay({
-        element: document.getElementById('fdetails'),
-        offset: [7, 7],
-        autoPan: false // Disable auto-panning
-    });
-    map.addOverlay(popup);
-
-    var highlightStyle = [new Style({
-        stroke: new Stroke({
-            color: '#f00',
-            width: 1
-        }),
-        fill: new Fill({
-            color: 'rgba(255,0,0,0.1)'
-        })
-    })];
-    var clickStyle = [new Style({
-        stroke: new Stroke({
-            color: '#000',
-            width: 2
-        })
-    })];
-
-    hoverOverlayLayer = new VectorLayer({
-        source: new VectorSource({
-            features: new Collection()
-        }),
-        style: function (feature, resolution) {
-            return highlightStyle;
-        }
-    });
-    map.addLayer(hoverOverlayLayer);  // makes unmanaged
-
-    clickOverlayLayer = new VectorLayer({
-        source: new VectorSource({
-            features: new Collection()
-        }),
-        style: function (feature, resolution) {
-            return clickStyle;
-        }
-    });
-    map.addLayer(clickOverlayLayer);  // makes unmanaged
-
-    // fired when the map is done being moved around
-    map.on('moveend', function () {
-        setQueryParams(appstate, map);
-    });
-    // fired as the pointer is moved over the map
-    map.on('pointermove', function (evt) {
-        if (evt.dragging) {
-            return;
-        }
-        displayFeatureInfo(evt);
-    });
-    //redundant to the above to support mobile
-    map.on('click', function (evt) {
-        if (evt.dragging) {
-            return;
-        }
-        displayFeatureInfo(evt);
-    });
-
-    // fired as somebody double clicks
-    map.on('dblclick', function (evt) {
-        // no zooming please
-        evt.stopPropagation();
-        var pixel = map.getEventPixel(evt.originalEvent);
-        var features = map.getFeaturesAtPixel(pixel);
-        if (features.length > 0) {
-            makeDetailedFeature(features[0]);
-        } else {
-            setStatus("No features found for where you double clicked on the map.");
-        }
-    });
-
-    const datepicker = document.getElementById('datepicker');
-    const datepicker2 = document.getElementById('datepicker2');
-
-    //datepicker.value = appstate.date ? appstate.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-    //datepicker2.value = appstate.date2 ? appstate.date2.toISOString().split('T')[0] : (appstate.lastdate ? appstate.lastdate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
-
-    datepicker.addEventListener('change', () => {
-        const [year, month, day] = datepicker.value.split('-');
-        appstate.date = makeDate(year, month, day);
-        remap();
-        if (appstate.date < appstate.lastdate) {
-            document.getElementById('settoday').style.display = 'block';
-        }
-    });
-
-    datepicker2.addEventListener('change', () => {
-        const [year, month, day] = datepicker2.value.split('-');
-        appstate.date2 = makeDate(year, month, day);
-        remap();
-    });
-
-    document.getElementById('settoday').addEventListener('click', () => {
-        setToday();
-    });
-
-
-    $("input[type=radio][name=whichlayer]").change(function () {
-        //console.log("cb on radio this.value=" + this.value);
-        appstate.ltype = this.value;
-        rerender_vectors();
-    });
-    $("#units_radio input[type=radio]").change(function () {
-    });
-    if (appstate.date2) {
-        //$('#t input[value=multi]').prop('checked', true).button('refresh');
+    // Initialize date display
+    if (getState(StateKeys.DATE2)) {
+        document.getElementById("dp2").style.display = 'block';
     }
 
-    if (appstate.date2) {
-        $("#dp2").css('display', 'block');
-    }
-
-    $('#huc12searchtext').on('keypress', function (event) {
-        if (event.which === 13) {
-            doHUC12Search();
-        }
-    });
-
-
-    $('#huc12searchbtn').on('click', function () {
-        doHUC12Search();
-    });
-
-    /*
-    $('#minus1d').on('click', function () {
-        appstate.date.setDate(appstate.date.getDate() - 1);
-        $("#datepicker").datepicker("setDate",
-            formatDate(myDateFormat, appstate.date));
-        remap();
-        if (appstate.date < appstate.lastdate) {
-            $("#plus1d").prop("disabled", false);
-        }
-        if (appstate.date != appstate.lastdate) {
-            $('#settoday').css('display', 'block');
-        }
-    });
-    */
-
-    $('#plus1d').on('click', function () {
-        appstate.date.setDate(appstate.date.getDate() + 1);
-        if (appstate.date > appstate.lastdate) {
-            $("#plus1d").prop("disabled", true);
-            appstate.date.setDate(appstate.date.getDate() - 1);
-        } else {
-            //$("#datepicker").datepicker("setDate",
-            //    formatDate(myDateFormat, appstate.date));
-            remap();
-        }
-    });
-
-    $('#il').on('click', function () {
-        map.getView().setCenter(transform([-88.75, 40.14], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(7);
-        $(this).blur();
-    });
-    $('#wi').on('click', () => {
-        map.getView().setCenter(transform([-91.2, 45.11], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(7);
-        $(this).blur();
-    });
-    $('#ia').on('click', function () {
-        map.getView().setCenter(transform([-93.5, 42.07], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(7);
-        $(this).blur();
-    });
-    $('#mn').on('click', function () {
-        map.getView().setCenter(transform([-93.21, 46.05], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(7);
-        $(this).blur();
-    });
-    $('#ks').on('click', function () {
-        map.getView().setCenter(transform([-98.38, 38.48], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(7);
-        $(this).blur();
-    });
-    $('#ne').on('click', function () {
-        map.getView().setCenter(transform([-96.01, 40.55], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(8);
-        $(this).blur();
-    });
-
-    $("#mapcontrols button").click(handleMapControlsClick);
-    $("#mapplus").click(function () {
-        map.getView().setZoom(map.getView().getZoom() + 1);
-    });
-    $("#mapminus").click(function () {
-        map.getView().setZoom(map.getView().getZoom() - 1);
-    });
-    $("#mapprint").click(() => {
-        // construct URL
-        const url = BACKEND + "/auto/" + formatDate("yymmdd", appstate.date) +
-            "_" + formatDate("yymmdd", (appstate.date2 === null) ? appstate.date : appstate.date2) +
-            "_0_" + appstate.ltype + ".png"
-        window.open(url);
-    });
-    $("#mapinfo").click(function () {
-        setStatus("Double click HUC12 for detailed data.");
-    });
-
-    checkDates();
-    window.setInterval(checkDates, 600000);
+    // Initialize other components
+    checkDates(scenario, setDate);
+    window.setInterval(() => {
+        checkDates(scenario, setDate);
+    }, 600000);
     makeLayerSwitcher();
     showVersions();
 
+    // Initialize Bootstrap components
+    const bootstrapComponents = initializeBootstrapComponents();
+    eventsModal = bootstrapComponents.eventsModal;
+    myModal = bootstrapComponents.myModal;
+    dtModal = bootstrapComponents.dtModal;
+    sidebar = bootstrapComponents.sidebar;
 }; // End of build
 
-function migrateHashToQueryParams() {
-    const hash = window.location.hash.substring(1); // Remove the '#' character
-    if (hash) {
-        const queryParams = new URLSearchParams(window.location.search);
-        const hashParts = hash.split('/');
-        if (hashParts.length > 0) queryParams.set('date', hashParts[0]);
-        if (hashParts.length > 1) queryParams.set('date2', hashParts[1]);
-        if (hashParts.length > 2) queryParams.set('ltype', hashParts[2]);
-        if (hashParts.length > 5) {
-            queryParams.set('lon', hashParts[3]);
-            queryParams.set('lat', hashParts[4]);
-            queryParams.set('zoom', hashParts[5]);
-        }
-        if (hashParts.length > 6) queryParams.set('feature', hashParts[6]);
-        if (hashParts.length > 7) queryParams.set('metric', hashParts[7]);
-
-        const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
-        window.history.replaceState(null, '', newUrl);
-    }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     migrateHashToQueryParams();
@@ -907,22 +420,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('huc12searchbtn').addEventListener('click', () => {
         doHUC12Search();
     });
-
-    document.getElementById('settoday').addEventListener('click', () => {
-        setToday();
-    });
-
-    document.getElementById('mapplus').addEventListener('click', () => {
-        map.getView().setZoom(map.getView().getZoom() + 1);
-    });
-
-    document.getElementById('mapminus').addEventListener('click', () => {
-        map.getView().setZoom(map.getView().getZoom() - 1);
-    });
-
-    document.getElementById('mapprint').addEventListener('click', () => {
-        const url = `${BACKEND}/auto/${formatDate("yymmdd", appstate.date)}_${formatDate("yymmdd", appstate.date2 || appstate.date)}_0_${appstate.ltype}.png`;
-        window.open(url);
-    });
 });
+
+// Global wrapper functions for dynamically generated HTML calls
+window.setYearInterval = function(syear) {
+    setYearInterval(syear, remap, eventsModal);
+};
+
+window.setDateFromString = function(s) {
+    setDateFromString(s, remap, eventsModal);
+};
+
+window.setHUC12 = setHUC12;
 

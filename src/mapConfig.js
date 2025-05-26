@@ -3,6 +3,7 @@ import { Tile as TileLayer, Vector as VectorLayer, VectorImage as VectorImageLay
 import { OSM, XYZ, Vector as VectorSource } from 'ol/source';
 import { Style, Fill, Stroke, Text } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
+import { getState, StateKeys } from './state';
 
 const tilecache = (window.location.host.indexOf(".local") > 0) ? "http://iem.local" : "https://mesonet.agron.iastate.edu";
 const BACKEND = (window.location.host.indexOf(".local") > 0) ? "http://depbackend.local" : "https://mesonet-dep.agron.iastate.edu";
@@ -10,7 +11,7 @@ const BACKEND = (window.location.host.indexOf(".local") > 0) ? "http://depbacken
 export const defaultCenter = transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857');
 export const defaultZoom = 6;
 
-export function createVectorLayer(appstate, multipliers, levels, colors) {
+export function createVectorLayer(multipliers, levels, colors) {
     const style = new Style({
         fill: new Fill({ color: 'rgba(255, 255, 255, 0)' }),
         text: new Text({
@@ -30,12 +31,15 @@ export function createVectorLayer(appstate, multipliers, levels, colors) {
             projection: 'EPSG:4326'
         }),
         style: function (feature, resolution) {
-            let val = feature.get(appstate.ltype);
-            val = val * multipliers[appstate.ltype][appstate.metric];
+            const ltype = getState(StateKeys.LTYPE);
+            const metric = getState(StateKeys.METRIC);
+            
+            let val = feature.get(ltype);
+            val = val * multipliers[ltype][metric];
             let c = 'rgba(255, 255, 255, 0)';
-            for (let i = levels[appstate.ltype][appstate.metric].length - 2; i >= 0; i--) {
-                if (val >= levels[appstate.ltype][appstate.metric][i]) {
-                    c = colors[appstate.ltype][i];
+            for (let i = levels[ltype][metric].length - 2; i >= 0; i--) {
+                if (val >= levels[ltype][metric][i]) {
+                    c = colors[ltype][i];
                     break;
                 }
             }

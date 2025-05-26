@@ -8,9 +8,6 @@
     <meta name="description" content="Iowa State University, Daily Erosion Project">
     <meta name="author" content="daryl herzmann akrherz@iastate.edu">
     <link rel="shortcut icon" href="https://www.dailyerosion.org/themes/isubit/iastate8_theme/favicon.ico" type="image/vnd.microsoft.icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" integrity="sha512-...hash..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
-     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <meta name="twitter:card" content="summary">
     <meta name="twitter:image:src" content="https://dailyerosion.org/images/logo.png">
     <meta name="twitter:title" content="DEP :: Map Interface">
@@ -234,10 +231,10 @@
     <legend>Unit Convention</legend>
 <div id="units_radio">
     <input type="radio" class="btn-check" name="units" id="english_opt"
-     autocomplete="off" onchange="setUnits(0);" value="0" checked>
+     autocomplete="off" value="0" checked>
     <label class="btn btn-outline-success" for="english_opt">English</label>
     <input type="radio" class="btn-check" name="units" id="metric_opt"
-     autocomplete="off" onchange="setUnits(1);" value="1">
+     autocomplete="off" value="1">
     <label class="btn btn-outline-success" for="metric_opt">Metric</label>
 </div>
 </fieldset>
@@ -253,7 +250,7 @@
 <br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
 <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
 </p>
-<button onclick="javascript: getShapefile();" class="btn btn-default" type="button"><i class="bi-download"></i> Download Data</button>
+<button data-action="download-shapefile" class="btn btn-default" type="button"><i class="bi-download"></i> Download Data</button>
 
 <h4>Current DEP Version</h4>
 
@@ -275,10 +272,10 @@
     <legend>Date Selection:</legend>
 <div id="t">
     <input type="radio" class="btn-check" name="t" id="single"
-     autocomplete="off" onchange="setDateSelection('single');" value="single" checked>
+     autocomplete="off" value="single" checked>
     <label class="btn btn-outline-success" for="single">Single</label>
     <input type="radio" class="btn-check" name="t" id="multi"
-     autocomplete="off" onchange="setDateSelection('multi');" value="multi">
+     autocomplete="off" value="multi">
     <label class="btn btn-outline-success" for="multi">Multi</label>
 </div>
 </fieldset>
@@ -289,7 +286,7 @@
 <span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="bi-arrow-right"></i></button></span>
 </div>
 
-<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="javascript: setToday();"><i class="bi-chevron-left"></i> Back to Latest Date</a>
+<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="#"><i class="bi-chevron-left"></i> Back to Latest Date</a>
 </div>
 
 <div style="display: none;" id="dp2">
@@ -299,8 +296,8 @@
 </div>
 </div>
 
-<h4>View Outputs: <button onclick="changeOpacity(-0.1);" class="btn btn-default" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
-    <button onclick="changeOpacity(0.1);" class="btn btn-default" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
+<h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-default" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
+    <button data-action="increase-opacity" class="btn btn-default" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
 <ul class="list-unstyled deplist">
 <li><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
 <label for="precip-in2_opt">Precipitation</label></li>
