@@ -4,6 +4,22 @@ import { showToast } from './toaster';
 
 const myDateFormat = 'M d, yy';
 
+/**
+ * Update the date selection type single or multi
+ * @param {*} newval
+ */
+export function setDateSelection(newval) {
+    if (newval === 'single') {
+        setState(StateKeys.DATE2, null);
+        document.getElementById("dp2").style.display = 'none';
+    } else {
+        document.getElementById("dp2").style.display = 'block';
+        //var dt = $("#datepicker2").datepicker("getDate");
+        //appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
+        //    dt.getUTCDate());
+    }
+}
+
 export function formatDate(fmt, dt) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return dt.toLocaleDateString('en-US', options);
@@ -13,40 +29,38 @@ export function makeDate(year, month, day) {
     return new Date(year, month - 1, day);
 }
 
-export function setToday(remap) {
+export function setToday() {
     const lastdate = getState(StateKeys.LAST_DATE);
     setDate(lastdate.getFullYear(),
         lastdate.getMonth() + 1,
-        lastdate.getDate(), remap);
+        lastdate.getDate());
     document.getElementById('settoday').style.display = 'none';
 }
 
-export function setDate(year, month, day, remap) {
+export function setDate(year, month, day) {
     setState(StateKeys.DATE, makeDate(year, month, day));
     setState(StateKeys.DATE2, null);
     document.getElementById("dp2").style.display = 'none';
-    remap();
 }
 
-export function setYearInterval(syear, remap, eventsModal) {
+export function setYearInterval(syear, eventsModal) {
     if (eventsModal) {
         eventsModal.hide();
     }
 
     setState(StateKeys.DATE, makeDate(syear, 1, 1));
     setState(StateKeys.DATE2, makeDate(syear, 12, 31));
-    remap();
     document.getElementById("dp2").style.display = 'block';
 }
 
-export function setDateFromString(s, remap, eventsModal) {
+export function setDateFromString(s, eventsModal) {
     if (eventsModal) {
         eventsModal.hide();
     }
     var dt = (new Date(s));
     setDate(formatDate('yy', dt),
         formatDate('mm', dt),
-        formatDate('dd', dt), remap);
+        formatDate('dd', dt));
 }
 
 export function checkDates(scenario, setDateFunc) {

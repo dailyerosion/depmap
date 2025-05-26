@@ -3,10 +3,139 @@ import { setToday, makeDate, formatDate } from './dateUtils';
 import { rerender_vectors, setTitle } from './mapRenderer';
 import { doHUC12Search } from './huc12Utils';
 import { setQueryParams } from './urlHandler';
-import { BACKEND } from './constants';
+import { BACKEND, multipliers, varunits } from './constants';
 import { getState, setState, StateKeys } from './state';
+import { setStatus } from './toaster';
+import { getClickOverlayLayer, getHoverOverlayLayer } from './mapInitializer';
+import { handleSideBarClick } from './uiManager';
 
-export function setupMapEventHandlers(map, setStatus, makeDetailedFeature, displayFeatureInfo) {
+let quickFeature = null;
+let detailedFeature = null;
+
+function makeDetailedFeature(feature) {
+    if (feature == null) {
+        return;
+    }
+
+    if (feature != detailedFeature) {
+        if (detailedFeature) {
+            detailedFeature.set('clicked', false);
+            getClickOverlayLayer().getSource().removeFeature(detailedFeature);
+        }
+        if (feature) {
+            getClickOverlayLayer().getSource().addFeature(feature);
+        }
+        detailedFeature = feature;
+    }
+    
+    // Create a state object for the updateDetails function
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    updateDetails(feature.getId(), currentState);
+    setQueryParams(currentState, map);
+}
+
+function displayFeatureInfo(map, popup, evt) {
+    const metric = getState(StateKeys.METRIC);
+
+    var features = map.getFeaturesAtPixel(map.getEventPixel(evt.originalEvent));
+    var feature;
+    if (features.length > 0) {
+        feature = features[0];
+        popup.element.hidden = false;
+        popup.setPosition(evt.coordinate);
+        document.getElementById('info-name').innerHTML = feature.get('name');
+        document.getElementById('info-huc12').innerHTML = feature.getId();
+        document.getElementById('info-loss').innerHTML = (feature.get('avg_loss') * multipliers['avg_loss'][metric]).toFixed(2) + ' ' + varunits['avg_loss'][metric];
+        document.getElementById('info-runoff').innerHTML = (feature.get('avg_runoff') * multipliers['avg_runoff'][metric]).toFixed(2) + ' ' + varunits['avg_runoff'][metric];
+        document.getElementById('info-delivery').innerHTML = (feature.get('avg_delivery') * multipliers['avg_delivery'][metric]).toFixed(2) + ' ' + varunits['avg_delivery'][metric];
+        document.getElementById('info-precip').innerHTML = (feature.get('qc_precip') * multipliers['qc_precip'][metric]).toFixed(2) + ' ' + varunits['qc_precip'][metric];
+    } else {
+        popup.element.hidden = true;
+        document.getElementById('info-name').innerHTML = '&nbsp;';
+        document.getElementById('info-huc12').innerHTML = '&nbsp;';
+        document.getElementById('info-loss').innerHTML = '&nbsp;';
+        document.getElementById('info-runoff').innerHTML = '&nbsp;';
+        document.getElementById('info-delivery').innerHTML = '&nbsp;';
+        document.getElementById('info-precip').innerHTML = '&nbsp;';
+    }
+
+    // Keep only one selected
+    if (feature) {
+        if (feature !== quickFeature) {
+            if (quickFeature) {
+                getHoverOverlayLayer().getSource().removeFeature(quickFeature);
+            }
+            if (feature) {
+                getHoverOverlayLayer().getSource().addFeature(feature);
+            }
+            quickFeature = feature;
+        }
+    }
+
+};
+
+function changeOpacity(amount) {
+    vectorLayer.setOpacity(vectorLayer.getOpacity() + amount);
+}
+
+function handleMapControlsClick(event) {
+    const btnid = event.currentTarget.id;
+    document.querySelectorAll("#mapcontrols button").forEach(btn => btn.classList.remove("active"));
+    document.getElementById(btnid).classList.add("active");
+}
+
+/**
+ * Update the metric and re-render the vectors
+ * @param {*} newunit 
+ */
+function setUnits(newunit) {
+    setState(StateKeys.METRIC, parseInt(newunit));
+    
+    // Create a state object for functions that still expect it
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    rerender_vectors(currentState, map, vectorLayer, () => setTitle(currentState));
+}
+
+// When user clicks the "Get Shapefile" Button
+function getShapefile() {
+    const date = getState(StateKeys.DATE);
+    const date2 = getState(StateKeys.DATE2);
+    const metric = getState(StateKeys.METRIC);
+    
+    const dt = formatDate("yy-mm-dd", date);
+    const states = [];
+    document.querySelectorAll("input[name='dlstates']:checked").forEach(input => {
+        states.push(input.value);
+    });
+    let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(",")}`;
+    if (date2 !== null) {
+        uri = `${uri}&dt2=${formatDate("yy-mm-dd", date2)}`;
+    }
+    uri = `${uri}&conv=${(metric == 0) ? 'english' : 'metric'}`;
+    window.location.href = uri;
+}
+
+export function setupMapEventHandlers(map, popup) {
     map.on('moveend', function () {
         const currentState = {
             date: getState(StateKeys.DATE),
@@ -25,14 +154,14 @@ export function setupMapEventHandlers(map, setStatus, makeDetailedFeature, displ
         if (evt.dragging) {
             return;
         }
-        displayFeatureInfo(evt);
+        displayFeatureInfo(map, popup, evt);
     });
 
     map.on('click', function (evt) {
         if (evt.dragging) {
             return;
         }
-        displayFeatureInfo(evt);
+        displayFeatureInfo(map, popup, evt);
     });
 
     map.on('dblclick', function (evt) {
@@ -47,14 +176,13 @@ export function setupMapEventHandlers(map, setStatus, makeDetailedFeature, displ
     });
 }
 
-export function setupDatePickerHandlers(remap) {
+export function setupDatePickerHandlers() {
     const datepicker = document.getElementById('datepicker');
     const datepicker2 = document.getElementById('datepicker2');
 
     datepicker.addEventListener('change', () => {
         const [year, month, day] = datepicker.value.split('-');
         setState(StateKeys.DATE, makeDate(year, month, day));
-        remap();
         if (getState(StateKeys.DATE) < getState(StateKeys.LAST_DATE)) {
             document.getElementById('settoday').style.display = 'block';
         }
@@ -63,11 +191,10 @@ export function setupDatePickerHandlers(remap) {
     datepicker2.addEventListener('change', () => {
         const [year, month, day] = datepicker2.value.split('-');
         setState(StateKeys.DATE2, makeDate(year, month, day));
-        remap();
     });
 
     document.getElementById('settoday').addEventListener('click', () => {
-        setToday(remap);
+        setToday();
     });
 }
 
@@ -147,7 +274,7 @@ export function setupStateNavigationHandlers(map) {
     });
 }
 
-export function setupMapControlHandlers(map, handleMapControlsClick, setStatus) {
+export function setupMapControlHandlers(map) {
     document.querySelectorAll("#mapcontrols button").forEach(button => {
         button.addEventListener('click', handleMapControlsClick);
     });
@@ -176,7 +303,15 @@ export function setupMapControlHandlers(map, handleMapControlsClick, setStatus) 
     });
 }
 
-export function setupInlineEventHandlers(getShapefile, setUnits, setDateSelection, changeOpacity) {
+export function setupInlineEventHandlers(setDateSelection) {
+
+    document.getElementById('btnq1').addEventListener('click', (event) => {
+        handleSideBarClick();
+    });
+    
+    document.getElementById('huc12searchbtn').addEventListener('click', () => {
+        doHUC12Search();
+    });
     // Unit selection radio buttons
     document.querySelectorAll('input[name="units"]').forEach(radio => {
         radio.addEventListener('change', (event) => {

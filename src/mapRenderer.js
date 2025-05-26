@@ -2,6 +2,83 @@ import { setQueryParams } from './urlHandler';
 import { colors, levels, varunits, BACKEND } from './constants';
 import { formatDate } from './dateUtils';
 import { getState, StateKeys } from './state';
+import { setStatus } from './toaster';
+
+export function remap() {
+    // Our main function for updating the map data
+    const date = getState(StateKeys.DATE);
+    const date2 = getState(StateKeys.DATE2);
+
+    // Abort if we have no date set
+    if (date == null) return;
+
+    //console.log("remap() called"+ detailedFeature);
+    if (date2 != null && date2 <= date) {
+        setStatus("Please ensure that 'To Date' is later than 'Date'");
+        return;
+    }
+    setStatus("Fetching new data to display...");
+    
+    fetch(getJSONURL())
+        .then(response => response.json())
+        .then(json => {
+            var vsource = vectorLayer.getSource();
+            // Zero out current data
+            vsource.getFeatures().forEach(function (feat) {
+                feat.setProperties({
+                    'avg_delivery': 0,
+                    'qc_precip': 0
+                }, true);
+            });
+            // Merge in JSON provided data
+            json.data.forEach(function (entry) {
+                var feat = vsource.getFeatureById(entry.huc_12);
+                if (feat === null) {
+                    return;
+                }
+                feat.setProperties(entry, true);
+            });
+
+            // Setup what was provided to use by the JSON service for levels,
+            // we also do the unit conversion so that we have levels in metric
+            for (var i = 0; i < varnames.length; i++) {
+                levels[varnames[i]][0] = json.ramps[varnames[i]];
+                levels[varnames[i]][2] = json.max_values[varnames[i]];
+                for (var j = 0; j < levels[varnames[i]][0].length; j++) {
+                    levels[varnames[i]][1][j] = levels[varnames[i]][0][j] * multipliers[varnames[i]][1];
+                }
+                levels[varnames[i]][3] = json.max_values[varnames[i]] * multipliers[varnames[i]][1];
+
+            }
+            drawColorbar();
+
+            if (detailedFeature) {
+                clickOverlayLayer.getSource().removeFeature(detailedFeature);
+                detailedFeature = vectorLayer.getSource().getFeatureById(detailedFeature.getId());
+                clickOverlayLayer.getSource().addFeature(detailedFeature);
+                updateDetails(detailedFeature.getId());
+            }
+            drawColorbar();
+            vectorLayer.changed();
+        })
+        .catch(error => {
+            setStatus(`Failed to fetch map data: ${error.message}`, 'error');
+        });
+    
+    const currentState = {
+        date: getState(StateKeys.DATE),
+        date2: getState(StateKeys.DATE2),
+        ltype: getState(StateKeys.LTYPE),
+        metric: getState(StateKeys.METRIC),
+        lat: getState(StateKeys.LAT),
+        lon: getState(StateKeys.LON),
+        sidebarOpen: getState(StateKeys.SIDEBAR_OPEN),
+        lastdate: getState(StateKeys.LAST_DATE)
+    };
+    
+    setTitle(currentState);
+    setQueryParams(currentState, map);
+}
 
 /**
  * Draw the colorbar legend on the canvas

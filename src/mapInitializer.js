@@ -2,13 +2,37 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import Overlay from 'ol/Overlay';
 import Collection from 'ol/Collection';
-import { Style, Fill, Stroke, Text } from 'ol/style';
+import { XYZ } from 'ol/source';
+import { Style, Fill, Stroke } from 'ol/style';
 import { Vector as VectorLayer } from 'ol/layer';
+import { Tile as TileLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
 import { createVectorLayer, createBaseLayers, defaultCenter, defaultZoom } from './mapConfig';
-import { multipliers, levels, colors } from './constants';
+import { multipliers, levels, colors, tilecache } from './constants';
 
-export function initializeMap(make_iem_tms) {
+let hoverOverlayLayer = null;
+let clickOverlayLayer = null;
+
+export function getHoverOverlayLayer() {
+    return hoverOverlayLayer;
+}
+export function getClickOverlayLayer() {
+    return clickOverlayLayer;
+}
+
+function make_iem_tms(title, layername, visible, type) {
+    return new TileLayer({
+        title: title,
+        visible: visible,
+        type: type,
+        maxZoom: (layername == 'depmask') ? 9 : 21,
+        source: new XYZ({
+            url: tilecache + '/c/tile.py/1.0.0/' + layername + '/{z}/{x}/{y}.png'
+        })
+    })
+}
+
+export function initializeMap() {
     const vectorLayer = createVectorLayer(multipliers, levels, colors);
 
     const map = new Map({
@@ -58,25 +82,24 @@ export function createOverlayLayers(map) {
         })
     })];
 
-    const hoverOverlayLayer = new VectorLayer({
+    hoverOverlayLayer = new VectorLayer({
         source: new VectorSource({
             features: new Collection()
         }),
-        style: function (feature, resolution) {
+        style: () => {
             return highlightStyle;
         }
     });
     map.addLayer(hoverOverlayLayer);
 
-    const clickOverlayLayer = new VectorLayer({
+    clickOverlayLayer = new VectorLayer({
         source: new VectorSource({
             features: new Collection()
         }),
-        style: function (feature, resolution) {
+        style: () => {
             return clickStyle;
         }
     });
     map.addLayer(clickOverlayLayer);
 
-    return { hoverOverlayLayer, clickOverlayLayer };
 }

@@ -1,3 +1,9 @@
+
+// Update the status box on the page with the given text
+export function setStatus(text, type = 'info') {
+    showToast(text, type);
+}
+
 export function showToast(message, type = 'info', duration = 3000) {
     const toastContainer = document.getElementById('toast-container') || createToastContainer();
     const toast = document.createElement('div');
