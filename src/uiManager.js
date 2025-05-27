@@ -27,7 +27,7 @@ export function makeLayerSwitcher() {
         console.error("Layer switcher elements not found");
         return;
     }
-    getMap().getLayers().getArray().forEach(function (lyr, i) {
+    getMap().getLayers().getArray().forEach((lyr, i) => {
         const lyrTitle = lyr.get('title');
         if (lyrTitle === undefined) {
             return;

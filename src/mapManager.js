@@ -172,7 +172,7 @@ export function setupMapEventHandlers() {
  * @returns
  */
 function makeDetailedFeature(feature) {
-    if (feature == null) {
+    if (feature === null) {
         return;
     }
 
