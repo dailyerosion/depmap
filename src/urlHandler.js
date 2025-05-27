@@ -97,16 +97,16 @@ export function migrateHashToQueryParams() {
     if (hash) {
         const queryParams = new URLSearchParams(window.location.search);
         const hashParts = hash.split('/');
-        if (hashParts.length > 0) queryParams.set('date', hashParts[0]);
-        if (hashParts.length > 1) queryParams.set('date2', hashParts[1]);
-        if (hashParts.length > 2) queryParams.set('ltype', hashParts[2]);
+        if (hashParts.length > 0) {queryParams.set('date', hashParts[0]);}
+        if (hashParts.length > 1) {queryParams.set('date2', hashParts[1]);}
+        if (hashParts.length > 2) {queryParams.set('ltype', hashParts[2]);}
         if (hashParts.length > 5) {
             queryParams.set('lon', hashParts[3]);
             queryParams.set('lat', hashParts[4]);
             queryParams.set('zoom', hashParts[5]);
         }
-        if (hashParts.length > 6) queryParams.set('feature', hashParts[6]);
-        if (hashParts.length > 7) queryParams.set('metric', hashParts[7]);
+        if (hashParts.length > 6) {queryParams.set('feature', hashParts[6]);}
+        if (hashParts.length > 7) {queryParams.set('metric', hashParts[7]);}
 
         const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
         window.history.replaceState(null, '', newUrl);

@@ -69,7 +69,7 @@ export async function doHUC12Search() {
  * @returns {string} Formatted value
  */
 const formatValue = (val) => {
-    if (val == null) return '0';
+    if (val == null) {return '0';}
     return val.toFixed(2);
 };
 

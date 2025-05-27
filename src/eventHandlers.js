@@ -121,7 +121,7 @@ export function setupDatePickerHandlers() {
     });
 
     datepicker.addEventListener('change', () => {
-        if (!datepicker.value) return;
+        if (!datepicker.value) {return;}
         const selectedDate = new Date(datepicker.value);
         setState(StateKeys.DATE, selectedDate);
         
@@ -132,7 +132,7 @@ export function setupDatePickerHandlers() {
     });
 
     datepicker2.addEventListener('change', () => {
-        if (!datepicker2.value) return;
+        if (!datepicker2.value) {return;}
         const selectedDate = new Date(datepicker2.value);
         setState(StateKeys.DATE2, selectedDate);
     });

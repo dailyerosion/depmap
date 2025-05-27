@@ -18,8 +18,8 @@ export function checkDates() {
     fetch(`${BACKEND}/geojson/timedomain.py?scenario=${scenario}`)
         .then((response) => response.json())
         .then((data) => {
-            if (data['last_date']) {
-                const newdate = new Date(data['last_date']);
+            if (data.last_date) {
+                const newdate = new Date(data.last_date);
                 const lastdate = getState(StateKeys.LAST_DATE);
                 const currentDate = getState(StateKeys.DATE);
 
@@ -58,7 +58,7 @@ export function remap() {
     const date2 = getState(StateKeys.DATE2);
 
     // Abort if we have no date set
-    if (date == null) return;
+    if (date == null) {return;}
 
     if (date2 != null && date2 <= date) {
         setStatus('Please ensure that "To Date" is later than "Date"');

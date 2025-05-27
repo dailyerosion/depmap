@@ -29,7 +29,7 @@ export function makeLayerSwitcher() {
     }
     getMap().getLayers().getArray().forEach(function (lyr, i) {
         const lyrTitle = lyr.get('title');
-        if (lyrTitle === undefined) return;
+        if (lyrTitle === undefined) {return;}
         const lid = 'oll' + i;
         const li = document.createElement('li');
         const input = document.createElement('input');
