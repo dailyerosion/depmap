@@ -1,5 +1,5 @@
 import { transform } from 'ol/proj';
-import { setToday, makeDate, formatDate } from './dateUtils';
+import { setToday, formatDate } from './dateUtils';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
@@ -90,9 +90,9 @@ export function setupDatePickerHandlers() {
 
     // Handler for minus one day button
     minusOneDay.addEventListener('click', () => {
-        const currentDate = getState(StateKeys.DATE);
-        if (currentDate instanceof Date) {
-            const newDate = new Date(currentDate);
+        const stateDate = getState(StateKeys.DATE);
+        if (stateDate instanceof Date) {
+            const newDate = new Date(stateDate);
             newDate.setDate(newDate.getDate() - 1);
             setState(StateKeys.DATE, newDate);
             datepicker.value = formatDate('yy-mm-dd', newDate);
@@ -106,9 +106,9 @@ export function setupDatePickerHandlers() {
 
     // Handler for plus one day button
     plusOneDay.addEventListener('click', () => {
-        const currentDate = getState(StateKeys.DATE);
-        if (currentDate instanceof Date) {
-            const newDate = new Date(currentDate);
+        const stateDate = getState(StateKeys.DATE);
+        if (stateDate instanceof Date) {
+            const newDate = new Date(stateDate);
             newDate.setDate(newDate.getDate() + 1);
             setState(StateKeys.DATE, newDate);
             datepicker.value = formatDate('yy-mm-dd', newDate);

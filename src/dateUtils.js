@@ -52,9 +52,9 @@ export function setToday() {
             lastdate.getDate()
         );
     }
-    const setToday = document.getElementById('settoday');
-    if (setToday) {
-        setToday.style.display = 'none';
+    const setTodayElem = document.getElementById('settoday');
+    if (setTodayElem) {
+        setTodayElem.style.display = 'none';
     }
 }
 
