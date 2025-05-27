@@ -1,94 +1,76 @@
 import { transform } from 'ol/proj';
 import { getState, setState, StateKeys } from './state';
+import { getMap } from './mapManager';
+import { makeDate } from './dateUtils';
 
-export function readUrlParams(defaultCenter, defaultZoom) {
+export function readUrlParams() {
     const params = new URLSearchParams(window.location.search);
-    const hash = window.location.hash.substring(1); // Remove the '#' character
 
     if (params.has('date')) {
         setState(StateKeys.DATE, makeDateFromString(params.get('date')));
-    } else if (hash) {
-        const tokens = hash.split("/");
-        if (tokens.length > 0 && tokens[0] !== '') {
-            setState(StateKeys.DATE, makeDate(tokens[0].substr(1, 4), tokens[0].substr(5, 2), tokens[0].substr(7, 2)));
-        }
     }
 
     if (params.has('date2')) {
         setState(StateKeys.DATE2, makeDateFromString(params.get('date2')));
-    } else if (hash) {
-        const tokens = hash.split("/");
-        if (tokens.length > 1 && tokens[1] !== '') {
-            setState(StateKeys.DATE2, makeDate(tokens[1].substr(0, 4), tokens[1].substr(4, 2), tokens[1].substr(6, 2)));
-        }
     }
 
     if (params.has('ltype')) {
         setState(StateKeys.LTYPE, params.get('ltype'));
         const input = document.querySelector(`input[value="${params.get('ltype')}"]`);
-        if (input) {
+        if (input && input instanceof HTMLInputElement) {
             input.checked = true;
-        }
-    } else if (hash) {
-        const tokens = hash.split("/");
-        if (tokens.length > 2 && tokens[2] !== '') {
-            setState(StateKeys.LTYPE, tokens[2]);
-            const input = document.querySelector(`input[value="${tokens[2]}"]`);
-            if (input) {
-                input.checked = true;
-            }
         }
     }
 
     if (params.has('lon') && params.has('lat') && params.has('zoom')) {
-        defaultCenter = transform([parseFloat(params.get('lon')), parseFloat(params.get('lat'))], 'EPSG:4326', 'EPSG:3857');
-        defaultZoom = parseFloat(params.get('zoom'));
-    } else if (hash) {
-        const tokens = hash.split("/");
-        if (tokens.length > 5 && tokens[3] !== '' && tokens[4] !== '' && tokens[5] !== '') {
-            defaultCenter = transform([parseFloat(tokens[3]), parseFloat(tokens[4])], 'EPSG:4326', 'EPSG:3857');
-            defaultZoom = parseFloat(tokens[5]);
+        const lat = params.get('lat');
+        if (lat) {
+            setState(StateKeys.LAT, parseFloat(lat));
+        }
+        const lon = params.get('lon');
+        if (lon) {
+            setState(StateKeys.LON, parseFloat(lon));
+        }
+        const zoom = params.get('zoom');
+        if (zoom) {
+            setState(StateKeys.ZOOM, parseFloat(zoom));
         }
     }
 
     if (params.has('metric')) {
-        setState(StateKeys.METRIC, parseInt(params.get('metric')));
-        const unitInput = document.querySelector(`#units_radio input[value="${params.get('metric')}"]`);
-        if (unitInput) {
-            unitInput.checked = true;
+        const metric = params.get('metric');
+        if (metric) {
+            setState(StateKeys.METRIC, parseInt(metric));
         }
-    } else if (hash) {
-        const tokens = hash.split("/");
-        if (tokens.length > 7 && tokens[7].length === 1) {
-            setState(StateKeys.METRIC, parseInt(tokens[7]));
-            const unitInput = document.querySelector(`#units_radio input[value="${tokens[7]}"]`);
-            if (unitInput) {
-                unitInput.checked = true;
-            }
+        const unitInput = document.querySelector(`#units_radio input[value="${params.get('metric')}"]`);
+        if (unitInput && unitInput instanceof HTMLInputElement) {
+            unitInput.checked = true;
         }
     }
 }
 
-export function setQueryParams(appstate, map) {
+export function setQueryParams() {
     const queryParams = new URLSearchParams(window.location.search);
-    
+
+    /** @type {Date} */
     const date = getState(StateKeys.DATE);
+    /** @type {Date} */
     const date2 = getState(StateKeys.DATE2);
     const ltype = getState(StateKeys.LTYPE);
     const metric = getState(StateKeys.METRIC);
     
-    if (date instanceof Date && !isNaN(date)) {
+    if (date instanceof Date && !Number.isNaN(date.getTime())) {
         queryParams.set('date', formatDateForQuery(date));
     }
-    if (date2 instanceof Date && !isNaN(date2)) {
+    if (date2 instanceof Date && !Number.isNaN(date2.getTime())) {
         queryParams.set('date2', formatDateForQuery(date2));
     }
     queryParams.set('ltype', ltype);
 
-    const center = transform(map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
+    const center = transform(getMap().getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
     queryParams.set('lon', center[0].toFixed(2));
     queryParams.set('lat', center[1].toFixed(2));
-    queryParams.set('zoom', map.getView().getZoom().toFixed(0));
+    queryParams.set('zoom', getMap().getView().getZoom().toFixed(0));
 
     if (metric !== undefined) {
         queryParams.set('metric', metric.toString());
@@ -102,9 +84,6 @@ function formatDateForQuery(date) {
     return date.toISOString().split('T')[0].replace(/-/g, '');
 }
 
-function makeDate(year, month, day) {
-    return new Date(year, month - 1, day);
-}
 
 function makeDateFromString(dateStr) {
     const year = parseInt(dateStr.substr(0, 4));

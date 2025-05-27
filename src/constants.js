@@ -1,6 +1,6 @@
 export const tilecache = (window.location.host.indexOf(".local") > 0) ? "http://iem.local" : "https://mesonet.agron.iastate.edu";
 export const BACKEND = (window.location.host.indexOf(".local") > 0) ? "http://depbackend.local" : "https://mesonet-dep.agron.iastate.edu";
-
+export const scenario = "0";
 export const varnames = ['qc_precip', 'avg_runoff', 'avg_loss', 'avg_delivery'];
 
 export const multipliers = {

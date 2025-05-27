@@ -12,18 +12,6 @@ body {
     overflow-y: auto;
 }
 
-.ui-datepicker {
-    z-index: 99999 !important;
-}
-
-.ui-datepicker-month {
-    color: #000 !important;
-}
-
-.ui-datepicker-year {
-    color: #000 !important;
-}
-
 .ui-widget {
     font-size: 1em !important;
 }

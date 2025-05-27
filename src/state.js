@@ -4,24 +4,31 @@ export const StateKeys = {
     LAST_DATE: 'lastdate',
     LAT: 'lat',
     LON: 'lon',
+    ZOOM: 'zoom',
     DATE: 'date',
     DATE2: 'date2',
-    METRIC: 'metric'
+    METRIC: 'metric',
 };
 
 const state = {
     [StateKeys.LTYPE]: 'qc_precip',
     [StateKeys.SIDEBAR_OPEN]: false,
     [StateKeys.LAST_DATE]: null,
-    [StateKeys.LAT]: null,
-    [StateKeys.LON]: null,
+    [StateKeys.LAT]: 42.1,
+    [StateKeys.LON]: -94.5,
+    [StateKeys.ZOOM]: 6,
     [StateKeys.DATE]: null,
     [StateKeys.DATE2]: null,
-    [StateKeys.METRIC]: 0
+    [StateKeys.METRIC]: 0,
 };
 
 const subscribers = {};
 
+/**
+ * Get the current state value for a given key
+ * @param {string} key 
+ * @returns {any} - The value of the state for the given key
+ */
 export function getState(key) {
     return state[key];
 }
