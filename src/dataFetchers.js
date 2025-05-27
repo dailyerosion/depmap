@@ -11,6 +11,9 @@ import { setStatus } from './toaster.js';
 import { formatDate, setDate } from './dateUtils.js';
 import { drawColorbar, getVectorLayer } from './mapManager';
 
+/**
+ * Check if the server has new data available
+ */
 export function checkDates() {
     fetch(`${BACKEND}/geojson/timedomain.py?scenario=${scenario}`)
         .then((response) => response.json())
@@ -46,6 +49,9 @@ export function checkDates() {
         });
 }
 
+/**
+ * Fetch new data to merge with the HUC12 map data.
+ */
 export function remap() {
     // Our main function for updating the map data
     const date = getState(StateKeys.DATE);
@@ -55,7 +61,7 @@ export function remap() {
     if (date == null) return;
 
     if (date2 != null && date2 <= date) {
-        setStatus(`Please ensure that 'To Date' is later than 'Date'`);
+        setStatus('Please ensure that "To Date" is later than "Date"');
         return;
     }
     setStatus('Fetching new data to display...');

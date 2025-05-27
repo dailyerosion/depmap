@@ -98,17 +98,17 @@ function displayFeatureInfo(evt) {
         infoElements.name.innerHTML = feature.get('name');
         infoElements.huc12.innerHTML = feature.getId();
         infoElements.loss.innerHTML = `${(
-            feature.get('avg_loss') * multipliers['avg_loss'][metric]
-        ).toFixed(2)} ${varunits['avg_loss'][metric]}`;
+            feature.get('avg_loss') * multipliers.avg_loss[metric]
+        ).toFixed(2)} ${varunits.avg_loss[metric]}`;
         infoElements.runoff.innerHTML = `${(
-            feature.get('avg_runoff') * multipliers['avg_runoff'][metric]
-        ).toFixed(2)} ${varunits['avg_runoff'][metric]}`;
+            feature.get('avg_runoff') * multipliers.avg_runoff[metric]
+        ).toFixed(2)} ${varunits.avg_runoff[metric]}`;
         infoElements.delivery.innerHTML = `${(
-            feature.get('avg_delivery') * multipliers['avg_delivery'][metric]
-        ).toFixed(2)} ${varunits['avg_delivery'][metric]}`;
+            feature.get('avg_delivery') * multipliers.avg_delivery[metric]
+        ).toFixed(2)} ${varunits.avg_delivery[metric]}`;
         infoElements.precip.innerHTML = `${(
-            feature.get('qc_precip') * multipliers['qc_precip'][metric]
-        ).toFixed(2)} ${varunits['qc_precip'][metric]}`;
+            feature.get('qc_precip') * multipliers.qc_precip[metric]
+        ).toFixed(2)} ${varunits.qc_precip[metric]}`;
     } else {
         popup.element.hidden = true;
         infoElements.name.innerHTML = '&nbsp;';
