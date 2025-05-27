@@ -25,11 +25,11 @@ export function checkDates() {
 
                 if (
                     newdate > lastdate &&
-                    (currentDate == null ||
+                    (currentDate === null ||
                         newdate.getTime() !== currentDate.getTime())
                 ) {
                     setState(StateKeys.LAST_DATE, newdate);
-                    if (currentDate != null) {
+                    if (currentDate !== null) {
                         const elem = document.getElementById('newdate-thedate');
                         if (elem) {
                             elem.innerHTML = formatDate('M d, yy', newdate);
@@ -58,9 +58,11 @@ export function remap() {
     const date2 = getState(StateKeys.DATE2);
 
     // Abort if we have no date set
-    if (date == null) {return;}
+    if (date === null) {
+        return;
+    }
 
-    if (date2 != null && date2 <= date) {
+    if (date2 !== null && date2 <= date) {
         setStatus('Please ensure that "To Date" is later than "Date"');
         return;
     }
