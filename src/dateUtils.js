@@ -1,6 +1,4 @@
-import { BACKEND, scenario } from './constants';
 import { getState, setState, StateKeys } from './state';
-import { showToast } from './toaster';
 
 const myDateFormat = 'M d, yy';
 
@@ -94,41 +92,6 @@ export function setDateFromString(s, eventsModal) {
     }
     const dt = new Date(s);
     setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
-}
-
-export function checkDates() {
-    fetch(`${BACKEND}/geojson/timedomain.py?scenario=${scenario}`)
-        .then((response) => response.json())
-        .then((data) => {
-            if (data['last_date']) {
-                const newdate = new Date(data['last_date']);
-                const lastdate = getState(StateKeys.LAST_DATE);
-                const currentDate = getState(StateKeys.DATE);
-
-                if (
-                    newdate > lastdate &&
-                    (currentDate == null ||
-                        newdate.getTime() !== currentDate.getTime())
-                ) {
-                    setState(StateKeys.LAST_DATE, newdate);
-                    if (currentDate != null) {
-                        const elem = document.getElementById('newdate-thedate');
-                        if (elem) {
-                            elem.innerHTML = formatDate(myDateFormat, newdate);
-                        }
-                    } else {
-                        setDate(
-                            newdate.getFullYear(),
-                            newdate.getMonth() + 1,
-                            newdate.getDate()
-                        );
-                    }
-                }
-            }
-        })
-        .catch((error) => {
-            showToast(`New data check failed ${error.message}`);
-        });
 }
 
 export { myDateFormat };
