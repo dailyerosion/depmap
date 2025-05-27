@@ -1,5 +1,5 @@
 import { transform } from 'ol/proj';
-import { setToday, makeDate, formatDate } from './dateUtils';
+import { setToday, formatDate } from './dateUtils';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
@@ -61,34 +61,80 @@ export function setupDatePickerHandlers() {
     const datepicker = document.getElementById('datepicker');
     const datepicker2 = document.getElementById('datepicker2');
     const setTodayButton = document.getElementById('settoday');
+    const minusOneDay = document.getElementById('minus1d');
+    const plusOneDay = document.getElementById('plus1d');
+
     if (
         !datepicker ||
         !datepicker2 ||
         !setTodayButton ||
+        !minusOneDay ||
+        !plusOneDay ||
         !(datepicker instanceof HTMLInputElement) ||
         !(datepicker2 instanceof HTMLInputElement)
     ) {
-        console.error('Datepicker elements not found');
+        console.error('Required date control elements not found');
         return;
     }
 
+    // Initialize date pickers with current state
+    const currentDate = getState(StateKeys.DATE);
+    if (currentDate instanceof Date) {
+        datepicker.value = formatDate('yy-mm-dd', currentDate);
+    }
+
+    const currentDate2 = getState(StateKeys.DATE2);
+    if (currentDate2 instanceof Date) {
+        datepicker2.value = formatDate('yy-mm-dd', currentDate2);
+    }
+
+    // Handler for minus one day button
+    minusOneDay.addEventListener('click', () => {
+        const stateDate = getState(StateKeys.DATE);
+        if (stateDate instanceof Date) {
+            const newDate = new Date(stateDate);
+            newDate.setDate(newDate.getDate() - 1);
+            setState(StateKeys.DATE, newDate);
+            datepicker.value = formatDate('yy-mm-dd', newDate);
+            
+            const lastDate = getState(StateKeys.LAST_DATE);
+            if (lastDate instanceof Date && newDate < lastDate) {
+                setTodayButton.style.display = 'block';
+            }
+        }
+    });
+
+    // Handler for plus one day button
+    plusOneDay.addEventListener('click', () => {
+        const stateDate = getState(StateKeys.DATE);
+        if (stateDate instanceof Date) {
+            const newDate = new Date(stateDate);
+            newDate.setDate(newDate.getDate() + 1);
+            setState(StateKeys.DATE, newDate);
+            datepicker.value = formatDate('yy-mm-dd', newDate);
+            
+            const lastDate = getState(StateKeys.LAST_DATE);
+            if (lastDate instanceof Date && newDate < lastDate) {
+                setTodayButton.style.display = 'block';
+            }
+        }
+    });
+
     datepicker.addEventListener('change', () => {
-        const [year, month, day] = datepicker.value.split('-');
-        setState(
-            StateKeys.DATE,
-            makeDate(parseInt(year, 10), parseInt(month, 10), parseInt(day, 10))
-        );
-        if (getState(StateKeys.DATE) < getState(StateKeys.LAST_DATE)) {
+        if (!datepicker.value) {return;}
+        const selectedDate = new Date(datepicker.value);
+        setState(StateKeys.DATE, selectedDate);
+        
+        const lastDate = getState(StateKeys.LAST_DATE);
+        if (lastDate instanceof Date && selectedDate < lastDate) {
             setTodayButton.style.display = 'block';
         }
     });
 
     datepicker2.addEventListener('change', () => {
-        const [year, month, day] = datepicker2.value.split('-');
-        setState(
-            StateKeys.DATE2,
-            makeDate(parseInt(year, 10), parseInt(month, 10), parseInt(day, 10))
-        );
+        if (!datepicker2.value) {return;}
+        const selectedDate = new Date(datepicker2.value);
+        setState(StateKeys.DATE2, selectedDate);
     });
 
     setTodayButton.addEventListener('click', () => {

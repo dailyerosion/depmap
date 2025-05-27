@@ -35,7 +35,7 @@ export function getState(key) {
 
 export function setState(key, value) {
     // console.error(`Setting state: ${key} = ${value}`);
-    if (!key) return;
+    if (!key) {return;}
     state[key] = value;
     notifySubscribers(key);
 }

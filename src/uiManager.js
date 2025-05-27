@@ -27,9 +27,11 @@ export function makeLayerSwitcher() {
         console.error("Layer switcher elements not found");
         return;
     }
-    getMap().getLayers().getArray().forEach(function (lyr, i) {
+    getMap().getLayers().getArray().forEach((lyr, i) => {
         const lyrTitle = lyr.get('title');
-        if (lyrTitle === undefined) return;
+        if (lyrTitle === undefined) {
+            return;
+        }
         const lid = 'oll' + i;
         const li = document.createElement('li');
         const input = document.createElement('input');
@@ -43,10 +45,7 @@ export function makeLayerSwitcher() {
             input.type = 'checkbox';
         }
         input.checked = lyr.get('visible');
-        input.addEventListener("change", function (e) {
-            // layerVisible(lyr, e.target.checked);
-        });
-        label.innerHTML = "&nbsp; " + lyrTitle;
+        label.innerHTML = `&nbsp;${lyrTitle}`;
         li.appendChild(input);
         li.appendChild(label);
         if (lyr.get('type') === 'base') {

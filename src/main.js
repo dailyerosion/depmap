@@ -3,13 +3,24 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { readUrlParams, migrateHashToQueryParams } from './urlHandler';
-import { checkDates, setDateSelection } from './dateUtils';
-import { initializeMap, remap, setupMapEventHandlers } from './mapManager';
-import { setupDatePickerHandlers, setupRadioHandlers, setupSearchHandlers, setupStateNavigationHandlers, setupMapControlHandlers, setupInlineEventHandlers } from './eventHandlers';
+import { setDateSelection } from './dateUtils';
+import { checkDates } from './dataFetchers';
+import { initializeMap } from './mapManager';
+import {
+    setupDatePickerHandlers,
+    setupRadioHandlers,
+    setupSearchHandlers,
+    setupStateNavigationHandlers,
+    setupMapControlHandlers,
+    setupInlineEventHandlers,
+} from './eventHandlers';
 import { initializeBootstrapComponents } from './bootstrapComponents';
 import { getState, StateKeys } from './state';
-import { showVersions, makeLayerSwitcher, setupSidebarEvents } from './uiManager';
-
+import {
+    showVersions,
+    makeLayerSwitcher,
+    setupSidebarEvents,
+} from './uiManager';
 
 // Our main entry point for the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize date display
     if (getState(StateKeys.DATE2)) {
-        const dp2 = document.getElementById("dp2");
+        const dp2 = document.getElementById('dp2');
         if (dp2) {
             dp2.style.display = 'block';
         }
@@ -49,5 +60,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Bootstrap components
     initializeBootstrapComponents();
-
 });
