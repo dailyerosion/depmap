@@ -1,3 +1,5 @@
+import { makeDate } from "./dateUtils";
+
 export const StateKeys = {
     LTYPE: 'ltype',
     SIDEBAR_OPEN: 'sidebarOpen',
@@ -17,7 +19,7 @@ const state = {
     [StateKeys.LAT]: 42.1,
     [StateKeys.LON]: -94.5,
     [StateKeys.ZOOM]: 6,
-    [StateKeys.DATE]: null,
+    [StateKeys.DATE]: makeDate(2025, 5, 26),
     [StateKeys.DATE2]: null,
     [StateKeys.METRIC]: 0,
 };

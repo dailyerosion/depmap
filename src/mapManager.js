@@ -275,22 +275,8 @@ export function rerender_vectors() {
     drawColorbar();
     getVectorLayer().changed();
     setQueryParams();
-    setTitle();
 }
 
-/**
- * Set the title shown on the page for what is being viewed
- */
-export function setTitle() {
-    // Currently disabled - return early
-    return;
-    // This code is commented out in the original
-    // dt = formatDate(myDateFormat, appstate.date);
-    // dtextra = (appstate.date2 === null) ? '' : ' to ' + formatDate(myDateFormat, appstate.date2);
-    // $('#maptitle').html(`Viewing ${vartitle[appstate.ltype]}` +
-    //     ` for ${dt} ${dtextra}`);
-    // $('#variable_desc').html(vardesc[appstate.ltype]);
-}
 
 export function getVectorLayer() {
     return vectorLayer;
@@ -344,7 +330,6 @@ function createVectorLayer() {
             clickOverlayLayer.getSource().addFeature(detailedFeature);
             updateDetails(detailedFeature.getId());
         }
-        setTitle();
         setQueryParams();
     });
     // Trigger a remap once this layer is loaded

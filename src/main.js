@@ -21,9 +21,13 @@ import {
     makeLayerSwitcher,
     setupSidebarEvents,
 } from './uiManager';
+import { setupBranding } from './brandingOverlay';
 
 // Our main entry point for the application
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Setup things not requiring other things to be initialized
+    setupBranding();
+
     // 1. Migrate any old hash-based URL parameters to query parameters
     migrateHashToQueryParams();
 
