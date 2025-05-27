@@ -1,7 +1,9 @@
 // Controls the app title div
 import { subscribeToState, StateKeys, getState } from "./state";
 import { vartitle } from "./constants";
-import { formatDate } from "./dateUtils";
+import strftime from "strftime";
+
+const DTFMT = "%-d %b %Y";
 
 /**
  * called back when state changes
@@ -15,9 +17,9 @@ function updateTitle() {
     const ltype = getState(StateKeys.LTYPE);
     const date = getState(StateKeys.DATE);
     const date2 = getState(StateKeys.DATE2);
-    let title = `Viewing ${vartitle[ltype] || ltype} for ${formatDate('yy-mm-dd', date)}`;
+    let title = `Viewing ${vartitle[ltype] || ltype} for ${strftime(DTFMT, date)}`;
     if (date2) {
-        title += ` to ${formatDate('yy-mm-dd', date2)}`;
+        title += ` to ${strftime(DTFMT, date2)}`;
     }
     titleElement.textContent = title;
 }

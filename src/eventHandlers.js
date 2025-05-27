@@ -1,5 +1,5 @@
 import { transform } from 'ol/proj';
-import { setToday, formatDate } from './dateUtils';
+import { setToday } from './dateUtils';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
@@ -7,6 +7,7 @@ import { getState, setState, StateKeys } from './state';
 import { setStatus } from './toaster';
 import { handleSideBarClick } from './uiManager';
 import { getMap, getVectorLayer } from './mapManager';
+import strftime from 'strftime';
 
 /**
  *
@@ -40,7 +41,7 @@ function getShapefile() {
     const date2 = getState(StateKeys.DATE2);
     const metric = getState(StateKeys.METRIC);
 
-    const dt = formatDate('yy-mm-dd', date);
+    const dt = strftime('%Y-%m-%d', date);
     const states = [];
     document
         .querySelectorAll('input[name="dlstates"]:checked')
@@ -51,7 +52,7 @@ function getShapefile() {
         });
     let uri = `${BACKEND}/dl/shapefile.py?dt=${dt}&states=${states.join(',')}`;
     if (date2 !== null) {
-        uri = `${uri}&dt2=${formatDate('yy-mm-dd', date2)}`;
+        uri = `${uri}&dt2=${strftime('%Y-%m-%d', date2)}`;
     }
     uri = `${uri}&conv=${metric === 0 ? 'english' : 'metric'}`;
     window.location.href = uri;
@@ -80,12 +81,12 @@ export function setupDatePickerHandlers() {
     // Initialize date pickers with current state
     const currentDate = getState(StateKeys.DATE);
     if (currentDate instanceof Date) {
-        datepicker.value = formatDate('yy-mm-dd', currentDate);
+        datepicker.value = strftime('%Y-%m-%d', currentDate);
     }
 
     const currentDate2 = getState(StateKeys.DATE2);
     if (currentDate2 instanceof Date) {
-        datepicker2.value = formatDate('yy-mm-dd', currentDate2);
+        datepicker2.value = strftime('%Y-%m-%d', currentDate2);
     }
 
     // Handler for minus one day button
@@ -95,7 +96,7 @@ export function setupDatePickerHandlers() {
             const newDate = new Date(stateDate);
             newDate.setDate(newDate.getDate() - 1);
             setState(StateKeys.DATE, newDate);
-            datepicker.value = formatDate('yy-mm-dd', newDate);
+            datepicker.value = strftime('%Y-%m-%d', newDate);
             
             const lastDate = getState(StateKeys.LAST_DATE);
             if (lastDate instanceof Date && newDate < lastDate) {
@@ -111,7 +112,7 @@ export function setupDatePickerHandlers() {
             const newDate = new Date(stateDate);
             newDate.setDate(newDate.getDate() + 1);
             setState(StateKeys.DATE, newDate);
-            datepicker.value = formatDate('yy-mm-dd', newDate);
+            datepicker.value = strftime('%Y-%m-%d', newDate);
             
             const lastDate = getState(StateKeys.LAST_DATE);
             if (lastDate instanceof Date && newDate < lastDate) {
@@ -247,8 +248,8 @@ export function setupMapControlHandlers() {
         const date2 = getState(StateKeys.DATE2);
         const ltype = getState(StateKeys.LTYPE);
 
-        const url = `${BACKEND}/auto/${formatDate('yymmdd', date)}_` +
-        `${formatDate('yymmdd', date2 || date)}_0_${ltype}.png`;
+        const url = `${BACKEND}/auto/${strftime('%Y%m%d', date)}_` +
+        `${strftime('%Y%m%d', date2 || date)}_0_${ltype}.png`;
         window.open(url);
     });
 
