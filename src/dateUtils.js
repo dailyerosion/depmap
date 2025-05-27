@@ -1,4 +1,4 @@
-import { BACKEND } from './constants';
+import { BACKEND, scenario } from './constants';
 import { getState, setState, StateKeys } from './state';
 import { showToast } from './toaster';
 
@@ -6,41 +6,70 @@ const myDateFormat = 'M d, yy';
 
 /**
  * Update the date selection type single or multi
- * @param {*} newval
+ * @param {string} newval - The date selection type ('single' or 'multi')
  */
 export function setDateSelection(newval) {
+    const dp2 = document.getElementById("dp2");
+    if (!dp2) {
+        return;
+    }
     if (newval === 'single') {
         setState(StateKeys.DATE2, null);
-        document.getElementById("dp2").style.display = 'none';
+        dp2.style.display = 'none';
     } else {
-        document.getElementById("dp2").style.display = 'block';
-        //var dt = $("#datepicker2").datepicker("getDate");
-        //appstate.date2 = makeDate(dt.getUTCFullYear(), dt.getUTCMonth() + 1,
-        //    dt.getUTCDate());
+        dp2.style.display = 'block';
     }
 }
 
+/**
+ * A crude date formatter that formats a date object into a string
+ * @param {string} fmt 
+ * @param {Date} dt 
+ * @returns {string} - The formatted date string 
+ */
 export function formatDate(fmt, dt) {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return dt.toLocaleDateString('en-US', options);
+    return fmt.replace('yy', String(dt.getFullYear()))
+        .replace('mm', String(dt.getMonth() + 1).padStart(2, '0'))
+        .replace('dd', String(dt.getDate()).padStart(2, '0'));
 }
 
+/**
+ * Make a date
+ * @param {number} year 
+ * @param {number} month 
+ * @param {number} day 
+ * @returns 
+ */
 export function makeDate(year, month, day) {
     return new Date(year, month - 1, day);
 }
 
 export function setToday() {
     const lastdate = getState(StateKeys.LAST_DATE);
-    setDate(lastdate.getFullYear(),
-        lastdate.getMonth() + 1,
-        lastdate.getDate());
-    document.getElementById('settoday').style.display = 'none';
+    if (lastdate) {
+        setDate(lastdate.getFullYear(),
+            lastdate.getMonth() + 1,
+            lastdate.getDate());
+    }
+    const setToday = document.getElementById('settoday');
+    if (setToday) {
+        setToday.style.display = 'none';
+    }
 }
 
+/**
+ * 
+ * @param {number} year 
+ * @param {number} month 
+ * @param {number} day 
+ */
 export function setDate(year, month, day) {
     setState(StateKeys.DATE, makeDate(year, month, day));
     setState(StateKeys.DATE2, null);
-    document.getElementById("dp2").style.display = 'none';
+    const dp2 = document.getElementById("dp2");
+    if (dp2){
+        dp2.style.display = 'none';
+    }
 }
 
 export function setYearInterval(syear, eventsModal) {
@@ -50,20 +79,21 @@ export function setYearInterval(syear, eventsModal) {
 
     setState(StateKeys.DATE, makeDate(syear, 1, 1));
     setState(StateKeys.DATE2, makeDate(syear, 12, 31));
-    document.getElementById("dp2").style.display = 'block';
+    const dp2 = document.getElementById("dp2");
+    if (dp2) {
+        dp2.style.display = 'block';
+    }
 }
 
 export function setDateFromString(s, eventsModal) {
     if (eventsModal) {
         eventsModal.hide();
     }
-    var dt = (new Date(s));
-    setDate(formatDate('yy', dt),
-        formatDate('mm', dt),
-        formatDate('dd', dt));
+    const dt = (new Date(s));
+    setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
 }
 
-export function checkDates(scenario, setDateFunc) {
+export function checkDates() {
     fetch(`${BACKEND}/geojson/timedomain.py?scenario=${scenario}`)
         .then(response => response.json())
         .then(data => {
@@ -76,9 +106,12 @@ export function checkDates(scenario, setDateFunc) {
                     currentDate == null || newdate.getTime() !== currentDate.getTime())) {
                     setState(StateKeys.LAST_DATE, newdate);
                     if (currentDate != null) {
-                        document.getElementById('newdate-thedate').innerHTML = formatDate(myDateFormat, newdate);
+                        const elem = document.getElementById('newdate-thedate');
+                        if (elem) {
+                            elem.innerHTML = formatDate(myDateFormat, newdate);
+                        }
                     } else {
-                        setDateFunc(
+                        setDate(
                             newdate.getFullYear(),
                             newdate.getMonth() + 1,
                             newdate.getDate()

@@ -1,4 +1,7 @@
 import { BACKEND, scenario } from './constants';
+import { getState, setState, StateKeys } from './state';
+import { getMap } from './mapManager';
+import { setStatus } from './toaster';
 
 export function setupSidebarEvents() {
     const sidebarElement = document.getElementById('sidebar');
@@ -17,17 +20,21 @@ export function handleSideBarClick() {
     setState(StateKeys.SIDEBAR_OPEN, !getState(StateKeys.SIDEBAR_OPEN));
 }
 
-export function makeLayerSwitcher(map) {
-    var base_elem = document.getElementById("ls-base-layers");
-    var over_elem = document.getElementById("ls-overlay-layers");
-    map.getLayers().getArray().forEach(function (lyr, i) {
-        var lyrTitle = lyr.get('title');
+export function makeLayerSwitcher() {
+    const base_elem = document.getElementById("ls-base-layers");
+    const over_elem = document.getElementById("ls-overlay-layers");
+    if (!base_elem || !over_elem) {
+        console.error("Layer switcher elements not found");
+        return;
+    }
+    getMap().getLayers().getArray().forEach(function (lyr, i) {
+        const lyrTitle = lyr.get('title');
         if (lyrTitle === undefined) return;
-        var lid = 'oll' + i;
-        var li = document.createElement('li');
-        var input = document.createElement('input');
+        const lid = 'oll' + i;
+        const li = document.createElement('li');
+        const input = document.createElement('input');
         input.id = lid;
-        var label = document.createElement('label');
+        const label = document.createElement('label');
         label.htmlFor = lid;
         if (lyr.get('type') === 'base') {
             input.type = 'radio';
@@ -37,7 +44,7 @@ export function makeLayerSwitcher(map) {
         }
         input.checked = lyr.get('visible');
         input.addEventListener("change", function (e) {
-            layerVisible(lyr, e.target.checked);
+            // layerVisible(lyr, e.target.checked);
         });
         label.innerHTML = "&nbsp; " + lyrTitle;
         li.appendChild(input);
@@ -56,13 +63,15 @@ export function showVersions() {
     fetch(`${BACKEND}/auto/version.py?scenario=${scenario}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("dv_label").textContent = data["label"];
-            document.getElementById("dv_wepp").textContent = data["wepp"];
-            document.getElementById("dv_acpf").textContent = data["acpf"];
-            document.getElementById("dv_flowpath").textContent = data["flowpath"];
-            document.getElementById("dv_gssurgo").textContent = data["gssurgo"];
-            document.getElementById("dv_software").textContent = data["software"];
-            document.getElementById("dv_tillage").textContent = data["tillage"];
+            const keys = ["label", "wepp", "acpf", "flowpath", "gssurgo", "software", "tillage"];
+            for (const key of keys) {
+                const element = document.getElementById(`dv_${key}`);
+                if (!element) {
+                    console.warn(`Element with id dv_${key} not found`);
+                    continue;
+                }
+                element.textContent = data[key] || 'N/A'; // Fallback to 'N/A' if key is missing
+            }
         })
         .catch(error => {
             setStatus(`DEP version check failed ${error.message}`);
