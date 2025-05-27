@@ -1,7 +1,5 @@
 import { getState, setState, StateKeys } from './state';
 
-const myDateFormat = 'M d, yy';
-
 /**
  * Update the date selection type single or multi
  * @param {string} newval - The date selection type ('single' or 'multi')
@@ -19,18 +17,6 @@ export function setDateSelection(newval) {
     }
 }
 
-/**
- * A crude date formatter that formats a date object into a string
- * @param {string} fmt
- * @param {Date} dt
- * @returns {string} - The formatted date string
- */
-export function formatDate(fmt, dt) {
-    return fmt
-        .replace('yy', String(dt.getFullYear()))
-        .replace('mm', String(dt.getMonth() + 1).padStart(2, '0'))
-        .replace('dd', String(dt.getDate()).padStart(2, '0'));
-}
 
 /**
  * Make a date
@@ -93,5 +79,3 @@ export function setDateFromString(s, eventsModal) {
     const dt = new Date(s);
     setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
 }
-
-export { myDateFormat };

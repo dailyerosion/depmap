@@ -1,6 +1,6 @@
 import { BACKEND, varunits, multipliers } from './constants';
-import { formatDate } from './dateUtils';
 import { getState, StateKeys } from './state';
+import strftime from 'strftime';
 
 /**
  * Perform HUC12 search based on user input
@@ -218,8 +218,8 @@ export async function updateDetails(huc12) {
     try {
         const searchParams = new URLSearchParams({
             huc12,
-            date: formatDate('yy-mm-dd', getState(StateKeys.DATE)),
-            date2: formatDate('yy-mm-dd', getState(StateKeys.DATE2)),
+            date: strftime('%Y-%m-%d', getState(StateKeys.DATE)),
+            date2: strftime('%Y-%m-%d', getState(StateKeys.DATE2)),
             metric: String(getState(StateKeys.METRIC)),
         });
 

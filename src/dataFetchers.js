@@ -8,8 +8,9 @@ import {
 } from './constants.js';
 import { getState, setState, StateKeys } from './state.js';
 import { setStatus } from './toaster.js';
-import { formatDate, setDate } from './dateUtils.js';
+import { setDate } from './dateUtils.js';
 import { drawColorbar, getVectorLayer } from './mapManager';
+import strftime from 'strftime';
 
 /**
  * Check if the server has new data available
@@ -32,7 +33,7 @@ export function checkDates() {
                     if (currentDate !== null) {
                         const elem = document.getElementById('newdate-thedate');
                         if (elem) {
-                            elem.innerHTML = formatDate('M d, yy', newdate);
+                            elem.innerHTML = strftime('%b %b, %Y', newdate);
                         }
                     } else {
                         setDate(
@@ -119,5 +120,5 @@ export function getJSONURL() {
     const date = getState(StateKeys.DATE);
     const date2 = getState(StateKeys.DATE2);
 
-    return `${BACKEND}/auto/${formatDate('yymmdd', date)}_${formatDate('yymmdd', date2 || date)}.json`;
+    return `${BACKEND}/auto/${strftime('%Y%m%d', date)}_${strftime('%Y%m%d', date2 || date)}.json`;
 }
