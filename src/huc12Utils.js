@@ -1,25 +1,102 @@
 import { BACKEND, varunits, multipliers } from './constants';
-import { getState, StateKeys } from './state';
+import { getState, setState, StateKeys } from './state';
 import strftime from 'strftime';
+import { requireElement, requireInputElement } from './domUtils.js';
+import { setYearInterval, setDateFromString } from './dateUtils.js';
+import { Modal } from 'bootstrap';
+import { getVectorLayer, getMap } from './mapManager.js';
+
+/**
+ * Set up event delegation for dynamically created modal content
+ */
+export function setupHUC12EventHandlers() {
+
+    // Event delegation for HUC12 search results
+    const searchRes = document.getElementById('huc12searchres');
+    if (searchRes) {
+        searchRes.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target instanceof HTMLAnchorElement && target.classList.contains('huc12-link')) {
+                event.preventDefault();
+                const huc12 = target.getAttribute('data-huc12');
+                if (huc12) {
+                    setHUC12(huc12);
+                }
+            }
+        });
+    }
+
+    // Event delegation for events modal date links
+    const eventsResults = document.getElementById('eventsres');
+    if (eventsResults) {
+        eventsResults.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target instanceof HTMLAnchorElement && target.classList.contains('date-link')) {
+                event.preventDefault();
+                const date = target.getAttribute('data-date');
+                const functionName = target.getAttribute('data-function');
+                
+                // Get the modal instance to hide it
+                const eventsModalElement = document.getElementById('eventsModal');
+                const eventsModal = eventsModalElement ? Modal.getInstance(eventsModalElement) : null;
+                
+                if (date && functionName) {
+                    if (functionName === 'setYearInterval') {
+                        setYearInterval(date, eventsModal);
+                    } else if (functionName === 'setDateFromString') {
+                        setDateFromString(date, eventsModal);
+                    }
+                }
+            }
+        });
+    }
+}
+
+/**
+ * callback function to set the HUC12 value
+ * @param {String} huc12 
+ */
+export function setHUC12(huc12) {
+    // 1. Close the huc12 search modal
+    const modalElement = requireElement('myModal');
+    const modal = Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide();
+    }
+
+    // 2. Find and zoom to the HUC12 geometry
+    const vectorLayer = getVectorLayer();
+    if (vectorLayer && vectorLayer.getSource()) {
+        const feature = vectorLayer.getSource().getFeatureById(huc12);
+        if (feature) {
+            const geometry = feature.getGeometry();
+            if (geometry) {
+                const map = getMap();
+                if (map) {
+                    // Fit the map view to the feature's extent
+                    map.getView().fit(geometry, {
+                        padding: [50, 50, 50, 50], // Add some padding around the feature
+                        maxZoom: 12 // Don't zoom in too close
+                    });
+                }
+            }
+        }
+    }
+
+    // 3. Switch to Data tab and load detailed huc12 information
+    updateDetails(huc12);
+}
 
 /**
  * Perform HUC12 search based on user input
  */
 export async function doHUC12Search() {
-    const searchRes = document.getElementById('huc12searchres');
-    if (!searchRes) {
-        console.error('Search results element not found');
-        return;
-    }
+    const searchRes = requireElement('huc12searchres');
 
     const loadingHtml = '<p><img src="images/wait24trans.gif" alt="Loading" /> Searching...</p>';
     searchRes.innerHTML = loadingHtml;
 
-    const huc12searchtext = document.getElementById('huc12searchtext');
-    if (!huc12searchtext || !(huc12searchtext instanceof HTMLInputElement)) {
-        console.error('Search input element not found');
-        return;
-    }
+    const huc12searchtext = requireInputElement('huc12searchtext');
 
     const searchParams = new URLSearchParams({ q: huc12searchtext.value });
     try {
@@ -28,7 +105,7 @@ export async function doHUC12Search() {
         
         const tableRows = data.results.map(result => `
             <tr>
-                <td><a href="javascript: setHUC12('${result.huc_12}');">${result.huc_12}</a></td>
+                <td><a href="#" data-huc12="${result.huc_12}" class="huc12-link">${result.huc_12}</a></td>
                 <td>${result.name}</td>
             </tr>
         `).join('');
@@ -96,7 +173,7 @@ const createEventRow = (result, mode, metric) => {
     
     return `
         <tr>
-            <td><a href="javascript: ${myfunc}('${dt}');">${dt}</a></td>
+            <td><a href="#" data-date="${dt}" data-function="${myfunc}" class="date-link">${dt}</a></td>
             <td>${formatValue(result.qc_precip * multipliers.qc_precip[metric])}${formatEventCount(result.qc_precip_events, mode)}</td>
             <td>${formatValue(result.avg_runoff * multipliers.avg_runoff[metric])}${formatEventCount(result.avg_runoff_events, mode)}</td>
             <td>${formatValue(result.avg_loss * multipliers.avg_loss[metric])}${formatEventCount(result.avg_loss_events, mode)}</td>
@@ -196,6 +273,7 @@ const getDetailsElements = () => {
  * @param {string} huc12 - HUC12 identifier
  */
 export async function updateDetails(huc12) {
+    setState(StateKeys.HUC12, huc12);
     const elements = getDetailsElements();
     if (!elements) {
         console.error('Required details panel elements not found');

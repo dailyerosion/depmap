@@ -1,7 +1,21 @@
 import { transform } from 'ol/proj';
-import { getState, setState, StateKeys } from './state';
+import { getState, setState, StateKeys, subscribeToState } from './state';
 import { getMap } from './mapManager';
 import { makeDate } from './dateUtils';
+
+/**
+ * Setup listeners to update the URL when the state changes
+ */
+export function updateUrlOnStateChange() {
+    subscribeToState(StateKeys.DATE, setQueryParams);
+    subscribeToState(StateKeys.DATE2, setQueryParams);
+    subscribeToState(StateKeys.LTYPE, setQueryParams);
+    subscribeToState(StateKeys.LAT, setQueryParams);
+    subscribeToState(StateKeys.LON, setQueryParams);
+    subscribeToState(StateKeys.ZOOM, setQueryParams);
+    subscribeToState(StateKeys.METRIC, setQueryParams);
+    subscribeToState(StateKeys.HUC12, setQueryParams);
+}
 
 export function readUrlParams() {
     const params = new URLSearchParams(window.location.search);
@@ -47,6 +61,13 @@ export function readUrlParams() {
             unitInput.checked = true;
         }
     }
+
+    if (params.has('huc12')) {
+        const huc12 = params.get('huc12');
+        if (huc12) {
+            setState(StateKeys.HUC12, huc12);
+        }
+    }
 }
 
 export function setQueryParams() {
@@ -76,6 +97,10 @@ export function setQueryParams() {
         queryParams.set('metric', metric.toString());
     }
 
+    const huc12 = getState(StateKeys.HUC12);
+    if (huc12) {
+        queryParams.set('huc12', huc12);
+    }
     const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
     window.history.replaceState(null, '', newUrl);
 }

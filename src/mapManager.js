@@ -18,8 +18,7 @@ import {
     tilecache,
     varunits,
 } from './constants';
-import { setQueryParams } from './urlHandler';
-import { getState, StateKeys } from './state';
+import { getState, StateKeys, setState } from './state';
 import { setStatus } from './toaster';
 import { updateDetails } from './huc12Utils';
 import { remap } from './dataFetchers';
@@ -134,10 +133,19 @@ function displayFeatureInfo(evt) {
 }
 
 export function setupMapEventHandlers() {
-    getMap().on('moveend', () => {
-        setQueryParams();
-    });
+    const map = getMap();
 
+    map.on('moveend', () => {
+        const view = map.getView();
+        const center = transform(
+            view.getCenter(),
+            'EPSG:3857',
+            'EPSG:4326'
+        );
+        setState(StateKeys.LAT, center[1]);
+        setState(StateKeys.LON, center[0]);
+        setState(StateKeys.ZOOM, view.getZoom());
+    });
     getMap().on('pointermove', (evt) => {
         if (evt.dragging) {
             return;
@@ -188,7 +196,6 @@ function makeDetailedFeature(feature) {
     }
 
     updateDetails(feature.getId());
-    setQueryParams();
 }
 
 /**
@@ -274,7 +281,6 @@ export function drawColorbar() {
 export function rerender_vectors() {
     drawColorbar();
     getVectorLayer().changed();
-    setQueryParams();
 }
 
 
@@ -321,7 +327,6 @@ function createVectorLayer() {
         },
     });
     vectorLayer.on('change', () => {
-        console.error('vectorLayer change event');
         if (detailedFeature) {
             clickOverlayLayer.getSource().removeFeature(detailedFeature);
             detailedFeature = vectorLayer
@@ -330,7 +335,6 @@ function createVectorLayer() {
             clickOverlayLayer.getSource().addFeature(detailedFeature);
             updateDetails(detailedFeature.getId());
         }
-        setQueryParams();
     });
     // Trigger a remap once this layer is loaded
     vectorLayer.getSource()?.on('featuresloadend', () => {

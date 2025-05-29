@@ -2,7 +2,7 @@ import './style.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import { readUrlParams, migrateHashToQueryParams } from './urlHandler';
+import { readUrlParams, migrateHashToQueryParams, updateUrlOnStateChange } from './urlHandler';
 import { setDateSelection } from './dateUtils';
 import { checkDates } from './dataFetchers';
 import { initializeMap } from './mapManager';
@@ -14,6 +14,7 @@ import {
     setupMapControlHandlers,
     setupInlineEventHandlers,
 } from './eventHandlers';
+import { setupHUC12EventHandlers } from './huc12Utils';
 import { initializeBootstrapComponents } from './bootstrapComponents';
 import { getState, StateKeys } from './state';
 import {
@@ -31,8 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Migrate any old hash-based URL parameters to query parameters
     migrateHashToQueryParams();
 
-    // 2. Read URL parameters to set initial state
+    // 2. Read URL parameters to set initial state and listen for changes
     readUrlParams();
+    updateUrlOnStateChange();
 
     // Initialize map and layers
     initializeMap();
@@ -45,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMapControlHandlers();
     setupInlineEventHandlers(setDateSelection);
     setupSidebarEvents();
+    setupHUC12EventHandlers();
 
     // Initialize date display
     if (getState(StateKeys.DATE2)) {

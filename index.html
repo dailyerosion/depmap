@@ -34,8 +34,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-bs-dismiss="modal"
-         aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"
+         aria-label="Close"></button>
         <h4 class="modal-title" id="eventsModalLabel">Listing of Daily Events</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
@@ -43,7 +43,7 @@
         
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -55,7 +55,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <h4 class="modal-title" id="dtModalLabel">DEP Tillage Codes</h4>
         </div>
         <div class="modal-body" onkeypress="return event.keyCode != 13;">
@@ -67,7 +67,7 @@
     practice within the HUC12 according to our estimates.
 </p>
 
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <thead><tr><th>Code</th><th>Label</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>1</td><td>No till</td>
@@ -87,7 +87,7 @@
           
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -97,21 +97,22 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <h4 class="modal-title" id="myModalLabel">Search for Watershed by Name</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
         <p>Enter some case-insensitive text to search for a watershed by name.</p>
       <form name="huc12search">
         <input type="text" name="q" id="huc12searchtext">
-        <button id="huc12searchbtn" class="btn btn-default"><i class="bi-search"></i> Search</button>
+        <button id="huc12searchbtn" type="button" class="btn btn-secondary">
+            <i class="bi-search"></i> Search</button>
         </form>
         <hr />
         <div id="huc12searchres"></div>
         
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -119,15 +120,15 @@
 <!-- End of modals -->
 
 <div id="mapcontrols">
-<button class="btn btn-sq-sm btn-danger pull-left active" id="mappointer"
+<button class="btn btn-sq-sm btn-danger float-start active" id="mappointer"
     title="Interact with Map.">
     <i class="bi-hand-index-fill"></i></button>
-<button class="btn btn-sq-sm btn-danger pull-left active" id="mapinfo"
+<button class="btn btn-sq-sm btn-danger float-start active" id="mapinfo"
     title="Double Click HUC12 for Detailed Data.">
     <i class="bi-info-circle"></i></button>
-<button id="mapplus" class="btn btn-sq-sm btn-danger pull-left" title="Zoom Map In."><i class="bi-zoom-in"></i></button>
-<button id="mapminus" class="btn btn-sq-sm btn-danger pull-left" title="Zoom Map Out."><i class="bi-zoom-out"></i></button>
-<button id="mapprint" class="btn btn-sq-sm btn-danger pull-left" title="Create PNG image of map."><i class="bi-printer"></i></button>
+<button id="mapplus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map In."><i class="bi-zoom-in"></i></button>
+<button id="mapminus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map Out."><i class="bi-zoom-out"></i></button>
+<button id="mapprint" class="btn btn-sq-sm btn-danger float-start" title="Create PNG image of map."><i class="bi-printer"></i></button>
 </div>
 
 <div id="fdetails">
@@ -202,7 +203,8 @@
  
         <!-- Search box -->
         <p>
-        <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi-search"></i> Search</button>
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+         data-bs-target="#myModal"><i class="bi-search"></i> Search</button>
         </p>
 
         <ul class="nav nav-tabs nav-justified" role="tablist" id="myTab">
@@ -250,7 +252,7 @@
 <br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
 <br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
 </p>
-<button data-action="download-shapefile" class="btn btn-default" type="button"><i class="bi-download"></i> Download Data</button>
+<button data-action="download-shapefile" class="btn btn-secondary" type="button"><i class="bi-download"></i> Download Data</button>
 
 <h4>Current DEP Version</h4>
 
@@ -281,12 +283,12 @@
 </fieldset>
 
 <div class="input-group">
-<span class="input-group-btn"><button id="minus1d" class="btn btn-default" type="button"><i class="bi-arrow-left"></i></button></span>
+<button id="minus1d" class="btn btn-secondary" type="button"><i class="bi-arrow-left"></i></button>
 <input type="date" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-<span class="input-group-btn"><button id="plus1d" class="btn btn-default" type="button"><i class="bi-arrow-right"></i></button></span>
+<button id="plus1d" class="btn btn-secondary" type="button"><i class="bi-arrow-right"></i></button>
 </div>
 
-<div style="display: none;" id="settoday"><a class="btn btn-default" role="button" href="#"><i class="bi-chevron-left"></i> Back to Latest Date</a>
+<div style="display: none;" id="settoday"><a class="btn btn-secondary" role="button" href="#"><i class="bi-chevron-left"></i> Back to Latest Date</a>
 </div>
 
 <div style="display: none;" id="dp2">
@@ -296,8 +298,8 @@
 </div>
 </div>
 
-<h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-default" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
-    <button data-action="increase-opacity" class="btn btn-default" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
+<h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-secondary" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
+    <button data-action="increase-opacity" class="btn btn-secondary" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
 <ul class="list-unstyled deplist">
 <li><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
 <label for="precip-in2_opt">Precipitation</label></li>
@@ -315,7 +317,7 @@
 <label for="slp_opt">Average Slope [%]</label></li>
 <li><input type="radio" id="dt_opt" name="whichlayer" value="dt">
 <label for="dt_opt">Dominant Tillage Practice</label>
- <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
+ <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
 </li>
 </ul>
 
@@ -327,12 +329,12 @@
 <ul id="ls-overlay-layers" class="list-unstyled deplist"></ul>
 
 <h4>View US State:</h4>
-<button id="il" class="btn btn-default" type="button"><i class="bi-search"></i> Illinois</button>
-<button id="ia" class="btn btn-default" type="button"><i class="bi-search"></i> Iowa</button>
-<button id="ks" class="btn btn-default" type="button"><i class="bi-search"></i> Kansas</button>
-<button id="mn" class="btn btn-default" type="button"><i class="bi-search"></i> Minnesota</button>
-<button id="ne" class="btn btn-default" type="button"><i class="bi-search"></i> Nebraska</button>
-<button id="wi" class="btn btn-default" type="button"><i class="bi-search"></i> Wisconsin</button>
+<button data-state="il" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Illinois</button>
+<button data-state="ia" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Iowa</button>
+<button data-state="ks" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Kansas</button>
+<button data-state="mn" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Minnesota</button>
+<button data-state="ne" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Nebraska</button>
+<button data-state="wi" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Wisconsin</button>
 <br clear="all" />
 
 <p>&nbsp;</p>
