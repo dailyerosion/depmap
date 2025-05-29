@@ -10,6 +10,7 @@ export const StateKeys = {
     DATE: 'date',
     DATE2: 'date2',
     METRIC: 'metric',
+    HUC12: 'huc12',
 };
 
 const state = {
@@ -22,6 +23,7 @@ const state = {
     [StateKeys.DATE]: makeDate(2025, 5, 26),
     [StateKeys.DATE2]: null,
     [StateKeys.METRIC]: 0,
+    [StateKeys.HUC12]: null,
 };
 
 const subscribers = {};
