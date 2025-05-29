@@ -133,9 +133,8 @@ function displayFeatureInfo(evt) {
 }
 
 export function setupMapEventHandlers() {
-    const map = getMap();
 
-    map.on('moveend', () => {
+    getMap().on('moveend', () => {
         const view = map.getView();
         const center = transform(
             view.getCenter(),

@@ -66,7 +66,7 @@ export function setHUC12(huc12) {
 
     // 2. Find and zoom to the HUC12 geometry
     const vectorLayer = getVectorLayer();
-    if (vectorLayer && vectorLayer.getSource()) {
+    if (vectorLayer?.getSource()) {
         const feature = vectorLayer.getSource().getFeatureById(huc12);
         if (feature) {
             const geometry = feature.getGeometry();
