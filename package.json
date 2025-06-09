@@ -25,6 +25,7 @@
   "dependencies": {
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
+    "iemjs": "^0.0.4",
     "ol": "latest",
     "strftime": "^0.10.3"
   }

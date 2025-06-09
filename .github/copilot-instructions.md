@@ -11,7 +11,7 @@ You can abbreviate the rule description to a single word or phrase.
 - Do not use Jquery and replace any jQuery code with vanilla JavaScript.
 - Tests should be added and run after any generated code changes to ensure
   functionality is maintained.
-- The `src/domUtils.js` helpers should be used for DOM queries to avoid any
+- The `iemjs/domUtils` helpers should be used for DOM queries to avoid any
   unnecessary boilerplate for null checks.  The general policy is that all
   dom elements are expected to exist.
 - Javascript usage of `this` should be avoided at all costs.
