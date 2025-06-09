@@ -7,7 +7,7 @@ import { getState, setState, StateKeys } from './state';
 import { setStatus } from './toaster';
 import { handleSideBarClick } from './uiManager';
 import { getMap, getVectorLayer } from './mapManager';
-import { requireElement } from './domUtils';
+import { requireElement } from 'iemjs/domUtils';
 import strftime from 'strftime';
 
 /**

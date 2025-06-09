@@ -1,7 +1,7 @@
 import { BACKEND, varunits, multipliers } from './constants';
 import { getState, setState, StateKeys } from './state';
 import strftime from 'strftime';
-import { requireElement, requireInputElement } from './domUtils.js';
+import { requireElement, requireInputElement } from 'iemjs/domUtils';
 import { setYearInterval, setDateFromString } from './dateUtils.js';
 import { Modal } from 'bootstrap';
 import { getVectorLayer, getMap } from './mapManager.js';
