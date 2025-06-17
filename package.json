@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
-    "@vitest/coverage-v8": "^3.1.4",
+    "@vitest/coverage-v8": "^3.2.3",
     "@vitest/ui": "^3.1.4",
     "eslint": "^9.29.0",
     "globals": "^16.2.0",
@@ -25,7 +25,7 @@
   "dependencies": {
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
-    "iemjs": "^0.0.4",
+    "iemjs": "^0.0.7",
     "ol": "latest",
     "strftime": "^0.10.3"
   }
