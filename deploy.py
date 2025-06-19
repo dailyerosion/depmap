@@ -128,9 +128,14 @@ def sync_to_releases(dist_dir: Path):
         RELEASE_PATH.mkdir(parents=True, exist_ok=True)
 
     try:
-        # Use rsync to copy files
+        # Use rsync to copy files, excluding .git directory from deletion
         run_command(
-            ["rsync", "-av", "--delete", f"{dist_dir}/", f"{RELEASE_PATH}/"]
+            [
+                "rsync",
+                "-av",
+                f"{dist_dir}/",
+                f"{RELEASE_PATH}/",
+            ]
         )
 
         print("✅ Files synced successfully")
@@ -219,10 +224,6 @@ def push_repositories():
         return
 
     try:
-        # Push source repository tags
-        print("   Pushing source repository tags...")
-        run_command(["git", "push", "--tags"], cwd=PROJECT_DIR)
-
         # Push release repository
         print("   Pushing release repository...")
         run_command(["git", "push", "--all"], cwd=RELEASE_PATH)
