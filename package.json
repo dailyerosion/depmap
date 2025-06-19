@@ -16,7 +16,8 @@
     "lint:fix": "eslint . --ext .js --fix",
     "release:patch": "npm version patch && npm run version:generate",
     "release:minor": "npm version minor && npm run version:generate",
-    "release:major": "npm version major && npm run version:generate"
+    "release:major": "npm version major && npm run version:generate",
+    "deploy": "python3 deploy.py"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
