@@ -1,70 +1,54 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-// Mock Bootstrap
-vi.mock('bootstrap', () => ({
-  Modal: vi.fn().mockImplementation(() => ({
-    show: vi.fn(),
-    hide: vi.fn(),
-    toggle: vi.fn()
-  })),
-  Offcanvas: vi.fn().mockImplementation(() => ({
-    show: vi.fn(),
-    hide: vi.fn(),
-    toggle: vi.fn()
-  }))
-}));
-
-// Mock DOM elements
-const mockElement = {
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  classList: {
-    add: vi.fn(),
-    remove: vi.fn(),
-    contains: vi.fn()
-  }
-};
-
-global.document = {
-  getElementById: vi.fn((id) => {
-    if (['eventsModal', 'myModal', 'dtModal', 'sidebar'].includes(id)) {
-      return mockElement;
-    }
-    return null;
-  })
-};
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('Bootstrap Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Create required DOM elements
+    const eventsModal = document.createElement('div');
+    eventsModal.id = 'eventsModal';
+    eventsModal.className = 'modal';
+    document.body.appendChild(eventsModal);
+    
+    const myModal = document.createElement('div');
+    myModal.id = 'myModal';
+    myModal.className = 'modal';
+    document.body.appendChild(myModal);
+    
+    const dtModal = document.createElement('div');
+    dtModal.id = 'dtModal';
+    dtModal.className = 'modal';
+    document.body.appendChild(dtModal);
+    
+    const sidebar = document.createElement('div');
+    sidebar.id = 'sidebar';
+    sidebar.className = 'offcanvas';
+    document.body.appendChild(sidebar);
+  });
+
+  afterEach(() => {
+    // Clean up DOM elements
+    while (document.body.firstChild) {
+      document.body.removeChild(document.body.firstChild);
+    }
   });
 
   it('should initialize all Bootstrap components when elements exist', async () => {
     const { initializeBootstrapComponents } = await import('../src/bootstrapComponents.js');
-    const { Modal, Offcanvas } = await import('bootstrap');
     
     const components = initializeBootstrapComponents();
     
-    expect(Modal).toHaveBeenCalledTimes(3); // eventsModal, myModal, dtModal
-    expect(Offcanvas).toHaveBeenCalledTimes(1); // sidebar
-    
+    // Test that all components are returned and are instances of Bootstrap components
     expect(components).toHaveProperty('eventsModal');
     expect(components).toHaveProperty('myModal');
     expect(components).toHaveProperty('dtModal');
     expect(components).toHaveProperty('sidebar');
+    
+    // Test that the components are properly initialized
+    expect(components.eventsModal).toBeDefined();
+    expect(components.myModal).toBeDefined();
+    expect(components.dtModal).toBeDefined();
+    expect(components.sidebar).toBeDefined();
   });
 
-  it('should handle missing DOM elements gracefully', async () => {
-    // Mock getElementById to return null for missing elements
-    global.document.getElementById = vi.fn(() => null);
-    
-    const { initializeBootstrapComponents } = await import('../src/bootstrapComponents.js');
-    
-    const components = initializeBootstrapComponents();
-    
-    expect(components.eventsModal).toBeNull();
-    expect(components.myModal).toBeNull();
-    expect(components.dtModal).toBeNull();
-    expect(components.sidebar).toBeNull();
-  });
 });

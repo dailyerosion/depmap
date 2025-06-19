@@ -5,6 +5,9 @@ You can abbreviate the rule description to a single word or phrase.
 
 ## Rules
 
+- **DO NOT MOCK** For testing, only mock things when absolutely necessary.
+  This means that you should not mock any modules or functions that are part of the
+  codebase. Instead, use the actual implementations of those modules or functions.
 - Do not add code comments detailing what you modified. Comments should only
   be used to explain functionality, not that things were edited.
 - Do not attempt to run node for testing purposes.

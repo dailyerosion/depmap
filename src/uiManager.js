@@ -2,17 +2,16 @@ import { BACKEND, scenario } from './constants';
 import { getState, setState, StateKeys } from './state';
 import { getMap } from './mapManager';
 import { setStatus } from './toaster';
+import { requireElement } from 'iemjs/domUtils';
 
 export function setupSidebarEvents() {
-    const sidebarElement = document.getElementById('sidebar');
-    if (sidebarElement) {
-        sidebarElement.addEventListener('shown.bs.offcanvas', () => {
-            setState(StateKeys.SIDEBAR_OPEN, true);
-        });
-        sidebarElement.addEventListener('hidden.bs.offcanvas', () => {
-            setState(StateKeys.SIDEBAR_OPEN, false);
-        });
-    }
+    const sidebarElement = requireElement('sidebar');
+    sidebarElement.addEventListener('shown.bs.offcanvas', () => {
+        setState(StateKeys.SIDEBAR_OPEN, true);
+    });
+    sidebarElement.addEventListener('hidden.bs.offcanvas', () => {
+        setState(StateKeys.SIDEBAR_OPEN, false);
+    });
 }
 
 export function handleSideBarClick() {
@@ -21,12 +20,9 @@ export function handleSideBarClick() {
 }
 
 export function makeLayerSwitcher() {
-    const base_elem = document.getElementById("ls-base-layers");
-    const over_elem = document.getElementById("ls-overlay-layers");
-    if (!base_elem || !over_elem) {
-        console.error("Layer switcher elements not found");
-        return;
-    }
+    const base_elem = requireElement("ls-base-layers");
+    const over_elem = requireElement("ls-overlay-layers");
+
     getMap().getLayers().getArray().forEach((lyr, i) => {
         const lyrTitle = lyr.get('title');
         if (lyrTitle === undefined) {
@@ -64,11 +60,7 @@ export function showVersions() {
         .then(data => {
             const keys = ["label", "wepp", "acpf", "flowpath", "gssurgo", "software", "tillage"];
             for (const key of keys) {
-                const element = document.getElementById(`dv_${key}`);
-                if (!element) {
-                    console.warn(`Element with id dv_${key} not found`);
-                    continue;
-                }
+                const element = requireElement(`dv_${key}`);
                 element.textContent = data[key] || 'N/A'; // Fallback to 'N/A' if key is missing
             }
         })

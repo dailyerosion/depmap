@@ -154,3 +154,778 @@ body {
     opacity: 0;
     transform: translateY(20px);
 }
+
+/* Bootstrap 5 Offcanvas/Sidebar Improvements */
+
+/* Enhanced offcanvas header */
+.offcanvas-header {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    border-bottom: 1px solid #dee2e6;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+}
+
+.offcanvas-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0;
+    color: white;
+}
+
+.offcanvas-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.offcanvas-header .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Enhanced Tab Navigation */
+.nav-tabs {
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 1.5rem;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 0;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    transition: all 0.3s ease;
+    position: relative;
+    background: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #495057;
+    background-color: #f8f9fa;
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: transparent;
+    border-color: transparent;
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-radius: 2px 2px 0 0;
+}
+
+.nav-tabs .nav-item {
+    flex: 1;
+}
+
+.nav-tabs .nav-link {
+    text-align: center;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Enhanced Tab Content */
+.tab-content {
+    padding: 0;
+    background: transparent;
+}
+
+.tab-pane {
+    padding: 1rem 0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-pane.active {
+    display: block !important;
+}
+
+/* Better visual hierarchy for tab sections */
+.tab-pane h4 {
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-pane h4:first-child {
+    margin-top: 0;
+}
+
+/* Enhanced Form Controls and Buttons */
+
+/* Button Groups and Radio Button Styling */
+.btn-check:checked + .btn-outline-success {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+}
+
+.btn-outline-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.2);
+}
+
+/* Enhanced Input Groups */
+.input-group {
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.input-group .form-control {
+    border: 1px solid #ced4da;
+    font-weight: 600;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    background-color: #fff;
+}
+
+.input-group .btn {
+    border: 1px solid #6c757d;
+    transition: all 0.3s ease;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-group .btn:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+    transform: translateY(-1px);
+}
+
+/* Secondary Button Improvements */
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+/* State Zoom Buttons - Special Styling */
+.szoom {
+    margin: 0.25rem 0.25rem 0.25rem 0;
+    font-size: 0.875rem;
+    padding: 0.4rem 0.8rem;
+    min-width: auto;
+}
+
+/* Search Button Enhancement */
+.btn-secondary[data-bs-toggle="modal"] {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.btn-secondary[data-bs-toggle="modal"]:hover {
+    background: linear-gradient(135deg, #5c636a 0%, #3d4146 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+}
+
+/* Enhanced Fieldsets and Form Organization */
+fieldset {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+fieldset:hover {
+    border-color: #dee2e6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+fieldset legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+    padding: 0 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    width: auto;
+}
+
+/* Radio Button Groups */
+#units_radio, 
+div[id$="_radio"] {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+#units_radio .btn,
+div[id$="_radio"] .btn {
+    flex: 1;
+    min-width: fit-content;
+}
+
+/* Date Selection Enhancement */
+#t {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#t .btn {
+    flex: 1;
+    font-weight: 500;
+}
+
+/* Back to Latest Date Button */
+#settoday a.btn {
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+    border-color: #ffc107;
+    color: #212529;
+    font-weight: 600;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+#settoday a.btn:hover {
+    background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
+    color: #212529;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+/* Special Action Buttons */
+button[data-action="download-shapefile"] {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    width: 100%;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+button[data-action="download-shapefile"]:hover {
+    background: linear-gradient(135deg, #146c43 0%, #0f5132 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(25, 135, 84, 0.4);
+}
+
+/* Opacity Control Buttons */
+button[data-action*="opacity"] {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+/* Form Spacing Improvements */
+.offcanvas-body > p:first-of-type {
+    margin-top: 0;
+}
+
+.offcanvas-body h4 + p,
+.offcanvas-body h4 + ul,
+.offcanvas-body h4 + div {
+    margin-top: 0.5rem;
+}
+
+/* Checkbox Styling for State Selection */
+input[type="checkbox"] {
+    margin-right: 0.5rem;
+    transform: scale(1.1);
+}
+
+input[type="checkbox"]:checked {
+    accent-color: #198754;
+}
+
+label[for^="ST"] {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+label[for^="ST"]:hover {
+    color: #198754;
+}
+
+/* Enhanced Content Section Spacing and Layout */
+
+/* Overall Offcanvas Body Layout */
+.offcanvas-body {
+    padding: 1.25rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ced4da #f8f9fa;
+}
+
+.offcanvas-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.offcanvas-body::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.offcanvas-body::-webkit-scrollbar-thumb {
+    background: #ced4da;
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.offcanvas-body::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
+}
+
+/* Section Spacing and Organization */
+.tab-pane > * + * {
+    margin-top: 1.5rem;
+}
+
+.tab-pane > fieldset + fieldset {
+    margin-top: 1rem;
+}
+
+.tab-pane > h4 + * {
+    margin-top: 0.75rem;
+}
+
+/* Content Containers */
+#detailsContainer {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    transition: all 0.3s ease;
+}
+
+#detailsContainer:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #dee2e6;
+}
+
+#details_loading {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 1rem;
+}
+
+#details_hidden {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 1rem;
+    background: #fff;
+    border: 2px dashed #dee2e6;
+    border-radius: 0.375rem;
+    margin: 0.5rem 0;
+}
+
+/* Table Styling for DEP Version */
+.table {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    padding: 0.5rem 0.75rem;
+    width: 40%;
+}
+
+.table td {
+    padding: 0.5rem 0.75rem;
+    color: #6c757d;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: rgba(248, 249, 250, 0.5);
+}
+
+/* Content Section Layout Improvements */
+
+/* Date Selection Section */
+.input-group + #settoday,
+.input-group + div[style*="display: none"] {
+    margin-top: 1rem;
+}
+
+#dp2 {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+    margin: 1rem 0;
+}
+
+#dp2 h4 {
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: #495057;
+}
+
+/* Variable Description Styling */
+#variable_desc {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: #1565c0;
+    display: block;
+    min-height: 1.5rem;
+}
+
+#variable_desc:empty {
+    display: none;
+}
+
+/* Section Grouping */
+.content-section {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.content-section:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+/* State Selection Layout */
+.state-buttons-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Improved spacing for checkbox lists */
+p:has(input[type="checkbox"]) {
+    margin: 0.25rem 0;
+    line-height: 1.6;
+}
+
+p:has(input[type="checkbox"]):first-of-type {
+    margin-top: 0.5rem;
+}
+
+/* Opacity Controls Layout */
+h4:has(button[data-action*="opacity"]) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+h4:has(button[data-action*="opacity"]) button {
+    margin-left: auto;
+}
+
+/* Better spacing for button groups */
+.btn + .btn {
+    margin-left: 0.25rem;
+}
+
+/* Clear spacing fix */
+br[clear="all"] {
+    display: block;
+    margin: 1rem 0;
+    height: 0;
+}
+
+/* Enhanced List Styling for Better Readability */
+
+/* DEP List (Radio Button Lists) Improvements */
+.list-unstyled.deplist {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin: 1rem 0;
+}
+
+.list-unstyled.deplist li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.list-unstyled.deplist li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.list-unstyled.deplist li:first-child {
+    padding-top: 0;
+}
+
+.list-unstyled.deplist li:hover {
+    background-color: rgba(13, 110, 253, 0.08);
+    border-radius: 0.25rem;
+    margin: 0 -0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Radio Button Styling within Lists */
+.list-unstyled.deplist input[type="radio"] {
+    margin: 0;
+    transform: scale(1.2);
+    accent-color: #0d6efd;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.list-unstyled.deplist label {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    margin: 0;
+    flex-grow: 1;
+    transition: color 0.3s ease;
+    line-height: 1.4;
+}
+
+.list-unstyled.deplist input[type="radio"]:checked + label {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.list-unstyled.deplist label:hover {
+    color: #0d6efd;
+}
+
+/* Special styling for options with buttons */
+.list-unstyled.deplist li:has(button) {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-unstyled.deplist li button {
+    margin-left: auto;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* Dynamic Lists (Base Layers, Overlay Layers) */
+#ls-base-layers,
+#ls-overlay-layers {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    min-height: 3rem;
+    position: relative;
+}
+
+#ls-base-layers:empty,
+#ls-overlay-layers:empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+#ls-base-layers:empty::before {
+    content: "Loading base layers...";
+}
+
+#ls-overlay-layers:empty::before {
+    content: "Loading overlay layers...";
+}
+
+/* Enhanced checkbox styling for better alignment */
+.list-unstyled.deplist input[type="checkbox"] {
+    margin: 0;
+    transform: scale(1.2);
+    accent-color: #198754;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Data Section List Improvements */
+
+/* Current DEP Version Table Enhancement */
+h4 + .table {
+    margin-top: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading states for dynamic content */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 0.25rem;
+    height: 1.2em;
+    display: inline-block;
+    min-width: 100px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* List Section Headers */
+.list-section-header {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    margin: 1.5rem 0 0.5rem 0;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grouped List Styling */
+.list-group-custom {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin: 1rem 0;
+    background: #fff;
+}
+
+.list-group-custom li {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-custom li:last-child {
+    border-bottom: none;
+}
+
+.list-group-custom li:hover {
+    background-color: #f8f9fa;
+}
+
+/* Enhanced spacing for nested content */
+.list-unstyled li > * + * {
+    margin-left: 0.5rem;
+}
+
+/* Better visual separation for output options */
+.deplist li[data-category="output"] {
+    background: linear-gradient(90deg, rgba(13, 110, 253, 0.05) 0%, transparent 100%);
+    border-left: 3px solid #0d6efd;
+    padding-left: 1rem;
+}
+
+.deplist li[data-category="metadata"] {
+    background: linear-gradient(90deg, rgba(108, 117, 125, 0.05) 0%, transparent 100%);
+    border-left: 3px solid #6c757d;
+    padding-left: 1rem;
+}
+
+/* Improved focus states for accessibility */
+.list-unstyled input[type="radio"]:focus,
+.list-unstyled input[type="checkbox"]:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.list-unstyled label:focus-within {
+    color: #0d6efd;
+    text-decoration: underline;
+}

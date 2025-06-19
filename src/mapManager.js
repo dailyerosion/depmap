@@ -22,6 +22,7 @@ import { getState, StateKeys, setState } from './state';
 import { setStatus } from './toaster';
 import { updateDetails } from './huc12Utils';
 import { remap } from './dataFetchers';
+import { requireElement } from 'iemjs/domUtils';
 
 let hoverOverlayLayer = null;
 let clickOverlayLayer = null;
@@ -46,21 +47,13 @@ const infoElements = {
  */
 function initializeInfoElements() {
     const elements = {
-        name: document.getElementById('info-name'),
-        huc12: document.getElementById('info-huc12'),
-        loss: document.getElementById('info-loss'),
-        runoff: document.getElementById('info-runoff'),
-        delivery: document.getElementById('info-delivery'),
-        precip: document.getElementById('info-precip'),
+        name: requireElement('info-name'),
+        huc12: requireElement('info-huc12'),
+        loss: requireElement('info-loss'),
+        runoff: requireElement('info-runoff'),
+        delivery: requireElement('info-delivery'),
+        precip: requireElement('info-precip'),
     };
-
-    // Validate all elements exist
-    for (const [key, element] of Object.entries(elements)) {
-        if (!element) {
-            console.error(`Required element #info-${key} not found`);
-            return;
-        }
-    }
 
     Object.assign(infoElements, elements);
 }
@@ -204,8 +197,8 @@ export function drawColorbar() {
     const ltype = getState(StateKeys.LTYPE);
     const metric = getState(StateKeys.METRIC);
 
-    const canvas = document.getElementById('colorbar');
-    if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
+    const canvas = requireElement('colorbar');
+    if (!(canvas instanceof HTMLCanvasElement)) {
         setStatus('Failed to find colorbar canvas element', 'error');
         return;
     }
@@ -421,11 +414,7 @@ export function initializeMap() {
         }),
     });
 
-    const fbdetails = document.getElementById('fdetails');
-    if (!fbdetails) {
-        console.error('Failed to find fdetails element');
-        return;
-    }
+    const fbdetails = requireElement('fdetails');
     popup = new Overlay({
         element: fbdetails,
         offset: [7, 7],

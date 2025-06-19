@@ -1,4 +1,5 @@
 import { Modal, Offcanvas } from 'bootstrap';
+import { requireElement } from 'iemjs/domUtils';
 
 function initializeBootstrapComponents() {
     let eventsModal = null;
@@ -6,25 +7,17 @@ function initializeBootstrapComponents() {
     let dtModal = null;
     let sidebar = null;
 
-    const eventsModalElement = document.getElementById('eventsModal');
-    if (eventsModalElement) {
-        eventsModal = new Modal(eventsModalElement);
-    }
-    
-    const myModalElement = document.getElementById('myModal');
-    if (myModalElement) {
-        myModal = new Modal(myModalElement);
-    }
-    
-    const dtModalElement = document.getElementById('dtModal');
-    if (dtModalElement) {
-        dtModal = new Modal(dtModalElement);
-    }
-    
-    const sidebarElement = document.getElementById('sidebar');
-    if (sidebarElement) {
-        sidebar = new Offcanvas(sidebarElement);
-    }
+    const eventsModalElement = requireElement('eventsModal');
+    eventsModal = new Modal(eventsModalElement);
+
+    const myModalElement = requireElement('myModal');
+    myModal = new Modal(myModalElement);
+
+    const dtModalElement = requireElement('dtModal');
+    dtModal = new Modal(dtModalElement);
+
+    const sidebarElement = requireElement('sidebar');
+    sidebar = new Offcanvas(sidebarElement);
 
     return { eventsModal, myModal, dtModal, sidebar };
 }

@@ -2,6 +2,7 @@ import './style.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import { VERSION_DISPLAY } from './version.js';
 import { readUrlParams, migrateHashToQueryParams, updateUrlOnStateChange } from './urlHandler';
 import { setDateSelection } from './dateUtils';
 import { checkDates } from './dataFetchers';
@@ -23,6 +24,16 @@ import {
     setupSidebarEvents,
 } from './uiManager';
 import { setupBranding } from './brandingOverlay';
+import { requireElement } from 'iemjs/domUtils';
+
+/**
+ * Initialize version display in the UI
+ */
+export function initializeVersionDisplay() {
+    // Update the web interface version element
+    const webInterfaceElement = requireElement('dv_web_interface');
+    webInterfaceElement.textContent = VERSION_DISPLAY;
+}
 
 // Our main entry point for the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,10 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize date display
     if (getState(StateKeys.DATE2)) {
-        const dp2 = document.getElementById('dp2');
-        if (dp2) {
-            dp2.style.display = 'block';
-        }
+        const dp2 = requireElement('dp2');
+        dp2.style.display = 'block';
     }
 
     // Initialize other components
@@ -64,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 600000);
     makeLayerSwitcher();
     showVersions();
+    
+    // Initialize version display
+    initializeVersionDisplay();
 
     // Initialize Bootstrap components
     initializeBootstrapComponents();

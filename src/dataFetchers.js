@@ -11,6 +11,7 @@ import { setStatus } from './toaster.js';
 import { setDate } from './dateUtils.js';
 import { drawColorbar, getVectorLayer } from './mapManager';
 import strftime from 'strftime';
+import { requireElement } from 'iemjs/domUtils';
 
 /**
  * Check if the server has new data available
@@ -31,10 +32,8 @@ export function checkDates() {
                 ) {
                     setState(StateKeys.LAST_DATE, newdate);
                     if (currentDate !== null) {
-                        const elem = document.getElementById('newdate-thedate');
-                        if (elem) {
-                            elem.innerHTML = strftime('%b %b, %Y', newdate);
-                        }
+                        const elem = requireElement('newdate-thedate');
+                        elem.innerHTML = strftime('%b %b, %Y', newdate);
                     } else {
                         setDate(
                             newdate.getFullYear(),

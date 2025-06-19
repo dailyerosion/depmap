@@ -1,8 +1,11 @@
 {
-  "name": "src2",
+  "name": "depmap",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "start": "vite",
+    "version:generate": "node scripts/generate-version.js",
+    "prebuild": "npm run version:generate",
+    "start": "npm run version:generate && vite",
     "build": "vite build",
     "serve": "vite preview",
     "test": "vitest run",
@@ -10,7 +13,11 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
+    "lint:fix": "eslint . --ext .js --fix",
+    "release:patch": "npm version patch && npm run version:generate",
+    "release:minor": "npm version minor && npm run version:generate",
+    "release:major": "npm version major && npm run version:generate",
+    "deploy": "python3 deploy.py"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
@@ -26,7 +33,7 @@
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
     "iemjs": "^0.0.7",
-    "ol": "latest",
+    "ol": "^10.6.1",
     "strftime": "^0.10.3"
   }
 }
