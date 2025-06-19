@@ -33,7 +33,7 @@
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
     "iemjs": "^0.0.7",
-    "ol": "latest",
+    "ol": "^10.6.1",
     "strftime": "^0.10.3"
   }
 }
