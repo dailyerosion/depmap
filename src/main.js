@@ -29,7 +29,7 @@ import { requireElement } from 'iemjs/domUtils';
 /**
  * Initialize version display in the UI
  */
-function initializeVersionDisplay() {
+export function initializeVersionDisplay() {
     // Update the web interface version element
     const webInterfaceElement = requireElement('dv_web_interface');
     webInterfaceElement.textContent = VERSION_DISPLAY;

@@ -26,32 +26,20 @@ RELEASE_PATH = Path("/home/akrherz/projects/depmap-releases")
 class DeploymentError(Exception):
     """Custom exception for deployment errors."""
 
-    pass
 
-
-def run_command(cmd, check=True, capture_output=False, cwd=None):
+def run_command(cmd: list, check=True, capture_output=False, cwd=None):
     """Run a command with error handling and logging."""
-    cmd_str = " ".join(cmd) if isinstance(cmd, list) else cmd
+    cmd_str = " ".join(cmd)
     print(f"📝 Running: {cmd_str}")
 
     try:
-        if isinstance(cmd, str):
-            result = subprocess.run(
-                cmd,
-                shell=True,
-                check=check,
-                capture_output=capture_output,
-                text=True,
-                cwd=cwd,
-            )
-        else:
-            result = subprocess.run(
-                cmd,
-                check=check,
-                capture_output=capture_output,
-                text=True,
-                cwd=cwd,
-            )
+        result = subprocess.run(
+            cmd,
+            check=check,
+            capture_output=capture_output,
+            text=True,
+            cwd=cwd,
+        )
 
         if capture_output and result.stdout:
             print(f"   Output: {result.stdout.strip()}")
