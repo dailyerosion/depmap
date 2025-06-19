@@ -2,7 +2,7 @@ import { BACKEND, varunits, multipliers } from './constants';
 import { getState, setState, StateKeys } from './state';
 import strftime from 'strftime';
 import { requireElement, requireInputElement } from 'iemjs/domUtils';
-import { setYearInterval, setDateFromString } from './dateUtils.js';
+import { setYearInterval, setDateFromString, setDate } from './dateUtils.js';
 import { Modal } from 'bootstrap';
 import { getVectorLayer, getMap } from './mapManager.js';
 
@@ -43,6 +43,42 @@ export function setupHUC12EventHandlers() {
                 } else if (functionName === 'setDateFromString') {
                     setDateFromString(date, eventsModal);
                 }
+            }
+        }
+    });
+
+    // Event delegation for details panel (handles dynamically injected content)
+    const detailsContainer = requireElement('details_details');
+    detailsContainer.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+        
+        const action = target.getAttribute('data-action');
+        if (!action) {
+            return;
+        }
+        
+        event.preventDefault();
+        
+        switch (action) {
+            case 'view-events': {
+                const huc12 = target.getAttribute('data-huc12');
+                const period = target.getAttribute('data-period');
+                if (huc12 && period && (period === 'daily' || period === 'yearly')) {
+                    viewEvents(huc12, period);
+                }
+                break;
+            }
+            case 'set-date': {
+                const year = target.getAttribute('data-year');
+                const month = target.getAttribute('data-month');
+                const day = target.getAttribute('data-day');
+                if (year && month && day) {
+                    setDate(parseInt(year), parseInt(month), parseInt(day));
+                }
+                break;
             }
         }
     });
