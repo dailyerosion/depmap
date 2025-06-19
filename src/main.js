@@ -2,6 +2,7 @@ import './style.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import { VERSION_DISPLAY } from './version.js';
 import { readUrlParams, migrateHashToQueryParams, updateUrlOnStateChange } from './urlHandler';
 import { setDateSelection } from './dateUtils';
 import { checkDates } from './dataFetchers';
@@ -23,6 +24,17 @@ import {
     setupSidebarEvents,
 } from './uiManager';
 import { setupBranding } from './brandingOverlay';
+
+/**
+ * Initialize version display in the UI
+ */
+function initializeVersionDisplay() {
+    // Update the web interface version element
+    const webInterfaceElement = document.getElementById('dv_web_interface');
+    if (webInterfaceElement) {
+        webInterfaceElement.textContent = VERSION_DISPLAY;
+    }
+}
 
 // Our main entry point for the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -64,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 600000);
     makeLayerSwitcher();
     showVersions();
+    
+    // Initialize version display
+    initializeVersionDisplay();
 
     // Initialize Bootstrap components
     initializeBootstrapComponents();
