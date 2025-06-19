@@ -196,8 +196,9 @@
     <div id="map" style="width: 100%; height: 100%; position:fixed;"></div>
    <div class="offcanvas offcanvas-start" id="sidebar"
     data-bs-scroll="true" data-bs-backdrop="false">
-    <div class="offcanvas-title">
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Daily Erosion Project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body" style="overflow-y: scroll;">
  
@@ -211,12 +212,14 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="data-tab" data-bs-toggle="tab"
                  data-bs-target="#data-pane" type="button" role="tab"
-                 aria-controls="data-pane" aria-selected="true">Data</button>
+                 aria-controls="data-pane" aria-selected="false">
+                 <i class="bi-table"></i> Data</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="map-tab" data-bs-toggle="tab"
                  data-bs-target="#map-pane" type="button" role="tab"
-                 aria-controls="map-pane" aria-selected="true">Map</button>
+                 aria-controls="map-pane" aria-selected="true">
+                 <i class="bi-map"></i> Map</button>
             </li>
             </ul>
         <div class="tab-content" id="myTabContent">
@@ -242,18 +245,26 @@
 </fieldset>
 
 <h4>Shapefile Download</h4>
-<p>Include States for currently shown date range:
-<br /><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label>
-<br /><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label>
-</p>
+<div class="content-section">
+<p><strong>Include States for currently shown date range:</strong></p>
+<div class="row">
+<div class="col-6">
+<p><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label></p>
+</div>
+<div class="col-6">
+<p><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label></p>
+<p><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label></p>
+</div>
+</div>
 <button data-action="download-shapefile" class="btn btn-secondary" type="button"><i class="bi-download"></i> Download Data</button>
+</div>
 
+<div class="content-section">
 <h4>Current DEP Version</h4>
 
 <table class="table table-striped"><tbody>
@@ -266,6 +277,7 @@
 <tr><th>Tillage</th><td><span id="dv_tillage"></span></td></tr>
 <tr><th>Web Interface</th><td><span id="dv_web_interface">Loading...</span></td></tr>
 </tbody></table>
+</div>
 
             </div><!-- ./data-pane -->
             <div class="tab-pane fade show active" id="map-pane">
@@ -301,21 +313,21 @@
 <h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-secondary" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
     <button data-action="increase-opacity" class="btn btn-secondary" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
 <ul class="list-unstyled deplist">
-<li><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
+<li data-category="output"><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
 <label for="precip-in2_opt">Precipitation</label></li>
-<li><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff">
+<li data-category="output"><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff">
 <label for="runoff2_opt">Runoff</label></li>
-<li><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss">
+<li data-category="output"><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss">
 <label for="loss2_opt">Detachment</label></li>
-<li><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery">
+<li data-category="output"><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery">
 <label for="delivery2_opt">Hillslope Soil Loss</label></li>
 </ul>
 
 <h4>View Metadata:</h4>
 <ul class="list-unstyled deplist">
-<li><input type="radio" id="slp_opt" name="whichlayer" value="slp">
+<li data-category="metadata"><input type="radio" id="slp_opt" name="whichlayer" value="slp">
 <label for="slp_opt">Average Slope [%]</label></li>
-<li><input type="radio" id="dt_opt" name="whichlayer" value="dt">
+<li data-category="metadata"><input type="radio" id="dt_opt" name="whichlayer" value="dt">
 <label for="dt_opt">Dominant Tillage Practice</label>
  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
 </li>
@@ -329,12 +341,14 @@
 <ul id="ls-overlay-layers" class="list-unstyled deplist"></ul>
 
 <h4>View US State:</h4>
+<div class="state-buttons-container">
 <button data-state="il" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Illinois</button>
 <button data-state="ia" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Iowa</button>
 <button data-state="ks" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Kansas</button>
 <button data-state="mn" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Minnesota</button>
 <button data-state="ne" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Nebraska</button>
 <button data-state="wi" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Wisconsin</button>
+</div>
 <br clear="all" />
 
 <p>&nbsp;</p>
