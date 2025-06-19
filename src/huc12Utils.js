@@ -12,46 +12,41 @@ import { getVectorLayer, getMap } from './mapManager.js';
 export function setupHUC12EventHandlers() {
 
     // Event delegation for HUC12 search results
-    const searchRes = document.getElementById('huc12searchres');
-    if (searchRes) {
-        searchRes.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target instanceof HTMLAnchorElement && target.classList.contains('huc12-link')) {
-                event.preventDefault();
-                const huc12 = target.getAttribute('data-huc12');
-                if (huc12) {
-                    setHUC12(huc12);
-                }
+    const searchRes = requireElement('huc12searchres');
+    searchRes.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLAnchorElement && target.classList.contains('huc12-link')) {
+            event.preventDefault();
+            const huc12 = target.getAttribute('data-huc12');
+            if (huc12) {
+                setHUC12(huc12);
             }
-        });
-    }
+        }
+    });
 
     // Event delegation for events modal date links
-    const eventsResults = document.getElementById('eventsres');
-    if (eventsResults) {
-        eventsResults.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target instanceof HTMLAnchorElement && target.classList.contains('date-link')) {
-                event.preventDefault();
-                const date = target.getAttribute('data-date');
-                const functionName = target.getAttribute('data-function');
+    const eventsResults = requireElement('eventsres');
+    eventsResults.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLAnchorElement && target.classList.contains('date-link')) {
+            event.preventDefault();
+            const date = target.getAttribute('data-date');
+            const functionName = target.getAttribute('data-function');
+
+            // Get the modal instance to hide it
+            const eventsModalElement = requireElement('eventsModal');
+            const eventsModal = eventsModalElement ? Modal.getInstance(eventsModalElement) : null;
                 
-                // Get the modal instance to hide it
-                const eventsModalElement = document.getElementById('eventsModal');
-                const eventsModal = eventsModalElement ? Modal.getInstance(eventsModalElement) : null;
-                
-                if (date && functionName) {
-                    if (functionName === 'setYearInterval') {
-                        setYearInterval(date, eventsModal);
-                    } else if (functionName === 'setDateFromString') {
-                        setDateFromString(date, eventsModal);
-                    }
+            if (date && functionName) {
+                if (functionName === 'setYearInterval') {
+                    setYearInterval(date, eventsModal);
+                } else if (functionName === 'setDateFromString') {
+                    setDateFromString(date, eventsModal);
                 }
             }
-        });
-    }
+        }
+    });
 }
-
 /**
  * callback function to set the HUC12 value
  * @param {String} huc12 
@@ -194,8 +189,8 @@ export async function viewEvents(huc12, mode) {
 
     // Get and validate required DOM elements
     const elements = {
-        modalLabel: document.getElementById('eventsModalLabel'),
-        results: document.getElementById('eventsres'),
+        modalLabel: requireElement('eventsModalLabel'),
+        results: requireElement('eventsres'),
     };
 
     if (!elements.modalLabel || !elements.results) {
@@ -258,11 +253,11 @@ export async function viewEvents(huc12, mode) {
  */
 const getDetailsElements = () => {
     const elements = {
-        sidebarToggle: document.getElementById('btnq1'),
-        dataTab: document.getElementById('data-tab'),
-        hidden: document.getElementById('details_hidden'),
-        details: document.getElementById('details_details'),
-        loading: document.getElementById('details_loading'),
+        sidebarToggle: requireElement('btnq1'),
+        dataTab: requireElement('data-tab'),
+        hidden: requireElement('details_hidden'),
+        details: requireElement('details_details'),
+        loading: requireElement('details_loading'),
     };
 
     return Object.values(elements).every(el => el) ? elements : null;

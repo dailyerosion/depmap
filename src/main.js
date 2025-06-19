@@ -24,16 +24,15 @@ import {
     setupSidebarEvents,
 } from './uiManager';
 import { setupBranding } from './brandingOverlay';
+import { requireElement } from 'iemjs/domUtils';
 
 /**
  * Initialize version display in the UI
  */
 function initializeVersionDisplay() {
     // Update the web interface version element
-    const webInterfaceElement = document.getElementById('dv_web_interface');
-    if (webInterfaceElement) {
-        webInterfaceElement.textContent = VERSION_DISPLAY;
-    }
+    const webInterfaceElement = requireElement('dv_web_interface');
+    webInterfaceElement.textContent = VERSION_DISPLAY;
 }
 
 // Our main entry point for the application
@@ -63,10 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize date display
     if (getState(StateKeys.DATE2)) {
-        const dp2 = document.getElementById('dp2');
-        if (dp2) {
-            dp2.style.display = 'block';
-        }
+        const dp2 = requireElement('dp2');
+        dp2.style.display = 'block';
     }
 
     // Initialize other components

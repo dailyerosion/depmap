@@ -24,7 +24,7 @@ function handleMapControlsClick(event) {
     document
         .querySelectorAll('#mapcontrols button')
         .forEach((btn) => btn.classList.remove('active'));
-    document.getElementById(btnid)?.classList.add('active');
+    requireElement(btnid).classList.add('active');
 }
 
 /**
@@ -60,11 +60,11 @@ function getShapefile() {
 }
 
 export function setupDatePickerHandlers() {
-    const datepicker = document.getElementById('datepicker');
-    const datepicker2 = document.getElementById('datepicker2');
-    const setTodayButton = document.getElementById('settoday');
-    const minusOneDay = document.getElementById('minus1d');
-    const plusOneDay = document.getElementById('plus1d');
+    const datepicker = requireElement('datepicker');
+    const datepicker2 = requireElement('datepicker2');
+    const setTodayButton = requireElement('settoday');
+    const minusOneDay = requireElement('minus1d');
+    const plusOneDay = requireElement('plus1d');
 
     if (
         !datepicker ||
@@ -217,19 +217,19 @@ export function setupMapControlHandlers() {
         button.addEventListener('click', handleMapControlsClick);
     });
 
-    document.getElementById('mapplus')?.addEventListener('click', () => {
+    requireElement('mapplus').addEventListener('click', () => {
         getMap()
             .getView()
             .setZoom(getMap().getView().getZoom() + 1);
     });
 
-    document.getElementById('mapminus')?.addEventListener('click', () => {
+    requireElement('mapminus').addEventListener('click', () => {
         getMap()
             .getView()
             .setZoom(getMap().getView().getZoom() - 1);
     });
 
-    document.getElementById('mapprint')?.addEventListener('click', () => {
+    requireElement('mapprint').addEventListener('click', () => {
         const date = getState(StateKeys.DATE);
         const date2 = getState(StateKeys.DATE2);
         const ltype = getState(StateKeys.LTYPE);
@@ -239,17 +239,17 @@ export function setupMapControlHandlers() {
         window.open(url);
     });
 
-    document.getElementById('mapinfo')?.addEventListener('click', () => {
+    requireElement('mapinfo').addEventListener('click', () => {
         setStatus('Double click HUC12 for detailed data.');
     });
 }
 
 export function setupInlineEventHandlers(setDateSelection) {
-    document.getElementById('btnq1')?.addEventListener('click', () => {
+    requireElement('btnq1').addEventListener('click', () => {
         handleSideBarClick();
     });
 
-    document.getElementById('huc12searchbtn')?.addEventListener('click', () => {
+    requireElement('huc12searchbtn').addEventListener('click', () => {
         doHUC12Search();
     });
     // Unit selection radio buttons
