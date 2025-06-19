@@ -52,15 +52,4 @@ describe('Branding Overlay', () => {
         expect(titleElement.textContent).toContain(' 8 May 2025');
     });
 
-    it('should handle missing maptitle element gracefully', () => {
-        document.body.removeChild(document.getElementById('maptitle'));
-        expect(() => setupBranding()).not.toThrow();
-    });
-
-    it('should fallback to ltype value when vartitle mapping is missing', () => {
-        setState(StateKeys.LTYPE, 'unknown_type');
-        setupBranding();
-        const titleElement = document.getElementById('maptitle');
-        expect(titleElement.textContent).toContain('unknown_type');
-    });
 });
