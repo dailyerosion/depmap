@@ -1,4 +1,3 @@
-// Functions that make API calls to fetch data
 import {
     BACKEND,
     scenario,
@@ -12,6 +11,7 @@ import { setDate } from './dateUtils.js';
 import { drawColorbar, getVectorLayer } from './mapManager';
 import strftime from 'strftime';
 import { requireElement } from 'iemjs/domUtils';
+import { Modal } from 'bootstrap';
 
 /**
  * Check if the server has new data available
@@ -21,26 +21,38 @@ export function checkDates() {
         .then((response) => response.json())
         .then((data) => {
             if (data.last_date) {
-                const newdate = new Date(data.last_date);
+                // Parse the date string as local date to avoid timezone issues
+                // data.last_date is in format "YYYY-MM-DD"
+                const dateParts = data.last_date.split('-');
+                const newdate = new Date(
+                    parseInt(dateParts[0], 10), // year
+                    parseInt(dateParts[1], 10) - 1, // month (0-indexed)
+                    parseInt(dateParts[2], 10) // day
+                );
                 const lastdate = getState(StateKeys.LAST_DATE);
                 const currentDate = getState(StateKeys.DATE);
 
-                if (
-                    newdate > lastdate &&
-                    (currentDate === null ||
-                        newdate.getTime() !== currentDate.getTime())
-                ) {
+                // Always update LAST_DATE to track the most recent available date
+                if (!lastdate || newdate > lastdate) {
                     setState(StateKeys.LAST_DATE, newdate);
-                    if (currentDate !== null) {
-                        const elem = requireElement('newdate-thedate');
-                        elem.innerHTML = strftime('%b %b, %Y', newdate);
-                    } else {
-                        setDate(
-                            newdate.getFullYear(),
-                            newdate.getMonth() + 1,
-                            newdate.getDate()
-                        );
-                    }
+                }
+
+                // If no current date is set (no date= in URL), automatically use the most recent date
+                if (currentDate === null) {
+                    setDate(
+                        newdate.getFullYear(),
+                        newdate.getMonth() + 1,
+                        newdate.getDate()
+                    );
+                } else if (newdate > lastdate && newdate.getTime() !== currentDate.getTime()) {
+                    // Show notification that newer data is available
+                    const elem = requireElement('newdate-thedate');
+                    elem.innerHTML = strftime('%b %d, %Y', newdate);
+                    
+                    // Show the new date notification modal
+                    const messageModal = requireElement('newdate-message');
+                    const modal = new Modal(messageModal);
+                    modal.show();
                 }
             }
         })

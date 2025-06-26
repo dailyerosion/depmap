@@ -325,10 +325,20 @@ export async function updateDetails(huc12) {
     elements.loading.style.display = 'block';
 
     try {
+        const date = getState(StateKeys.DATE);
+        const date2 = getState(StateKeys.DATE2);
+        
+        if (!date) {
+            elements.loading.style.display = 'none';
+            elements.details.style.display = 'block';
+            elements.details.innerHTML = '<p>Please wait for date to be loaded...</p>';
+            return;
+        }
+
         const searchParams = new URLSearchParams({
             huc12,
-            date: strftime('%Y-%m-%d', getState(StateKeys.DATE)),
-            date2: strftime('%Y-%m-%d', getState(StateKeys.DATE2)),
+            date: strftime('%Y-%m-%d', date),
+            date2: date2 ? strftime('%Y-%m-%d', date2) : '',
             metric: String(getState(StateKeys.METRIC)),
         });
 

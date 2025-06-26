@@ -5,7 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { VERSION_DISPLAY } from './version.js';
 import { readUrlParams, migrateHashToQueryParams, updateUrlOnStateChange } from './urlHandler';
 import { setDateSelection } from './dateUtils';
-import { checkDates } from './dataFetchers';
+import { checkDates, remap } from './dataFetchers';
 import { initializeMap } from './mapManager';
 import {
     setupDatePickerHandlers,
@@ -17,7 +17,7 @@ import {
 } from './eventHandlers';
 import { setupHUC12EventHandlers } from './huc12Utils';
 import { initializeBootstrapComponents } from './bootstrapComponents';
-import { getState, StateKeys } from './state';
+import { getState, StateKeys, subscribeToState } from './state';
 import {
     showVersions,
     makeLayerSwitcher,
@@ -46,6 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Read URL parameters to set initial state and listen for changes
     readUrlParams();
     updateUrlOnStateChange();
+
+    // 3. Set up subscription to remap when date changes
+    subscribeToState(StateKeys.DATE, () => {
+        // Only remap if we have a valid date
+        const currentDate = getState(StateKeys.DATE);
+        if (currentDate instanceof Date) {
+            remap();
+        }
+    });
+    subscribeToState(StateKeys.DATE2, () => {
+        // Remap when date2 changes (for range selections)
+        remap();
+    });
 
     // Initialize map and layers
     initializeMap();

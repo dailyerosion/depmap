@@ -29,7 +29,7 @@ export function makeDate(year, month, day) {
 
 export function setToday() {
     const lastdate = getState(StateKeys.LAST_DATE);
-    if (lastdate) {
+    if (lastdate instanceof Date) {
         setDate(
             lastdate.getFullYear(),
             lastdate.getMonth() + 1,
@@ -68,6 +68,18 @@ export function setDateFromString(s, eventsModal) {
     if (eventsModal) {
         eventsModal.hide();
     }
-    const dt = new Date(s);
-    setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+    
+    // Parse date string properly to avoid timezone issues
+    // Assume s is in format "YYYY-MM-DD"
+    if (s.includes('-') && s.length === 10) {
+        const dateParts = s.split('-');
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10);
+        const day = parseInt(dateParts[2], 10);
+        setDate(year, month, day);
+    } else {
+        // Fallback to original method for other formats
+        const dt = new Date(s);
+        setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
+    }
 }
