@@ -12,10 +12,6 @@ body {
     overflow-y: auto;
 }
 
-.ui-widget {
-    font-size: 1em !important;
-}
-
 .dp {
     border: 0px;
     font-weight: bolder;
