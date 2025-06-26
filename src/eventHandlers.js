@@ -3,7 +3,7 @@ import { setToday } from './dateUtils';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
-import { getState, setState, StateKeys } from './state';
+import { getState, setState, StateKeys, subscribeToState } from './state';
 import { setStatus } from './toaster';
 import { handleSideBarClick } from './uiManager';
 import { getMap, getVectorLayer } from './mapManager';
@@ -124,7 +124,13 @@ export function setupDatePickerHandlers() {
 
     datepicker.addEventListener('change', () => {
         if (!datepicker.value) {return;}
-        const selectedDate = new Date(datepicker.value);
+        // Parse date string properly to avoid timezone issues
+        const dateParts = datepicker.value.split('-');
+        const selectedDate = new Date(
+            parseInt(dateParts[0], 10), // year
+            parseInt(dateParts[1], 10) - 1, // month (0-indexed)
+            parseInt(dateParts[2], 10) // day
+        );
         setState(StateKeys.DATE, selectedDate);
         
         const lastDate = getState(StateKeys.LAST_DATE);
@@ -135,12 +141,35 @@ export function setupDatePickerHandlers() {
 
     datepicker2.addEventListener('change', () => {
         if (!datepicker2.value) {return;}
-        const selectedDate = new Date(datepicker2.value);
+        // Parse date string properly to avoid timezone issues
+        const dateParts = datepicker2.value.split('-');
+        const selectedDate = new Date(
+            parseInt(dateParts[0], 10), // year
+            parseInt(dateParts[1], 10) - 1, // month (0-indexed)
+            parseInt(dateParts[2], 10) // day
+        );
         setState(StateKeys.DATE2, selectedDate);
     });
 
     setTodayButton.addEventListener('click', () => {
         setToday();
+    });
+
+    // Subscribe to state changes to keep date pickers in sync
+    subscribeToState(StateKeys.DATE, (newDate) => {
+        if (newDate instanceof Date) {
+            datepicker.value = strftime('%Y-%m-%d', newDate);
+        } else {
+            datepicker.value = '';
+        }
+    });
+
+    subscribeToState(StateKeys.DATE2, (newDate2) => {
+        if (newDate2 instanceof Date) {
+            datepicker2.value = strftime('%Y-%m-%d', newDate2);
+        } else {
+            datepicker2.value = '';
+        }
     });
 }
 
@@ -298,6 +327,16 @@ export function setupInlineEventHandlers(setDateSelection) {
     if (opacityIncreaseBtn) {
         opacityIncreaseBtn.addEventListener('click', () => {
             changeOpacity(0.1);
+        });
+    }
+
+    // "Go to Latest Date" button in the new date notification modal
+    const gotoLatestBtn = document.querySelector(
+        'button[data-action="goto-latest"]'
+    );
+    if (gotoLatestBtn) {
+        gotoLatestBtn.addEventListener('click', () => {
+            setToday();
         });
     }
 }

@@ -68,7 +68,7 @@ function displayFeatureInfo(evt) {
     const features = getMap().getFeaturesAtPixel(
         getMap().getEventPixel(evt.originalEvent)
     );
-    let feature;
+    let feature = null;
 
     // Validate all elements exist before proceeding
     if (
@@ -303,15 +303,15 @@ function createVectorLayer() {
 
             let val = feature.get(ltype);
             val = val * multipliers[ltype][metric];
-            let c = 'rgba(255, 255, 255, 0)';
+            let color = 'rgba(255, 255, 255, 0)';
             for (let i = levels[ltype][metric].length - 2; i >= 0; i--) {
                 if (val >= levels[ltype][metric][i]) {
-                    c = colors[ltype][i];
+                    color = colors[ltype][i];
                     break;
                 }
             }
-            huc12Style.getFill()?.setColor(c);
-            huc12Style.getStroke()?.setColor(resolution < 1250 ? '#000000' : c);
+            huc12Style.getFill()?.setColor(color);
+            huc12Style.getStroke()?.setColor(resolution < 1250 ? '#000000' : color);
             huc12Style
                 .getText()
                 ?.setText(resolution < 160 ? val.toFixed(2) : '');

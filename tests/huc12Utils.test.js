@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { setHUC12, setupHUC12EventHandlers } from '../src/huc12Utils.js';
+import { setupHUC12EventHandlers } from '../src/huc12Utils.js';
 
 // Mock the mapManager functions
 vi.mock('../src/mapManager.js', () => ({
@@ -83,6 +83,13 @@ describe('huc12Utils', () => {
         it('should close modal, zoom to feature, and load details', async () => {
             const { Modal } = await import('bootstrap');
             const { getVectorLayer, getMap } = await import('../src/mapManager.js');
+            const { setState, StateKeys } = await import('../src/state.js');
+            const { makeDate } = await import('../src/dateUtils.js');
+            const { setHUC12 } = await import('../src/huc12Utils.js');
+            
+            // Set up state with a valid date so the fetch will be called
+            setState(StateKeys.DATE, makeDate(2025, 6, 25));
+            setState(StateKeys.METRIC, 0);
             
             // Mock fetch for updateDetails - return a resolved promise
             const mockFetch = vi.fn(() => 
