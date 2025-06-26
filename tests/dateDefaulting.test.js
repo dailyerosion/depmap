@@ -4,7 +4,7 @@ import { checkDates } from '../src/dataFetchers';
 import { makeDate } from '../src/dateUtils';
 
 describe('Date defaulting logic', () => {
-    let mockFetch;
+    let mockFetch = vi.fn();
 
     beforeEach(() => {
         // Mock fetch globally

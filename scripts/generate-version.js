@@ -27,8 +27,8 @@ try {
     } catch {
         // No tag on current commit, that's fine
     }
-} catch (e) {
-    console.warn('Could not get git info:', e.message);
+} catch (error) {
+    console.warn('Could not get git info:', error.message);
 }
 
 // Generate build timestamp

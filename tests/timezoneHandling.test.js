@@ -3,7 +3,7 @@ import { getState, setState, StateKeys } from '../src/state';
 import { checkDates } from '../src/dataFetchers';
 
 describe('Timezone handling', () => {
-    let mockFetch;
+    let mockFetch = null;
 
     beforeEach(() => {
         mockFetch = vi.fn();

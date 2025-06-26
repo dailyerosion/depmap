@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { setHUC12, setupHUC12EventHandlers } from '../src/huc12Utils.js';
+import { setupHUC12EventHandlers } from '../src/huc12Utils.js';
 
 // Mock the mapManager functions
 vi.mock('../src/mapManager.js', () => ({

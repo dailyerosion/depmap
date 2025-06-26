@@ -129,7 +129,7 @@ export async function doHUC12Search() {
 
     const huc12searchtext = requireInputElement('huc12searchtext');
 
-    const searchParams = new URLSearchParams({ q: huc12searchtext.value });
+    const searchParams = new URLSearchParams({ query: huc12searchtext.value });
     try {
         const response = await fetch(`${BACKEND}/geojson/hsearch.py?${searchParams}`);
         const data = await response.json();

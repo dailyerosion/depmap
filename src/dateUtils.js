@@ -64,22 +64,22 @@ export function setYearInterval(syear, eventsModal) {
     dp2.style.display = 'block';
 }
 
-export function setDateFromString(s, eventsModal) {
+export function setDateFromString(dateString, eventsModal) {
     if (eventsModal) {
         eventsModal.hide();
     }
     
     // Parse date string properly to avoid timezone issues
-    // Assume s is in format "YYYY-MM-DD"
-    if (s.includes('-') && s.length === 10) {
-        const dateParts = s.split('-');
+    // Assume dateString is in format "YYYY-MM-DD"
+    if (dateString.includes('-') && dateString.length === 10) {
+        const dateParts = dateString.split('-');
         const year = parseInt(dateParts[0], 10);
         const month = parseInt(dateParts[1], 10);
         const day = parseInt(dateParts[2], 10);
         setDate(year, month, day);
     } else {
         // Fallback to original method for other formats
-        const dt = new Date(s);
+        const dt = new Date(dateString);
         setDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
     }
 }
