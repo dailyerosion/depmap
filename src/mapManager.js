@@ -187,7 +187,7 @@ function makeDetailedFeature(feature) {
         detailedFeature = feature;
     }
 
-    updateDetails(feature.getId());
+    updateDetails(feature.getId(), true);
 }
 
 /**
@@ -325,7 +325,7 @@ function createVectorLayer() {
                 .getSource()
                 .getFeatureById(detailedFeature.getId());
             clickOverlayLayer.getSource().addFeature(detailedFeature);
-            updateDetails(detailedFeature.getId());
+            updateDetails(detailedFeature.getId(), false);
         }
     });
     // Trigger a remap once this layer is loaded
