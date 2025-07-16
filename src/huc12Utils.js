@@ -302,8 +302,10 @@ const getDetailsElements = () => {
 /**
  * Update the HUC12 details widget panel
  * @param {string} huc12 - HUC12 identifier
+ * @param {boolean} focusTab - Whether to focus the Data tab
  */
-export async function updateDetails(huc12) {
+export async function updateDetails(huc12, focusTab) {
+    console.error(`Updating details for HUC12: ${huc12}`);
     setState(StateKeys.HUC12, huc12);
     const elements = getDetailsElements();
     if (!elements) {
@@ -316,8 +318,10 @@ export async function updateDetails(huc12) {
         elements.sidebarToggle.click();
     }
 
-    // Show Data Tab in side bar
-    elements.dataTab.click();
+    if (focusTab) {
+        // Show Data Tab in side bar
+        elements.dataTab.click();
+    }
 
     // Update display states
     elements.hidden.style.display = 'none';
