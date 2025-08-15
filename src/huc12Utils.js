@@ -129,7 +129,7 @@ export async function doHUC12Search() {
 
     const huc12searchtext = requireInputElement('huc12searchtext');
 
-    const searchParams = new URLSearchParams({ query: huc12searchtext.value });
+    const searchParams = new URLSearchParams({ q: huc12searchtext.value });
     try {
         const response = await fetch(`${BACKEND}/geojson/hsearch.py?${searchParams}`);
         const data = await response.json();
@@ -305,7 +305,6 @@ const getDetailsElements = () => {
  * @param {boolean} focusTab - Whether to focus the Data tab
  */
 export async function updateDetails(huc12, focusTab) {
-    console.error(`Updating details for HUC12: ${huc12}`);
     setState(StateKeys.HUC12, huc12);
     const elements = getDetailsElements();
     if (!elements) {
