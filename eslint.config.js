@@ -22,7 +22,8 @@ module.exports = [
             "curly": ["error", "all"],
             "dot-notation": "error",
             "eqeqeq": "error",
-            "id-length": ["error", { "min": 2, "exceptions": ["i", "j", "k", "x", "y", "z"] }],
+            // Allow single-letter web service parameters like 'q'
+            "id-length": ["error", { "min": 2, "exceptions": ["i", "j", "k", "x", "y", "z", "q"] }],
             "init-declarations": ["error", "always"],
             "no-eval": "error",
             "no-var": "error",
