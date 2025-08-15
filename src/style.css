@@ -798,6 +798,47 @@ br[clear="all"] {
     position: relative;
 }
 
+#ls-base-layers li, #ls-overlay-layers li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem; /* fixed padding so no shift */
+    margin: 0;
+    border-left: 4px solid transparent; /* reserve space */
+    border-radius: 0.25rem;
+    transition: background-color 0.20s ease, box-shadow 0.20s ease, border-color 0.20s ease;
+    font-size: 0.85rem;
+}
+
+#ls-base-layers li:hover, #ls-overlay-layers li:hover {
+    background-color: rgba(0,0,0,0.04);
+}
+
+#ls-base-layers li.active, #ls-overlay-layers li.active {
+    background: rgba(25,135,84,0.12);
+    border-color: #198754;
+    box-shadow: inset 0 0 0 1px rgba(25,135,84,0.35);
+}
+
+#ls-base-layers input, #ls-overlay-layers input {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+#ls-base-layers label, #ls-overlay-layers label {
+    cursor: pointer;
+    flex: 1;
+    margin: 0;
+    font-weight: 500;
+    user-select: none;
+}
+
+#ls-base-layers li.active label, #ls-overlay-layers li.active label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
 #ls-base-layers:empty,
 #ls-overlay-layers:empty {
     display: flex;

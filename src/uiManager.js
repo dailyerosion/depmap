@@ -1,7 +1,7 @@
 import { BACKEND, scenario } from './constants';
+import { setStatus } from './toaster';
 import { getState, setState, StateKeys } from './state';
 import { getMap } from './mapManager';
-import { setStatus } from './toaster';
 import { requireElement } from 'iemjs/domUtils';
 
 export function setupSidebarEvents() {
@@ -44,6 +44,29 @@ export function makeLayerSwitcher() {
         label.innerHTML = `&nbsp;${lyrTitle}`;
         li.appendChild(input);
         li.appendChild(label);
+        // Wire visibility changes
+        input.addEventListener('change', () => {
+            if (lyr.get('type') === 'base') {
+                getMap().getLayers().forEach((layer) => {
+                    if (layer.get('type') === 'base') {
+                        const visible = layer === lyr;
+                        layer.setVisible(visible);
+                    }
+                });
+                // Update active class visuals for base list
+                base_elem.querySelectorAll('li').forEach((liNode) => liNode.classList.remove('active'));
+                li.classList.add('active');
+                setStatus(`Base layer set to: ${lyrTitle}`, 'info');
+            } else {
+                lyr.setVisible(input.checked);
+                li.classList.toggle('active', input.checked);
+                setStatus(`${input.checked ? 'Enabled' : 'Disabled'} layer: ${lyrTitle}`, 'info');
+            }
+        });
+        // Initial active class assignment
+        if (lyr.get('visible')) {
+            li.classList.add('active');
+        }
         if (lyr.get('type') === 'base') {
             base_elem.appendChild(li);
         } else {
