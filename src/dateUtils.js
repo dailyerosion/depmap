@@ -1,4 +1,4 @@
-import { getState, setState, StateKeys } from './state';
+import { setState, StateKeys } from './state';
 import { requireElement } from 'iemjs/domUtils';
 
 /**
@@ -27,18 +27,6 @@ export function makeDate(year, month, day) {
     return new Date(year, month - 1, day);
 }
 
-export function setToday() {
-    const lastdate = getState(StateKeys.LAST_DATE);
-    if (lastdate instanceof Date) {
-        setDate(
-            lastdate.getFullYear(),
-            lastdate.getMonth() + 1,
-            lastdate.getDate()
-        );
-    }
-    const setTodayElem = requireElement('settoday');
-    setTodayElem.style.display = 'none';
-}
 
 /**
  *

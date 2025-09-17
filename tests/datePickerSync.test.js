@@ -16,11 +16,6 @@ describe('Date picker synchronization', () => {
         datepicker2.type = 'date';
         document.body.appendChild(datepicker2);
 
-        const setTodayButton = document.createElement('div');
-        setTodayButton.id = 'settoday';
-        setTodayButton.style.display = 'none';
-        document.body.appendChild(setTodayButton);
-
         const minusBtn = document.createElement('button');
         minusBtn.id = 'minus1d';
         document.body.appendChild(minusBtn);
@@ -28,6 +23,10 @@ describe('Date picker synchronization', () => {
         const plusBtn = document.createElement('button');
         plusBtn.id = 'plus1d';
         document.body.appendChild(plusBtn);
+
+        const setDateBtn = document.createElement('button');
+        setDateBtn.id = 'setdate';
+        document.body.appendChild(setDateBtn);
 
         // Set up the date picker handlers
         setupDatePickerHandlers();
