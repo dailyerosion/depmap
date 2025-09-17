@@ -1,5 +1,4 @@
 import { transform } from 'ol/proj';
-import { setToday } from './dateUtils';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
@@ -62,23 +61,17 @@ function getShapefile() {
 export function setupDatePickerHandlers() {
     const datepicker = requireElement('datepicker');
     const datepicker2 = requireElement('datepicker2');
-    const setTodayButton = requireElement('settoday');
+    const setDateButton = requireElement('setdate');
     const minusOneDay = requireElement('minus1d');
     const plusOneDay = requireElement('plus1d');
 
-    if (
-        !datepicker ||
-        !datepicker2 ||
-        !setTodayButton ||
-        !minusOneDay ||
-        !plusOneDay ||
-        !(datepicker instanceof HTMLInputElement) ||
-        !(datepicker2 instanceof HTMLInputElement)
-    ) {
-        console.error('Required date control elements not found');
-        return;
-    }
-
+    // Show the setDateButton when values change
+    datepicker.addEventListener("change", () => {
+        setDateButton.style.display = 'block';
+    });
+    datepicker2.addEventListener("change", () => {
+        setDateButton.style.display = 'block';
+    });
     // Initialize date pickers with current state
     const currentDate = getState(StateKeys.DATE);
     if (currentDate instanceof Date) {
@@ -101,7 +94,7 @@ export function setupDatePickerHandlers() {
             
             const lastDate = getState(StateKeys.LAST_DATE);
             if (lastDate instanceof Date && newDate < lastDate) {
-                setTodayButton.style.display = 'block';
+                setDateButton.style.display = 'block';
             }
         }
     });
@@ -117,42 +110,40 @@ export function setupDatePickerHandlers() {
             
             const lastDate = getState(StateKeys.LAST_DATE);
             if (lastDate instanceof Date && newDate < lastDate) {
-                setTodayButton.style.display = 'block';
+                setDateButton.style.display = 'block';
             }
         }
     });
 
-    datepicker.addEventListener('change', () => {
-        if (!datepicker.value) {return;}
-        // Parse date string properly to avoid timezone issues
-        const dateParts = datepicker.value.split('-');
-        const selectedDate = new Date(
-            parseInt(dateParts[0], 10), // year
-            parseInt(dateParts[1], 10) - 1, // month (0-indexed)
-            parseInt(dateParts[2], 10) // day
-        );
-        setState(StateKeys.DATE, selectedDate);
-        
-        const lastDate = getState(StateKeys.LAST_DATE);
-        if (lastDate instanceof Date && selectedDate < lastDate) {
-            setTodayButton.style.display = 'block';
+    setDateButton.addEventListener('click', () => {
+        let dateParts = null;
+        let newDate = null;
+        if (datepicker.value) {
+            dateParts = datepicker.value.split('-');
+            if (dateParts.length === 3) {
+                newDate = new Date(
+                    parseInt(dateParts[0], 10),
+                    parseInt(dateParts[1], 10) - 1,
+                    parseInt(dateParts[2], 10)
+                );
+                if (!isNaN(newDate.getTime())) {
+                    setState(StateKeys.DATE, newDate);
+                }
+            }
         }
-    });
-
-    datepicker2.addEventListener('change', () => {
-        if (!datepicker2.value) {return;}
-        // Parse date string properly to avoid timezone issues
-        const dateParts = datepicker2.value.split('-');
-        const selectedDate = new Date(
-            parseInt(dateParts[0], 10), // year
-            parseInt(dateParts[1], 10) - 1, // month (0-indexed)
-            parseInt(dateParts[2], 10) // day
-        );
-        setState(StateKeys.DATE2, selectedDate);
-    });
-
-    setTodayButton.addEventListener('click', () => {
-        setToday();
+        if (datepicker2.value) {
+            dateParts = datepicker2.value.split('-');
+            if (dateParts.length === 3) {
+                newDate = new Date(
+                    parseInt(dateParts[0], 10),
+                    parseInt(dateParts[1], 10) - 1,
+                    parseInt(dateParts[2], 10)
+                );
+                if (!isNaN(newDate.getTime())) {
+                    setState(StateKeys.DATE2, newDate);
+                }
+            }
+        }
     });
 
     // Subscribe to state changes to keep date pickers in sync
@@ -330,13 +321,4 @@ export function setupInlineEventHandlers(setDateSelection) {
         });
     }
 
-    // "Go to Latest Date" button in the new date notification modal
-    const gotoLatestBtn = document.querySelector(
-        'button[data-action="goto-latest"]'
-    );
-    if (gotoLatestBtn) {
-        gotoLatestBtn.addEventListener('click', () => {
-            setToday();
-        });
-    }
 }

@@ -35,12 +35,13 @@ describe('Date handlers', () => {
             document.body.appendChild(plus);
         }
 
-        const today = document.getElementById('settoday');
-        if (!today) {
-            const todayBtn = document.createElement('div');
-            todayBtn.id = 'settoday';
-            document.body.appendChild(todayBtn);
+        const setDateBtn = document.getElementById('setDate');
+        if (!setDateBtn) {
+            const setDate = document.createElement('button');
+            setDate.id = 'setdate';
+            document.body.appendChild(setDate);
         }
+
     });
 
     afterEach(() => {
@@ -53,7 +54,7 @@ describe('Date handlers', () => {
         const initialDate = makeDate(2025, 5, 27);
         setState(StateKeys.DATE, initialDate);
         setupDatePickerHandlers();
-        
+
         const minusButton = document.getElementById('minus1d');
         if (!minusButton) {
             throw new Error('minus1d button not found');

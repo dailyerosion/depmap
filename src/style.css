@@ -434,8 +434,7 @@ div[id$="_radio"] .btn {
     font-weight: 500;
 }
 
-/* Back to Latest Date Button */
-#settoday a.btn {
+#setdate a.btn {
     background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
     border-color: #ffc107;
     color: #212529;
@@ -444,7 +443,7 @@ div[id$="_radio"] .btn {
     margin: 1rem 0;
 }
 
-#settoday a.btn:hover {
+#setdate a.btn:hover {
     background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
     color: #212529;
     transform: translateY(-2px);
@@ -612,7 +611,7 @@ label[for^="ST"]:hover {
 /* Content Section Layout Improvements */
 
 /* Date Selection Section */
-.input-group + #settoday,
+.input-group + #setdate,
 .input-group + div[style*="display: none"] {
     margin-top: 1rem;
 }
