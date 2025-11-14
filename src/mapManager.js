@@ -2,6 +2,7 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import Overlay from 'ol/Overlay';
 import Collection from 'ol/Collection';
+import { defaults as defaultInteractions } from 'ol/interaction';
 import { XYZ } from 'ol/source';
 import OSM from 'ol/source/OSM';
 import { GeoJSON } from 'ol/format';
@@ -153,6 +154,7 @@ export function setupMapEventHandlers() {
     });
 
     getMap().on('dblclick', (evt) => {
+        evt.preventDefault();
         evt.stopPropagation();
         const pixel = getMap().getEventPixel(evt.originalEvent);
         const features = getMap().getFeaturesAtPixel(pixel);
@@ -394,6 +396,7 @@ export function initializeMap() {
     map = new Map({
         target: 'map',
         controls: [],
+        interactions: defaultInteractions({ doubleClickZoom: false }),
         layers: [
             ...createBaseLayers(),
             vectorLayer,
