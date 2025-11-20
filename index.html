@@ -69,8 +69,8 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <h4 class="modal-title" id="dtModalLabel">DEP Tillage Codes</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" onkeypress="return event.keyCode != 13;">
 
@@ -335,28 +335,47 @@
 <h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-secondary" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
     <button data-action="increase-opacity" class="btn btn-secondary" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
 <ul class="list-unstyled deplist">
-<li data-category="output"><input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip" checked="checked">
-<label for="precip-in2_opt">Precipitation</label></li>
-<li data-category="output"><input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff">
-<label for="runoff2_opt">Runoff</label></li>
-<li data-category="output"><input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss">
-<label for="loss2_opt">Detachment</label></li>
-<li data-category="output"><input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery">
-<label for="delivery2_opt">Hillslope Soil Loss</label></li>
+<li data-category="output">
+    <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip"
+    checked="checked" data-description="Precipitation is the liquid equivalent (snow is melted) depth of water spatially averaged over the HUC12.">
+    <label for="precip-in2_opt">Precipitation</label>
+</li>
+<li data-category="output">
+    <input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"
+    data-description="Runoff is the amount of water leaving the DEP modelled hillslopes averaged for a HUC12.">
+    <label for="runoff2_opt">Runoff</label>
+</li>
+<li data-category="output">
+    <input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"
+    data-description="Detachment is the amount of soil disturbed from the DEP modelled hillslope averaged for a HUC12.">
+    <label for="loss2_opt">Detachment</label>
+</li>
+<li data-category="output">
+    <input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"
+    data-description="Delivery is the amount of soil leaving the modelled hillslope averaged for a HUC12.">
+    <label for="delivery2_opt">Hillslope Soil Loss</label>
+</li>
 </ul>
+<p id="output-description" class="text-muted small ms-4"></p>
 
 <h4>View Metadata:</h4>
 <ul class="list-unstyled deplist">
-<li data-category="metadata"><input type="radio" id="slp_opt" name="whichlayer" value="slp">
-<label for="slp_opt">Average Slope [%]</label></li>
-<li data-category="metadata"><input type="radio" id="dt_opt" name="whichlayer" value="dt">
-<label for="dt_opt">Dominant Tillage Practice</label>
- <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-  data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
+<li data-category="metadata">
+    <input type="radio" id="slp_opt" name="whichlayer" value="slp"
+    data-description="Average Slope is a HUC12 averaged value of bulk slope for DEP modelled hillslopes.">
+    <label for="slp_opt">Average Slope [%]</label>
+</li>
+<li data-category="metadata">
+    <input type="radio" id="dt_opt" name="whichlayer" value="dt"
+    data-description="Dominant Tillage Practice is the most common DEP tillage code within a HUC12. See info button for more details.">
+    <label for="dt_opt">Dominant Tillage Practice 
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+         data-bs-target="#dtModal" style="padding: 0.1rem 0.4rem; font-size: 0.85em;">
+         <i class="bi-info-circle-fill"></i> info</button>
+    </label>
 </li>
 </ul>
-
-<p><span id="variable_desc"></span></p>
+<p id="metadata-description" class="text-muted small ms-4"></p>
 
 <h4>Imagery:</h4>
 <ul id="ls-base-layers" class="list-unstyled deplist"></ul>
