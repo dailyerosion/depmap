@@ -738,9 +738,6 @@ br[clear="all"] {
 .list-unstyled.deplist li:hover {
     background-color: rgba(13, 110, 253, 0.08);
     border-radius: 0.25rem;
-    margin: 0 -0.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 /* Radio Button Styling within Lists */
@@ -748,6 +745,7 @@ br[clear="all"] {
     margin: 0;
     transform: scale(1.2);
     accent-color: #0d6efd;
+    cursor: pointer;
     cursor: pointer;
     flex-shrink: 0;
 }

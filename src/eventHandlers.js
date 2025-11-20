@@ -172,8 +172,21 @@ export function setupRadioHandlers() {
                 setState(StateKeys.LTYPE, this.value);
 
                 rerender_vectors();
+                
+                const descriptionEl = document.getElementById('output-description');
+                if (descriptionEl && this.dataset.description) {
+                    descriptionEl.textContent = this.dataset.description;
+                }
             });
         });
+    
+    const checkedRadio = document.querySelector('input[type=radio][name=whichlayer]:checked');
+    if (checkedRadio) {
+        const descriptionEl = document.getElementById('output-description');
+        if (descriptionEl && checkedRadio.dataset.description) {
+            descriptionEl.textContent = checkedRadio.dataset.description;
+        }
+    }
 
     document
         .querySelectorAll('#units_radio input[type=radio]')
