@@ -69,8 +69,8 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <h4 class="modal-title" id="dtModalLabel">DEP Tillage Codes</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" onkeypress="return event.keyCode != 13;">
 
@@ -360,16 +360,22 @@
 
 <h4>View Metadata:</h4>
 <ul class="list-unstyled deplist">
-<li data-category="metadata"><input type="radio" id="slp_opt" name="whichlayer" value="slp">
-<label for="slp_opt">Average Slope [%]</label></li>
-<li data-category="metadata"><input type="radio" id="dt_opt" name="whichlayer" value="dt">
-<label for="dt_opt">Dominant Tillage Practice</label>
- <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-  data-bs-target="#dtModal"><i class="bi-info-circle"></i></button>
+<li data-category="metadata">
+    <input type="radio" id="slp_opt" name="whichlayer" value="slp"
+    data-description="Average Slope is a HUC12 averaged value of bulk slope for DEP modelled hillslopes.">
+    <label for="slp_opt">Average Slope [%]</label>
+</li>
+<li data-category="metadata">
+    <input type="radio" id="dt_opt" name="whichlayer" value="dt"
+    data-description="Dominant Tillage Practice is the most common DEP tillage code within a HUC12. See info button for more details.">
+    <label for="dt_opt">Dominant Tillage Practice 
+        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+         data-bs-target="#dtModal" style="padding: 0.1rem 0.4rem; font-size: 0.85em;">
+         <i class="bi-info-circle-fill"></i> info</button>
+    </label>
 </li>
 </ul>
-
-<p><span id="variable_desc"></span></p>
+<p id="metadata-description" class="text-muted small ms-4"></p>
 
 <h4>Imagery:</h4>
 <ul id="ls-base-layers" class="list-unstyled deplist"></ul>
