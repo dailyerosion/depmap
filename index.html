@@ -48,9 +48,9 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
+        <h4 class="modal-title" id="eventsModalLabel">Listing of Daily Events</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"
          aria-label="Close"></button>
-        <h4 class="modal-title" id="eventsModalLabel">Listing of Daily Events</h4>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
         <div id="eventsres"></div>
@@ -111,8 +111,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <h4 class="modal-title" id="myModalLabel">Search for Watershed by Name or ID</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" onkeypress="return event.keyCode != 13;">
         <p>Enter some case-insensitive text to search for a watershed by name or
@@ -136,14 +136,14 @@
 
 <div id="mapcontrols">
 <button class="btn btn-sq-sm btn-danger float-start active" id="mappointer"
-    title="Interact with Map.">
+    title="Interact with Map." aria-label="Interact with Map">
     <i class="bi-hand-index-fill"></i></button>
 <button class="btn btn-sq-sm btn-danger float-start active" id="mapinfo"
-    title="Double Click HUC12 for Detailed Data.">
+    title="Double Click HUC12 for Detailed Data." aria-label="Double Click HUC12 for Detailed Data">
     <i class="bi-info-circle"></i></button>
-<button id="mapplus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map In."><i class="bi-zoom-in"></i></button>
-<button id="mapminus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map Out."><i class="bi-zoom-out"></i></button>
-<button id="mapprint" class="btn btn-sq-sm btn-danger float-start" title="Create PNG image of map."><i class="bi-printer"></i></button>
+<button id="mapplus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map In." aria-label="Zoom Map In"><i class="bi-zoom-in"></i></button>
+<button id="mapminus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map Out." aria-label="Zoom Map Out"><i class="bi-zoom-out"></i></button>
+<button id="mapprint" class="btn btn-sq-sm btn-danger float-start" title="Create PNG image of map." aria-label="Create PNG image of map"><i class="bi-printer"></i></button>
 </div>
 
 <div id="fdetails">
@@ -314,9 +314,9 @@
 </fieldset>
 
 <div class="input-group">
-<button id="minus1d" class="btn btn-secondary" type="button"><i class="bi-arrow-left"></i></button>
+<button id="minus1d" class="btn btn-secondary" type="button" aria-label="Previous day"><i class="bi-arrow-left"></i></button>
 <input type="date" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-<button id="plus1d" class="btn btn-secondary" type="button"><i class="bi-arrow-right"></i></button>
+<button id="plus1d" class="btn btn-secondary" type="button" aria-label="Next day"><i class="bi-arrow-right"></i></button>
 </div>
 
 <div style="display: none;" id="dp2">
@@ -352,7 +352,7 @@
 </li>
 <li data-category="output">
     <input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"
-    data-description="Delivery is the amount of soil leaving the modelled hillslope averaged for a HUC12.">
+    data-description="Hillslope Soil Loss is the amount of soil delivered to the bottom the modelled hillslope averaged for a HUC12.">
     <label for="delivery2_opt">Hillslope Soil Loss</label>
 </li>
 </ul>
