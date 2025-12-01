@@ -258,7 +258,7 @@ export async function viewEvents(huc12, mode) {
                         <th>Precip [${varunits.qc_precip[metric]}]</th>
                         <th>Runoff [${varunits.qc_precip[metric]}]</th>
                         <th>Detach [${varunits.avg_loss[metric]}]</th>
-                        <th>Hillslope Soil Loss [${varunits.avg_loss[metric]}]</th>
+                        <th>Hillslope Soil Delivery [${varunits.avg_loss[metric]}]</th>
                     </tr>
                 </thead>
                 <tbody>

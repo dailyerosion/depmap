@@ -34,7 +34,7 @@ export const vardesc = {
     avg_runoff: 'Runoff is the average amount of water that left the hillslopes via above ground transport.',
     avg_loss: 'Soil Detachment is the average amount of soil disturbed on the modelled hillslopes.',
     qc_precip: 'Precipitation is the average amount of rainfall and melted snow received on the hillslopes.',
-    avg_delivery: 'Hillslope Soil Loss is the average amount of soil transported to the bottom of the modelled hillslopes.',
+    avg_delivery: 'Hillslope Soil Delivery is the average amount of soil transported to the bottom of the modelled hillslopes.',
     dt: "Dominant Tillage Code is an index value with increasing values indicating increasing tillage intensity.",
     slp: "Average hillslope bulk slope."
 };
@@ -52,7 +52,7 @@ export const vartitle = {
     avg_runoff: 'Water Runoff',
     avg_loss: 'Soil Detachment',
     qc_precip: 'Precipitation',
-    avg_delivery: 'Hillslope Soil Loss',
+    avg_delivery: 'Hillslope Soil Delivery',
     dt: 'Dominant Tillage',
     slp: 'Bulk Slope'
 };
