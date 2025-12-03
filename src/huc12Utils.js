@@ -288,7 +288,7 @@ export async function viewEvents(huc12, mode) {
  * @returns {string} Formatted date string
  */
 function formatDateDisplay(dateStr) {
-    const date = new Date(dateStr + 'T00:00:00');
+    const date = new Date(`${dateStr}T00:00:00`);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
@@ -312,7 +312,7 @@ function populateDetailsPanel(data, huc12, date) {
     const { name, qc_precip, avg_runoff, avg_loss, avg_delivery, punit, lunit, top10 } = data;
     
     // Format numeric values to 2 decimal places
-    const formatValue = (val) => Number(val).toFixed(2);
+    const formatNum = (val) => Number(val).toFixed(2);
     
     // Update simple text elements
     requireElement('details_name').textContent = name;
@@ -321,10 +321,10 @@ function populateDetailsPanel(data, huc12, date) {
     requireElement('details_summary_title').textContent = `${formatSummaryDate(date)} Summary`;
     
     // Update summary values
-    requireElement('details_precip').textContent = `${formatValue(qc_precip)} ${punit}`;
-    requireElement('details_runoff').textContent = `${formatValue(avg_runoff)} ${punit}`;
-    requireElement('details_loss').textContent = `${formatValue(avg_loss)} ${lunit}`;
-    requireElement('details_delivery').textContent = `${formatValue(avg_delivery)} ${lunit}`;
+    requireElement('details_precip').textContent = `${formatNum(qc_precip)} ${punit}`;
+    requireElement('details_runoff').textContent = `${formatNum(avg_runoff)} ${punit}`;
+    requireElement('details_loss').textContent = `${formatNum(avg_loss)} ${lunit}`;
+    requireElement('details_delivery').textContent = `${formatNum(avg_delivery)} ${lunit}`;
     
     // Update buttons with HUC12 data attribute
     requireElement('details_btn_daily').setAttribute('data-huc12', huc12);
