@@ -173,35 +173,18 @@ export function setupRadioHandlers() {
 
                 rerender_vectors();
                 
-                const category = this.closest('li').dataset.category;
-                const outputDesc = document.getElementById('output-description');
-                const metadataDesc = document.getElementById('metadata-description');
-                
-                if (category === 'output') {
-                    if (outputDesc && this.dataset.description) {
-                        outputDesc.textContent = this.dataset.description;
-                    }
-                    if (metadataDesc) {
-                        metadataDesc.textContent = '';
-                    }
-                } else {
-                    if (metadataDesc && this.dataset.description) {
-                        metadataDesc.textContent = this.dataset.description;
-                    }
-                    if (outputDesc) {
-                        outputDesc.textContent = '';
-                    }
+                const layerDesc = document.getElementById('layer-description');
+                if (layerDesc && this.dataset.description) {
+                    layerDesc.textContent = this.dataset.description;
                 }
             });
         });
     
     const checkedRadio = document.querySelector('input[type=radio][name=whichlayer]:checked');
     if (checkedRadio) {
-        const category = checkedRadio.closest('li').dataset.category;
-        const descriptionId = category === 'output' ? 'output-description' : 'metadata-description';
-        const descriptionEl = document.getElementById(descriptionId);
-        if (descriptionEl && checkedRadio.dataset.description) {
-            descriptionEl.textContent = checkedRadio.dataset.description;
+        const layerDesc = document.getElementById('layer-description');
+        if (layerDesc && checkedRadio.dataset.description) {
+            layerDesc.textContent = checkedRadio.dataset.description;
         }
     }
 

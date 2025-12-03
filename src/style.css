@@ -552,36 +552,20 @@ label[for^="ST"]:hover {
 }
 
 /* Content Containers */
-#detailsContainer {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1.5rem 0;
-    transition: all 0.3s ease;
-}
-
-#detailsContainer:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-color: #dee2e6;
-}
 
 #details_loading {
     text-align: center;
     color: #6c757d;
     font-style: italic;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
-#details_hidden {
-    text-align: center;
-    color: #6c757d;
-    font-style: italic;
-    padding: 1rem;
-    background: #fff;
-    border: 2px dashed #dee2e6;
-    border-radius: 0.375rem;
-    margin: 0.5rem 0;
+#details_details .table {
+    font-size: 0.8rem;
+}
+
+#details_details .table th {
+    width: 45%;
 }
 
 /* Table Styling for DEP Version */

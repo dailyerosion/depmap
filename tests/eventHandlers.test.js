@@ -28,18 +28,17 @@ describe('eventHandlers', () => {
             <input type="radio" name="whichlayer" value="qc_precip" checked data-description="Test precipitation description">
           </li>
         </ul>
-        <p id="output-description"></p>
-        <p id="metadata-description"></p>
+        <p id="layer-description"></p>
         <div id="units_radio"></div>
       `;
 
       setupRadioHandlers();
 
-      const outputDesc = document.getElementById('output-description');
-      expect(outputDesc.textContent).toBe('Test precipitation description');
+      const layerDesc = document.getElementById('layer-description');
+      expect(layerDesc.textContent).toBe('Test precipitation description');
     });
 
-    it('should clear metadata description when output radio is selected', () => {
+    it('should update description when different radio is selected', () => {
       document.body.innerHTML = `
         <ul>
           <li data-category="output">
@@ -49,8 +48,7 @@ describe('eventHandlers', () => {
             <input type="radio" name="whichlayer" value="slp" data-description="Metadata description">
           </li>
         </ul>
-        <p id="output-description"></p>
-        <p id="metadata-description"></p>
+        <p id="layer-description"></p>
         <div id="units_radio"></div>
       `;
 
@@ -60,12 +58,10 @@ describe('eventHandlers', () => {
       setupRadioHandlers();
       
       metadataRadio.dispatchEvent(new Event('change'));
-      expect(document.getElementById('metadata-description').textContent).toBe('Metadata description');
-      expect(document.getElementById('output-description').textContent).toBe('');
+      expect(document.getElementById('layer-description').textContent).toBe('Metadata description');
 
       outputRadio.dispatchEvent(new Event('change'));
-      expect(document.getElementById('output-description').textContent).toBe('Output description');
-      expect(document.getElementById('metadata-description').textContent).toBe('');
+      expect(document.getElementById('layer-description').textContent).toBe('Output description');
     });
   });
 });
