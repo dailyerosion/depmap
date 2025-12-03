@@ -173,7 +173,7 @@ export function setupMapEventHandlers() {
  * @param {*} feature
  * @returns
  */
-function makeDetailedFeature(feature) {
+export function makeDetailedFeature(feature) {
     if (feature === null) {
         return;
     }

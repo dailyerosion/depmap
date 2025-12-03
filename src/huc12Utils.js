@@ -4,7 +4,7 @@ import strftime from 'strftime';
 import { requireElement, requireInputElement } from 'iemjs/domUtils';
 import { setYearInterval, setDateFromString, setDate } from './dateUtils.js';
 import { Modal } from 'bootstrap';
-import { getVectorLayer, getMap } from './mapManager.js';
+import { getVectorLayer, getMap, makeDetailedFeature } from './mapManager.js';
 
 /**
  * Set up event delegation for dynamically created modal content
@@ -95,7 +95,7 @@ export function setHUC12(huc12) {
         modal.hide();
     }
 
-    // 2. Find and zoom to the HUC12 geometry
+    // 2. Find the feature and zoom to it
     const vectorLayer = getVectorLayer();
     if (vectorLayer?.getSource()) {
         const feature = vectorLayer.getSource().getFeatureById(huc12);
@@ -106,16 +106,19 @@ export function setHUC12(huc12) {
                 if (map) {
                     // Fit the map view to the feature's extent
                     map.getView().fit(geometry, {
-                        padding: [50, 50, 50, 50], // Add some padding around the feature
-                        maxZoom: 12 // Don't zoom in too close
+                        padding: [50, 50, 50, 50],
+                        maxZoom: 12
                     });
                 }
             }
+            // 3. Select the feature and load details (same as double-click)
+            makeDetailedFeature(feature);
+            return;
         }
     }
 
-    // 3. Switch to Data tab and load detailed huc12 information
-    updateDetails(huc12);
+    // Fallback if feature not found - just load details by ID
+    updateDetails(huc12, true);
 }
 
 /**
@@ -280,6 +283,80 @@ export async function viewEvents(huc12, mode) {
 }
 
 /**
+ * Format a date string (YYYY-MM-DD) for display
+ * @param {string} dateStr - Date in YYYY-MM-DD format
+ * @returns {string} Formatted date string
+ */
+function formatDateDisplay(dateStr) {
+    const date = new Date(`${dateStr}T00:00:00`);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
+/**
+ * Format a date string for the summary header
+ * @param {Date} date - Date object
+ * @returns {string} Formatted date string (e.g., "01 Jan 2025")
+ */
+function formatSummaryDate(date) {
+    return strftime('%d %b %Y', date);
+}
+
+/**
+ * Populate the HUC12 details panel from JSON data
+ * @param {Object} data - JSON response from the API
+ * @param {string} huc12 - HUC12 identifier
+ * @param {Date} date - Current date
+ */
+function populateDetailsPanel(data, huc12, date) {
+    const { name, qc_precip, avg_runoff, avg_loss, avg_delivery, punit, lunit, top10 } = data;
+    
+    // Format numeric values to 2 decimal places
+    const formatNum = (val) => Number(val).toFixed(2);
+    
+    // Update simple text elements
+    requireElement('details_name').textContent = name;
+    requireElement('details_huc12_display').textContent = huc12;
+    requireInputElement('details_huc12').value = huc12;
+    requireElement('details_summary_title').textContent = `${formatSummaryDate(date)} Summary`;
+    
+    // Update summary values
+    requireElement('details_precip').textContent = `${formatNum(qc_precip)} ${punit}`;
+    requireElement('details_runoff').textContent = `${formatNum(avg_runoff)} ${punit}`;
+    requireElement('details_loss').textContent = `${formatNum(avg_loss)} ${lunit}`;
+    requireElement('details_delivery').textContent = `${formatNum(avg_delivery)} ${lunit}`;
+    
+    // Update buttons with HUC12 data attribute
+    requireElement('details_btn_daily').setAttribute('data-huc12', huc12);
+    requireElement('details_btn_yearly').setAttribute('data-huc12', huc12);
+    
+    // Update top 10 table header units
+    requireElement('details_top10_punit').textContent = punit;
+    requireElement('details_top10_punit2').textContent = punit;
+    requireElement('details_top10_lunit').textContent = lunit;
+    requireElement('details_top10_lunit2').textContent = lunit;
+    
+    // Build top 10 table rows with full data
+    const top10Body = requireElement('details_top10');
+    let top10HTML = '';
+    
+    for (let i = 0; i < top10.length; i++) {
+        const item = top10[i];
+        const [year, month, day] = item.date.split('-');
+        const shortYear = year.slice(2);
+        top10HTML += `<tr>
+            <td><a href="#" data-action="set-date" data-year="${year}" data-month="${month}" data-day="${day}" title="${formatDateDisplay(item.date)}">${month}/${day}/${shortYear}</a></td>
+            <td>${formatValue(item.qc_precip)}</td>
+            <td>${formatValue(item.avg_runoff)}</td>
+            <td>${formatValue(item.avg_loss)}</td>
+            <td>${formatValue(item.avg_delivery)}</td>
+        </tr>`;
+    }
+    
+    top10Body.innerHTML = top10HTML;
+}
+
+/**
  * Update the HUC12 details widget panel
  * @param {string} huc12 - HUC12 identifier
  */
@@ -341,16 +418,18 @@ export async function updateDetails(huc12, focusTab) {
         const searchParams = new URLSearchParams({
             huc12,
             date: strftime('%Y-%m-%d', date),
-            date2: date2 ? strftime('%Y-%m-%d', date2) : '',
             metric: String(getState(StateKeys.METRIC)),
         });
+        if (date2) {
+            searchParams.set('date2', strftime('%Y-%m-%d', date2));
+        }
 
-        const response = await fetch(`${BACKEND}/huc12-details.php?${searchParams}`);
-        const data = await response.text();
+        const response = await fetch(`${BACKEND}/auto/huc12_details.py?${searchParams}`);
+        const data = await response.json();
 
-        elements.details.style.display = 'block';
         elements.loading.style.display = 'none';
-        elements.details.innerHTML = data;
+        elements.details.style.display = 'block';
+        populateDetailsPanel(data, huc12, date);
     } catch (error) {
         elements.details.style.display = 'block';
         elements.loading.style.display = 'none';

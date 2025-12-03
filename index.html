@@ -243,157 +243,247 @@
             </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade" id="data-pane">
-<!-- Data pane stuff -->
 
-<div id="detailsContainer" style="background: #eee;">
-    <div id="details_loading" style="display: none;"><img src="src/images/wait24trans.gif" /> Loading...</div>
-    <div id="details_details"></div>
-    <div id="details_hidden">Double click on a watershed to load detailed data</div>
-</div><!-- ./detailsContainer -->
+<!-- Watershed Details -->
+<div class="card mb-2" id="detailsContainer">
+    <div class="card-header py-1">
+        <i class="bi-droplet me-2"></i> Watershed Details
+    </div>
+    <div class="card-body py-2 ps-1">
+        <div id="details_loading" style="display: none;"><img src="src/images/wait24trans.gif" /> Loading...</div>
+        <div id="details_hidden" class="text-center text-muted py-2">
+            <i class="bi-cursor fs-4 d-block mb-2"></i>
+            Double click on a watershed to load detailed data
+        </div>
+        <div id="details_details" style="display: none;">
+            <div class="mb-2">
+                <strong id="details_name"></strong>
+                <code id="details_huc12_display" class="small ms-2"></code>
+                <input type="hidden" id="details_huc12">
+            </div>
+            <div class="btn-group btn-group-sm w-100 mb-2" role="group">
+                <button id="details_btn_daily" data-action="view-events" data-period="daily"
+                    class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#eventsModal">
+                    <i class="bi-table"></i> Daily</button>
+                <button id="details_btn_yearly" data-action="view-events" data-period="yearly"
+                    class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
+                    data-bs-target="#eventsModal">
+                    <i class="bi-calendar3"></i> Yearly</button>
+            </div>
+            <h6 id="details_summary_title" class="text-muted small mb-1">Summary</h6>
+            <table class="table table-sm table-bordered mb-2">
+                <tbody>
+                    <tr><th>Precip</th><td id="details_precip"></td></tr>
+                    <tr><th>Runoff</th><td id="details_runoff"></td></tr>
+                    <tr><th>Soil Detachment</th><td id="details_loss"></td></tr>
+                    <tr><th>Hillslope Soil Delivery</th><td id="details_delivery"></td></tr>
+                </tbody>
+            </table>
+            <h6 class="text-muted small mb-1">Top 10 Soil Detachment Days</h6>
+            <table class="table table-sm table-striped table-bordered mb-0" style="font-size: 0.85em;">
+                <thead>
+                    <tr>
+                        <th>Date (m/d/y)</th>
+                        <th><abbr title="Precipitation">Pcpn</abbr> (<span id="details_top10_punit"></span>)</th>
+                        <th><abbr title="Runoff">Roff</abbr> (<span id="details_top10_punit2"></span>)</th>
+                        <th><abbr title="Soil Detachment">Detach</abbr> (<span id="details_top10_lunit"></span>)</th>
+                        <th><abbr title="Hillslope Soil Delivery">Delivery</abbr> (<span id="details_top10_lunit2"></span>)</th>
+                    </tr>
+                </thead>
+                <tbody id="details_top10"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-<fieldset>
-    <legend>Unit Convention</legend>
-<div id="units_radio">
-    <input type="radio" class="btn-check" name="units" id="english_opt"
-     autocomplete="off" value="0" checked>
-    <label class="btn btn-outline-success" for="english_opt">English</label>
-    <input type="radio" class="btn-check" name="units" id="metric_opt"
-     autocomplete="off" value="1">
-    <label class="btn btn-outline-success" for="metric_opt">Metric</label>
-</div>
-</fieldset>
-
-<h4>Shapefile Download</h4>
-<div class="content-section">
-<p><strong>Include States for currently shown date range:</strong></p>
-<div class="row">
-<div class="col-6">
-<p><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label></p>
-</div>
-<div class="col-6">
-<p><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label></p>
-<p><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label></p>
-</div>
-</div>
-<button data-action="download-shapefile" class="btn btn-secondary" type="button"><i class="bi-download"></i> Download Data</button>
+<!-- Unit Convention -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-rulers me-2"></i> Unit Convention
+    </div>
+    <div class="card-body py-2">
+        <div id="units_radio">
+            <input type="radio" class="btn-check" name="units" id="english_opt"
+                autocomplete="off" value="0" checked>
+            <label class="btn btn-outline-success" for="english_opt">English</label>
+            <input type="radio" class="btn-check" name="units" id="metric_opt"
+                autocomplete="off" value="1">
+            <label class="btn btn-outline-success" for="metric_opt">Metric</label>
+        </div>
+    </div>
 </div>
 
-<div class="content-section">
-<h4>Current DEP Version</h4>
+<!-- Shapefile Download -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-download me-2"></i> Shapefile Download
+    </div>
+    <div class="card-body py-2">
+        <p class="small mb-2"><strong>Include States for currently shown date range:</strong></p>
+        <div class="row">
+            <div class="col-6">
+                <div><input type="checkbox" checked="checked" name="dlstates" value="IL" id="STIL"> <label for="STIL">Illinois</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="IA" id="STIA"> <label for="STIA">Iowa</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="KS" id="STKS"> <label for="STKS">Kansas</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="MN" id="STMN"> <label for="STMN">Minnesota</label></div>
+            </div>
+            <div class="col-6">
+                <div><input type="checkbox" checked="checked" name="dlstates" value="MO" id="STMO"> <label for="STMO">Missouri</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="NE" id="STNE"> <label for="STNE">Nebraska</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="SD" id="STSD"> <label for="STSD">South Dakota</label></div>
+                <div><input type="checkbox" checked="checked" name="dlstates" value="WI" id="STWI"> <label for="STWI">Wisconsin</label></div>
+            </div>
+        </div>
+        <button data-action="download-shapefile" class="btn btn-secondary btn-sm mt-2" type="button"><i class="bi-download"></i> Download Data</button>
+    </div>
+</div>
 
-<table class="table table-striped"><tbody>
-<tr><th>DEP Label</th><td><span id="dv_label"></span></td></tr>
-<tr><th>WEPP Version</th><td><span id="dv_wepp"></span></td></tr>
-<tr><th>ACPF</th><td><span id="dv_acpf"></span></td></tr>
-<tr><th>Flowpath</th><td><span id="dv_flowpath"></span></td></tr>
-<tr><th>GSSURGO</th><td><span id="dv_gssurgo"></span></td></tr>
-<tr><th>Software</th><td><span id="dv_software"></span></td></tr>
-<tr><th>Tillage</th><td><span id="dv_tillage"></span></td></tr>
-<tr><th>Web Interface</th><td><span id="dv_web_interface">Loading...</span></td></tr>
-</tbody></table>
+<!-- DEP Version -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-info-circle me-2"></i> DEP Version Details
+    </div>
+    <div class="card-body py-2">
+        <table class="table table-sm table-striped mb-0"><tbody>
+            <tr><th>DEP Label</th><td><span id="dv_label"></span></td></tr>
+            <tr><th>WEPP Version</th><td><span id="dv_wepp"></span></td></tr>
+            <tr><th>ACPF</th><td><span id="dv_acpf"></span></td></tr>
+            <tr><th>Flowpath</th><td><span id="dv_flowpath"></span></td></tr>
+            <tr><th>GSSURGO</th><td><span id="dv_gssurgo"></span></td></tr>
+            <tr><th>Software</th><td><span id="dv_software"></span></td></tr>
+            <tr><th>Tillage</th><td><span id="dv_tillage"></span></td></tr>
+            <tr><th>Web Interface</th><td><span id="dv_web_interface">Loading...</span></td></tr>
+        </tbody></table>
+    </div>
 </div>
 
             </div><!-- ./data-pane -->
             <div class="tab-pane fade show active" id="map-pane">
-<!-- MAP PANE -->
-<fieldset>
-    <legend>Date Selection:</legend>
-<div id="t">
-    <input type="radio" class="btn-check" name="t" id="single"
-     autocomplete="off" value="single" checked>
-    <label class="btn btn-outline-success" for="single">Single</label>
-    <input type="radio" class="btn-check" name="t" id="multi"
-     autocomplete="off" value="multi">
-    <label class="btn btn-outline-success" for="multi">Multi</label>
+
+<!-- Date Selection -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-calendar-event me-2"></i> Date Selection
+    </div>
+    <div class="card-body py-2">
+        <div id="t" class="mb-2">
+            <input type="radio" class="btn-check" name="t" id="single"
+                autocomplete="off" value="single" checked>
+            <label class="btn btn-outline-success btn-sm" for="single">Single</label>
+            <input type="radio" class="btn-check" name="t" id="multi"
+                autocomplete="off" value="multi">
+            <label class="btn btn-outline-success btn-sm" for="multi">Multi</label>
+        </div>
+        <div class="input-group input-group-sm">
+            <button id="minus1d" class="btn btn-secondary" type="button" aria-label="Previous day"><i class="bi-arrow-left"></i></button>
+            <input type="date" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
+            <button id="plus1d" class="btn btn-secondary" type="button" aria-label="Next day"><i class="bi-arrow-right"></i></button>
+        </div>
+        <div style="display: none;" id="dp2" class="mt-2">
+            <label class="small text-muted">To Date:</label>
+            <div class="input-group input-group-sm">
+                <input type="date" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
+            </div>
+        </div>
+        <div style="display: none;" id="setdate" class="mt-2">
+            <button class="btn btn-secondary btn-sm" type="button" id="settoday">
+                <i class="bi-calendar"></i> Set Date
+            </button>
+        </div>
+    </div>
 </div>
-</fieldset>
 
-<div class="input-group">
-<button id="minus1d" class="btn btn-secondary" type="button" aria-label="Previous day"><i class="bi-arrow-left"></i></button>
-<input type="date" name="date" id="datepicker" class="form-control" style="font-weight: bolder;">
-<button id="plus1d" class="btn btn-secondary" type="button" aria-label="Next day"><i class="bi-arrow-right"></i></button>
+<!-- Available Data Layers -->
+<div class="card mb-2">
+    <div class="card-header py-1 d-flex justify-content-between align-items-center">
+        <span><i class="bi-layers me-2"></i> Available Data Layers</span>
+        <span>
+            <button data-action="decrease-opacity" class="btn btn-outline-secondary btn-sm py-0 px-1" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i></button>
+            <button data-action="increase-opacity" class="btn btn-outline-secondary btn-sm py-0 px-1" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i></button>
+        </span>
+    </div>
+    <div class="card-body py-2">
+        <p class="text-muted small mb-1"><strong>Outputs</strong></p>
+        <ul class="list-unstyled deplist mb-2">
+            <li data-category="output">
+                <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip"
+                checked="checked" data-description="Precipitation is the liquid equivalent (snow is melted) depth of water spatially averaged over the HUC12.">
+                <label for="precip-in2_opt">Precipitation</label>
+            </li>
+            <li data-category="output">
+                <input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"
+                data-description="Runoff is the amount of water leaving the DEP modelled hillslopes averaged for a HUC12.">
+                <label for="runoff2_opt">Runoff</label>
+            </li>
+            <li data-category="output">
+                <input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"
+                data-description="Detachment is the amount of soil disturbed from the DEP modelled hillslope averaged for a HUC12.">
+                <label for="loss2_opt">Detachment</label>
+            </li>
+            <li data-category="output">
+                <input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"
+                data-description="Hillslope Soil Delivery is the amount of soil delivered to the bottom the modelled hillslope averaged for a HUC12.">
+                <label for="delivery2_opt">Hillslope Soil Delivery</label>
+            </li>
+        </ul>
+        <p class="text-muted small mb-1"><strong>Metadata</strong></p>
+        <ul class="list-unstyled deplist mb-1">
+            <li data-category="metadata">
+                <input type="radio" id="slp_opt" name="whichlayer" value="slp"
+                data-description="Average Slope is a HUC12 averaged value of bulk slope for DEP modelled hillslopes.">
+                <label for="slp_opt">Average Slope [%]</label>
+            </li>
+            <li data-category="metadata">
+                <input type="radio" id="dt_opt" name="whichlayer" value="dt"
+                data-description="Dominant Tillage Practice is the most common DEP tillage code within a HUC12. See info button for more details.">
+                <label for="dt_opt">Dominant Tillage Practice 
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                     data-bs-target="#dtModal" style="padding: 0.1rem 0.4rem; font-size: 0.85em;">
+                     <i class="bi-info-circle-fill"></i> info</button>
+                </label>
+            </li>
+        </ul>
+        <p id="layer-description" class="text-muted small mb-0"></p>
+    </div>
 </div>
 
-<div style="display: none;" id="dp2">
-<h4>To Date:</h4>
-<div class="input-group">
-    <input type="date" name="date2" id="datepicker2" class="form-control" style="font-weight: bolder;" />
-</div>
-</div>
-
-<div style="display: none;" id="setdate">
-    <button class="btn btn-secondary" type="button" id="settoday">
-        <i class="bi-calendar"></i> Set Date
-    </button>
+<!-- Imagery -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-image me-2"></i> Imagery
+    </div>
+    <div class="card-body py-2">
+        <ul id="ls-base-layers" class="list-unstyled deplist mb-0"></ul>
+    </div>
 </div>
 
-<h4>View Outputs: <button data-action="decrease-opacity" class="btn btn-secondary" type="button" title="Decrease Opacity"><i class="bi-brightness-high"></i> -</button>
-    <button data-action="increase-opacity" class="btn btn-secondary" type="button" title="Increase Opacity"><i class="bi-brightness-low"></i> +</button></h4>
-<ul class="list-unstyled deplist">
-<li data-category="output">
-    <input type="radio" id="precip-in2_opt" name="whichlayer" value="qc_precip"
-    checked="checked" data-description="Precipitation is the liquid equivalent (snow is melted) depth of water spatially averaged over the HUC12.">
-    <label for="precip-in2_opt">Precipitation</label>
-</li>
-<li data-category="output">
-    <input type="radio" id="runoff2_opt" name="whichlayer" value="avg_runoff"
-    data-description="Runoff is the amount of water leaving the DEP modelled hillslopes averaged for a HUC12.">
-    <label for="runoff2_opt">Runoff</label>
-</li>
-<li data-category="output">
-    <input type="radio" id="loss2_opt" name="whichlayer" value="avg_loss"
-    data-description="Detachment is the amount of soil disturbed from the DEP modelled hillslope averaged for a HUC12.">
-    <label for="loss2_opt">Detachment</label>
-</li>
-<li data-category="output">
-    <input type="radio" id="delivery2_opt" name="whichlayer" value="avg_delivery"
-    data-description="Hillslope Soil Delivery is the amount of soil delivered to the bottom the modelled hillslope averaged for a HUC12.">
-    <label for="delivery2_opt">Hillslope Soil Delivery</label>
-</li>
-</ul>
-<p id="output-description" class="text-muted small ms-4"></p>
-
-<h4>View Metadata:</h4>
-<ul class="list-unstyled deplist">
-<li data-category="metadata">
-    <input type="radio" id="slp_opt" name="whichlayer" value="slp"
-    data-description="Average Slope is a HUC12 averaged value of bulk slope for DEP modelled hillslopes.">
-    <label for="slp_opt">Average Slope [%]</label>
-</li>
-<li data-category="metadata">
-    <input type="radio" id="dt_opt" name="whichlayer" value="dt"
-    data-description="Dominant Tillage Practice is the most common DEP tillage code within a HUC12. See info button for more details.">
-    <label for="dt_opt">Dominant Tillage Practice 
-        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-         data-bs-target="#dtModal" style="padding: 0.1rem 0.4rem; font-size: 0.85em;">
-         <i class="bi-info-circle-fill"></i> info</button>
-    </label>
-</li>
-</ul>
-<p id="metadata-description" class="text-muted small ms-4"></p>
-
-<h4>Imagery:</h4>
-<ul id="ls-base-layers" class="list-unstyled deplist"></ul>
-<h4>Layers:</h4>
-<ul id="ls-overlay-layers" class="list-unstyled deplist"></ul>
-
-<h4>View US State:</h4>
-<div class="state-buttons-container">
-<button data-state="il" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Illinois</button>
-<button data-state="ia" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Iowa</button>
-<button data-state="ks" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Kansas</button>
-<button data-state="mn" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Minnesota</button>
-<button data-state="ne" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Nebraska</button>
-<button data-state="wi" class="btn btn-secondary szoom" type="button"><i class="bi-search"></i> Wisconsin</button>
+<!-- Layers -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-stack me-2"></i> Layers
+    </div>
+    <div class="card-body py-2">
+        <ul id="ls-overlay-layers" class="list-unstyled deplist mb-0"></ul>
+    </div>
 </div>
-<br clear="all" />
 
-<p>&nbsp;</p>
+<!-- Zoom to State -->
+<div class="card mb-2">
+    <div class="card-header py-1">
+        <i class="bi-geo-alt me-2"></i> Zoom to State
+    </div>
+    <div class="card-body py-2">
+        <div class="d-flex flex-wrap gap-1">
+            <button data-state="il" class="btn btn-outline-secondary btn-sm szoom" type="button">Illinois</button>
+            <button data-state="ia" class="btn btn-outline-secondary btn-sm szoom" type="button">Iowa</button>
+            <button data-state="ks" class="btn btn-outline-secondary btn-sm szoom" type="button">Kansas</button>
+            <button data-state="mn" class="btn btn-outline-secondary btn-sm szoom" type="button">Minnesota</button>
+            <button data-state="ne" class="btn btn-outline-secondary btn-sm szoom" type="button">Nebraska</button>
+            <button data-state="wi" class="btn btn-outline-secondary btn-sm szoom" type="button">Wisconsin</button>
+        </div>
+    </div>
+</div>
 
                 </div><!-- ./map-pane -->
             </div><!-- tabcontent -->

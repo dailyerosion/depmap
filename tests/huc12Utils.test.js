@@ -7,7 +7,8 @@ vi.mock('../src/mapManager.js', () => ({
     getVectorLayer: vi.fn(() => ({
         getSource: vi.fn(() => ({
             getFeatureById: vi.fn(() => ({
-                getGeometry: vi.fn(() => ({}))
+                getGeometry: vi.fn(() => ({})),
+                getId: vi.fn(() => '123456789012')
             }))
         }))
     })),
@@ -15,7 +16,8 @@ vi.mock('../src/mapManager.js', () => ({
         getView: vi.fn(() => ({
             fit: vi.fn()
         }))
-    }))
+    })),
+    makeDetailedFeature: vi.fn()
 }));
 
 // Mock Bootstrap Modal
@@ -122,16 +124,8 @@ describe('huc12Utils', () => {
             };
             getMap.mockReturnValue(mockMap);
             
-            // Call setHUC12 and wait for async operations to complete
+            // Call setHUC12
             setHUC12('123456789012');
-            
-            // Wait for the fetch promise to resolve
-            await vi.waitFor(() => {
-                expect(mockFetch).toHaveBeenCalled();
-            });
-            
-            // Wait for all pending promises
-            await new Promise(resolve => setTimeout(resolve, 0));
 
             // Verify modal is closed
             expect(Modal.getInstance).toHaveBeenCalledWith(document.getElementById('myModal'));
@@ -146,14 +140,9 @@ describe('huc12Utils', () => {
                 maxZoom: 12
             });
 
-            // Verify details panel elements were manipulated (after async operations complete)
-            const detailsHidden = document.getElementById('details_hidden');
-            const detailsDetails = document.getElementById('details_details');
-            const detailsLoading = document.getElementById('details_loading');
-            
-            expect(detailsHidden.style.display).toBe('none');
-            expect(detailsDetails.style.display).toBe('block');
-            expect(detailsLoading.style.display).toBe('none');
+            // Verify makeDetailedFeature was called with the feature
+            const { makeDetailedFeature } = await import('../src/mapManager.js');
+            expect(makeDetailedFeature).toHaveBeenCalledWith(mockFeature);
         });
     });
 
