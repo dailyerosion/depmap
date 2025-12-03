@@ -187,14 +187,6 @@ export function setupRadioHandlers() {
             layerDesc.textContent = checkedRadio.dataset.description;
         }
     }
-
-    document
-        .querySelectorAll('#units_radio input[type=radio]')
-        .forEach((radio) => {
-            radio.addEventListener('change', () => {
-                console.log('fixme');
-            });
-        });
 }
 
 export function setupSearchHandlers() {
