@@ -1,6 +1,7 @@
 {
   "name": "depmap",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "version:generate": "node scripts/generate-version.js",
     "prebuild": "npm run version:generate",
