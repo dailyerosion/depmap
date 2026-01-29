@@ -2,7 +2,7 @@ ci:
   autoupdate_schedule: quarterly
 repos:
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: 'v10.0.0-rc.0'
+    rev: 'v10.0.0-rc.2'
     hooks:
       - id: eslint
         additional_dependencies:
@@ -15,7 +15,7 @@ repos:
         - --fix
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.14.11"
+    rev: "v0.14.14"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
