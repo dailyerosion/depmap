@@ -118,9 +118,7 @@ function displayFeatureInfo(evt) {
             if (quickFeature) {
                 getHoverOverlayLayer().getSource().removeFeature(quickFeature);
             }
-            if (feature) {
-                getHoverOverlayLayer().getSource().addFeature(feature);
-            }
+            getHoverOverlayLayer().getSource().addFeature(feature);
             quickFeature = feature;
         }
     }
