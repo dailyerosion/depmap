@@ -116,12 +116,10 @@ export function setupDatePickerHandlers() {
     });
 
     setDateButton.addEventListener('click', () => {
-        let dateParts = null;
-        let newDate = null;
         if (datepicker.value) {
-            dateParts = datepicker.value.split('-');
+            const dateParts = datepicker.value.split('-');
             if (dateParts.length === 3) {
-                newDate = new Date(
+                const newDate = new Date(
                     parseInt(dateParts[0], 10),
                     parseInt(dateParts[1], 10) - 1,
                     parseInt(dateParts[2], 10)
@@ -132,9 +130,9 @@ export function setupDatePickerHandlers() {
             }
         }
         if (datepicker2.value) {
-            dateParts = datepicker2.value.split('-');
+            const dateParts = datepicker2.value.split('-');
             if (dateParts.length === 3) {
-                newDate = new Date(
+                const newDate = new Date(
                     parseInt(dateParts[0], 10),
                     parseInt(dateParts[1], 10) - 1,
                     parseInt(dateParts[2], 10)
