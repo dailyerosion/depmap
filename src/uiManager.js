@@ -6,11 +6,24 @@ import { requireElement } from 'iemjs/domUtils';
 
 export function setupSidebarEvents() {
     const sidebarElement = requireElement('sidebar');
+    const sidebarToggle = requireElement('btnq1');
+    const primarySidebarAction = sidebarElement.querySelector('[data-bs-toggle="modal"]');
+
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+
     sidebarElement.addEventListener('shown.bs.offcanvas', () => {
+        sidebarToggle.setAttribute('aria-expanded', 'true');
         setState(StateKeys.SIDEBAR_OPEN, true);
+
+        if (primarySidebarAction instanceof HTMLElement) {
+            primarySidebarAction.focus();
+        }
     });
     sidebarElement.addEventListener('hidden.bs.offcanvas', () => {
+        sidebarToggle.setAttribute('aria-expanded', 'false');
         setState(StateKeys.SIDEBAR_OPEN, false);
+
+        sidebarToggle.focus();
     });
 }
 

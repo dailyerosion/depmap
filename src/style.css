@@ -43,13 +43,20 @@ body {
     z-index: 1003;
 }
 
-.btn:focus,
-.btn:active:focus,
-.btn.active:focus,
-.btn.focus,
-.btn:active.focus,
-.btn.active.focus {
+.btn:focus-visible,
+.btn:active:focus-visible,
+.btn.active:focus-visible,
+.btn.focus-visible,
+.btn:active.focus-visible,
+.btn.active.focus-visible {
+    outline: 3px solid #111;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.85);
+}
+
+.btn:focus:not(:focus-visible) {
     outline: none;
+    box-shadow: none;
 }
 
 #colorbar {

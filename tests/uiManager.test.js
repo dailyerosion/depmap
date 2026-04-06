@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import * as uiManager from '../src/uiManager.js';
 import { initializeMap } from '../src/mapManager.js';
 import { requireElement } from 'iemjs/domUtils';
+import { getState, setState, StateKeys } from '../src/state.js';
 
 function setupDOM() {
   // Containers for layer switcher
@@ -57,5 +58,33 @@ describe('uiManager', () => {
     // After change: second visible, first not
     expect(second.checked).toBe(true);
     expect(first.checked).toBe(false);
+  });
+
+  it('updates drawer accessibility state and focus on offcanvas events', () => {
+    const sidebarToggle = document.createElement('button');
+    sidebarToggle.id = 'btnq1';
+    document.body.appendChild(sidebarToggle);
+
+    const sidebar = document.createElement('div');
+    sidebar.id = 'sidebar';
+
+    const searchButton = document.createElement('button');
+    searchButton.type = 'button';
+    searchButton.setAttribute('data-bs-toggle', 'modal');
+    sidebar.appendChild(searchButton);
+    document.body.appendChild(sidebar);
+
+    setState(StateKeys.SIDEBAR_OPEN, false);
+    uiManager.setupSidebarEvents();
+
+    sidebar.dispatchEvent(new Event('shown.bs.offcanvas'));
+    expect(sidebarToggle.getAttribute('aria-expanded')).toBe('true');
+    expect(getState(StateKeys.SIDEBAR_OPEN)).toBe(true);
+    expect(document.activeElement).toBe(searchButton);
+
+    sidebar.dispatchEvent(new Event('hidden.bs.offcanvas'));
+    expect(sidebarToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(getState(StateKeys.SIDEBAR_OPEN)).toBe(false);
+    expect(document.activeElement).toBe(sidebarToggle);
   });
 });
