@@ -188,13 +188,8 @@ export function setupRadioHandlers() {
 }
 
 export function setupSearchHandlers() {
-    requireElement('huc12searchtext').addEventListener('keypress', (event) => {
-            if (event.code === '13') {
-                doHUC12Search();
-            }
-        });
-
-    requireElement('huc12searchbtn').addEventListener('click', () => {
+    requireElement('huc12searchform').addEventListener('submit', (event) => {
+        event.preventDefault();
         doHUC12Search();
     });
 }
@@ -272,9 +267,6 @@ export function setupInlineEventHandlers(setDateSelection) {
         handleSideBarClick();
     });
 
-    requireElement('huc12searchbtn').addEventListener('click', () => {
-        doHUC12Search();
-    });
     // Unit selection radio buttons
     document.querySelectorAll('input[name="units"]').forEach((radio) => {
         radio.addEventListener('change', (event) => {

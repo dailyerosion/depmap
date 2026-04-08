@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { setupRadioHandlers } from '../src/eventHandlers.js';
+import { setupRadioHandlers, setupSearchHandlers } from '../src/eventHandlers.js';
+import { doHUC12Search } from '../src/huc12Utils.js';
 
 // Mock dependencies
 vi.mock('../src/mapManager', () => ({
@@ -12,6 +13,10 @@ vi.mock('../src/state', () => ({
   StateKeys: {
     LTYPE: 'ltype',
   },
+}));
+
+vi.mock('../src/huc12Utils', () => ({
+  doHUC12Search: vi.fn(),
 }));
 
 describe('eventHandlers', () => {
@@ -62,6 +67,24 @@ describe('eventHandlers', () => {
 
       outputRadio.dispatchEvent(new Event('change'));
       expect(document.getElementById('layer-description').textContent).toBe('Output description');
+    });
+  });
+
+  describe('setupSearchHandlers', () => {
+    it('submits the HUC12 search form when the form submit event fires', () => {
+      document.body.innerHTML = `
+        <form id="huc12searchform" name="huc12search">
+          <input type="text" id="huc12searchtext" name="q">
+          <button id="huc12searchbtn" type="submit">Search</button>
+        </form>
+      `;
+
+      setupSearchHandlers();
+
+      const form = document.getElementById('huc12searchform');
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+      expect(doHUC12Search).toHaveBeenCalledTimes(1);
     });
   });
 });
