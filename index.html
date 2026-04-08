@@ -114,16 +114,18 @@
         <h4 class="modal-title" id="myModalLabel">Search for Watershed by Name or ID</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" onkeypress="return event.keyCode != 13;">
+            <div class="modal-body">
         <p>Enter some case-insensitive text to search for a watershed by name or
             enter the HUC12 numeric ID.</p>
-      <form name="huc12search">
-        <input type="text" name="q" id="huc12searchtext">
-        <button id="huc12searchbtn" type="button" class="btn btn-secondary">
+            <form name="huc12search" id="huc12searchform">
+                <label class="visually-hidden" for="huc12searchtext">Search for watershed by name or HUC12 ID</label>
+                <input type="text" name="q" id="huc12searchtext" aria-describedby="huc12searchhelp">
+                <button id="huc12searchbtn" type="submit" class="btn btn-secondary">
             <i class="bi-search"></i> Search</button>
-        </form>
+                </form>
         <hr />
-        <div id="huc12searchres"></div>
+                <div id="huc12searchhelp" class="visually-hidden">Type a watershed name or HUC12 ID, then press Enter or activate Search.</div>
+                <div id="huc12searchres"></div>
         
       </div>
       <div class="modal-footer">
