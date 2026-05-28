@@ -7,8 +7,7 @@ import { XYZ } from 'ol/source';
 import OSM from 'ol/source/OSM';
 import { GeoJSON } from 'ol/format';
 import { Style, Fill, Stroke, Text as TextStyle } from 'ol/style';
-import { Vector as VectorLayer } from 'ol/layer';
-import { Tile as TileLayer, VectorImage as VectorImageLayer } from 'ol/layer';
+import { Vector as VectorLayer, Tile as TileLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
 import { transform } from 'ol/proj';
 import {
@@ -59,18 +58,14 @@ function initializeInfoElements() {
     Object.assign(infoElements, elements);
 }
 
+let _rafPending = false;
+let _pendingFeature = null;
+let _pendingCoordinate = null;
+
 /**
- *
  * @param {*} evt
  */
 function displayFeatureInfo(evt) {
-    const metric = getState(StateKeys.METRIC);
-
-    const features = getMap().getFeaturesAtPixel(
-        getMap().getEventPixel(evt.originalEvent)
-    );
-    let feature = null;
-
     // Validate all elements exist before proceeding
     if (
         !infoElements.name ||
@@ -84,44 +79,61 @@ function displayFeatureInfo(evt) {
         return;
     }
 
-    if (features.length > 0) {
-        feature = features[0];
-        popup.element.hidden = false;
-        popup.setPosition(evt.coordinate);
-        infoElements.name.innerHTML = feature.get('name');
-        infoElements.huc12.innerHTML = feature.getId();
-        infoElements.loss.innerHTML = `${(
-            feature.get('avg_loss') * multipliers.avg_loss[metric]
-        ).toFixed(2)} ${varunits.avg_loss[metric]}`;
-        infoElements.runoff.innerHTML = `${(
-            feature.get('avg_runoff') * multipliers.avg_runoff[metric]
-        ).toFixed(2)} ${varunits.avg_runoff[metric]}`;
-        infoElements.delivery.innerHTML = `${(
-            feature.get('avg_delivery') * multipliers.avg_delivery[metric]
-        ).toFixed(2)} ${varunits.avg_delivery[metric]}`;
-        infoElements.precip.innerHTML = `${(
-            feature.get('qc_precip') * multipliers.qc_precip[metric]
-        ).toFixed(2)} ${varunits.qc_precip[metric]}`;
-    } else {
-        popup.element.hidden = true;
-        infoElements.name.innerHTML = '&nbsp;';
-        infoElements.huc12.innerHTML = '&nbsp;';
-        infoElements.loss.innerHTML = '&nbsp;';
-        infoElements.runoff.innerHTML = '&nbsp;';
-        infoElements.delivery.innerHTML = '&nbsp;';
-        infoElements.precip.innerHTML = '&nbsp;';
+    const pixel = getMap().getEventPixel(evt.originalEvent);
+
+    // forEachFeatureAtPixel uses the vector source R-tree; return false to stop
+    // at the first hit instead of collecting all features.
+    let feature = null;
+    getMap().forEachFeatureAtPixel(
+        pixel,
+        (feat) => {
+            feature = feat;
+            return true;
+        },
+        { layerFilter: (layer) => layer === vectorLayer }
+    );
+
+    // Update hover overlay only when the hovered feature changes
+    if (feature !== quickFeature) {
+        if (quickFeature) {
+            getHoverOverlayLayer().getSource().removeFeature(quickFeature);
+        }
+        if (feature) {
+            getHoverOverlayLayer().getSource().addFeature(feature);
+        }
+        quickFeature = feature;
     }
 
-    // Keep only one selected
-    if (feature) {
-        if (feature !== quickFeature) {
-            if (quickFeature) {
-                getHoverOverlayLayer().getSource().removeFeature(quickFeature);
-            }
-            getHoverOverlayLayer().getSource().addFeature(feature);
-            quickFeature = feature;
-        }
+    _pendingFeature = feature;
+    _pendingCoordinate = evt.coordinate;
+
+    if (_rafPending) {
+        return;
     }
+    _rafPending = true;
+    requestAnimationFrame(() => {
+        _rafPending = false;
+        const metric = getState(StateKeys.METRIC);
+        const feat = _pendingFeature;
+        if (feat) {
+            popup.element.hidden = false;
+            popup.setPosition(_pendingCoordinate);
+            infoElements.name.textContent = feat.get('name');
+            infoElements.huc12.textContent = feat.getId();
+            infoElements.loss.textContent = `${(feat.get('avg_loss') * multipliers.avg_loss[metric]).toFixed(2)} ${varunits.avg_loss[metric]}`;
+            infoElements.runoff.textContent = `${(feat.get('avg_runoff') * multipliers.avg_runoff[metric]).toFixed(2)} ${varunits.avg_runoff[metric]}`;
+            infoElements.delivery.textContent = `${(feat.get('avg_delivery') * multipliers.avg_delivery[metric]).toFixed(2)} ${varunits.avg_delivery[metric]}`;
+            infoElements.precip.textContent = `${(feat.get('qc_precip') * multipliers.qc_precip[metric]).toFixed(2)} ${varunits.qc_precip[metric]}`;
+        } else {
+            popup.element.hidden = true;
+            infoElements.name.textContent = '\u00a0';
+            infoElements.huc12.textContent = '\u00a0';
+            infoElements.loss.textContent = '\u00a0';
+            infoElements.runoff.textContent = '\u00a0';
+            infoElements.delivery.textContent = '\u00a0';
+            infoElements.precip.textContent = '\u00a0';
+        }
+    });
 }
 
 export function setupMapEventHandlers() {
@@ -291,8 +303,7 @@ function createVectorLayer() {
         stroke: new Stroke({ color: '#000000', width: 0.5 }),
     });
 
-    vectorLayer = new VectorImageLayer({
-        imageRatio: 2,
+    vectorLayer = new VectorLayer({
         source: new VectorSource({
             url: `${BACKEND}/geojson/huc12.geojson`,
             format: new GeoJSON(),
