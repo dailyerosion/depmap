@@ -19,6 +19,11 @@ describe('Bootstrap Components', () => {
     dtModal.id = 'dtModal';
     dtModal.className = 'modal';
     document.body.appendChild(dtModal);
+
+    const printModal = document.createElement('div');
+    printModal.id = 'printModal';
+    printModal.className = 'modal';
+    document.body.appendChild(printModal);
     
     const sidebar = document.createElement('div');
     sidebar.id = 'sidebar';
@@ -42,12 +47,14 @@ describe('Bootstrap Components', () => {
     expect(components).toHaveProperty('eventsModal');
     expect(components).toHaveProperty('myModal');
     expect(components).toHaveProperty('dtModal');
+    expect(components).toHaveProperty('printModal');
     expect(components).toHaveProperty('sidebar');
     
     // Test that the components are properly initialized
     expect(components.eventsModal).toBeDefined();
     expect(components.myModal).toBeDefined();
     expect(components.dtModal).toBeDefined();
+    expect(components.printModal).toBeDefined();
     expect(components.sidebar).toBeDefined();
   });
 

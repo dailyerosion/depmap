@@ -12,10 +12,13 @@ function initializeBootstrapComponents() {
     const dtModalElement = requireElement('dtModal');
     const dtModal = new Modal(dtModalElement);
 
+    const printModalElement = requireElement('printModal');
+    const printModal = new Modal(printModalElement);
+
     const sidebarElement = requireElement('sidebar');
     const sidebar = new Offcanvas(sidebarElement);
 
-    return { eventsModal, myModal, dtModal, sidebar };
+    return { eventsModal, myModal, dtModal, printModal, sidebar };
 }
 
 export { initializeBootstrapComponents };

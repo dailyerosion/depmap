@@ -1,4 +1,4 @@
-import { transform } from 'ol/proj';
+import { transform, transformExtent } from 'ol/proj';
 import { rerender_vectors } from './mapManager';
 import { doHUC12Search } from './huc12Utils';
 import { BACKEND } from './constants';
@@ -24,6 +24,71 @@ function handleMapControlsClick(event) {
         .querySelectorAll('#mapcontrols button')
         .forEach((btn) => btn.classList.remove('active'));
     requireElement(btnid).classList.add('active');
+}
+
+function formatDateForPrint(date) {
+    return date instanceof Date ? strftime('%Y-%m-%d', date) : '';
+}
+
+function syncMapPrintDates() {
+    const date = getState(StateKeys.DATE);
+    const date2 = getState(StateKeys.DATE2);
+    requireElement('mapprint-sdate').value = formatDateForPrint(date);
+    requireElement('mapprint-edate').value = formatDateForPrint(date2 || date);
+}
+
+function updateMapPrintStateAvailability() {
+    const useStateExtent = requireElement('mapprint-extent-state').checked;
+    requireElement('mapprint-state-options').setAttribute('aria-disabled', `${!useStateExtent}`);
+    document.querySelectorAll('input[name="mapprint-state"]').forEach((input) => {
+        if (input instanceof HTMLInputElement) {
+            input.disabled = !useStateExtent;
+        }
+    });
+}
+
+function getMapPrintExtentValue() {
+    const size = getMap().getSize();
+    if (!size) {
+        return null;
+    }
+    const currentExtent = getMap().getView().calculateExtent(size);
+    return transformExtent(currentExtent, 'EPSG:3857', 'EPSG:4326')
+        .map((value) => value.toFixed(4))
+        .join(',');
+}
+
+export function buildMapPrintUrl() {
+    const startDate = requireElement('mapprint-sdate').value;
+    const endDate = requireElement('mapprint-edate').value || startDate;
+    const extentMode = document.querySelector('input[name="mapprint-extent"]:checked');
+    const annualMode = document.querySelector('input[name="mapprint-annual"]:checked');
+    const stateChoice = document.querySelector('input[name="mapprint-state"]:checked');
+
+    const params = new URLSearchParams({
+        sdate: startDate,
+        edate: endDate,
+        v: getState(StateKeys.LTYPE),  // eslint-disable-line id-length
+    });
+
+    if (extentMode instanceof HTMLInputElement) {
+        if (extentMode.value === 'current') {
+            const extent = getMapPrintExtentValue();
+            if (!extent) {
+                return null;
+            }
+            params.set('extent', extent);
+        }
+        if (extentMode.value === 'state' && stateChoice instanceof HTMLInputElement) {
+            params.set('state', stateChoice.value);
+        }
+    }
+
+    if (annualMode instanceof HTMLInputElement && annualMode.value === '1') {
+        params.set('annual', '1');
+    }
+
+    return `${BACKEND}/auto/mapper.png?${params.toString()}`;
 }
 
 /**
@@ -166,14 +231,18 @@ export function setupRadioHandlers() {
     document
         .querySelectorAll('input[type=radio][name=whichlayer]')
         .forEach((radio) => {
-            radio.addEventListener('change', function () {
-                setState(StateKeys.LTYPE, this.value);
+            radio.addEventListener('change', (event) => {
+                const target = event.target;
+                if (!(target instanceof HTMLInputElement)) {
+                    return;
+                }
+                setState(StateKeys.LTYPE, target.value);
 
                 rerender_vectors();
                 
                 const layerDesc = document.getElementById('layer-description');
-                if (layerDesc && this.dataset.description) {
-                    layerDesc.textContent = this.dataset.description;
+                if (layerDesc && target.dataset.description) {
+                    layerDesc.textContent = target.dataset.description;
                 }
             });
         });
@@ -248,12 +317,21 @@ export function setupMapControlHandlers() {
     });
 
     requireElement('mapprint').addEventListener('click', () => {
-        const date = getState(StateKeys.DATE);
-        const date2 = getState(StateKeys.DATE2);
-        const ltype = getState(StateKeys.LTYPE);
+        syncMapPrintDates();
+        updateMapPrintStateAvailability();
+    });
 
-        const url = `${BACKEND}/auto/${strftime('%Y%m%d', date)}_` +
-        `${strftime('%Y%m%d', date2 || date)}_0_${ltype}.png`;
+    document.querySelectorAll('input[name="mapprint-extent"]').forEach((input) => {
+        input.addEventListener('change', updateMapPrintStateAvailability);
+    });
+
+    requireElement('mapprintform').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const url = buildMapPrintUrl();
+        if (!url) {
+            setStatus('Unable to determine current map extent for printing.', 'error');
+            return;
+        }
         window.open(url);
     });
 
