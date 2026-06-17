@@ -139,7 +139,7 @@ describe('eventHandlers', () => {
       `;
 
       expect(buildMapPrintUrl()).toBe(
-        'https://mesonet-dep.agron.iastate.edu/auto/mapper.py?sdate=2026-01-02&edate=2026-01-05&ltype=avg_loss&state=IL&annual=1'
+        'https://mesonet-dep.agron.iastate.edu/auto/mapper.png?sdate=2026-01-02&edate=2026-01-05&v=avg_loss&state=IL&annual=1'
       );
     });
 
@@ -175,7 +175,7 @@ describe('eventHandlers', () => {
       document.getElementById('mapprintform').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 
       expect(openSpy).toHaveBeenCalledWith(
-        'https://mesonet-dep.agron.iastate.edu/auto/mapper.py?sdate=2026-01-02&edate=2026-01-05&ltype=avg_loss&extent=-89.8315%2C33.7852%2C-80.8484%2C40.9163'
+        'https://mesonet-dep.agron.iastate.edu/auto/mapper.png?sdate=2026-01-02&edate=2026-01-05&v=avg_loss&extent=-89.8315%2C33.7852%2C-80.8484%2C40.9163'
       );
     });
   });
