@@ -134,6 +134,77 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="printModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="printModalLabel">Create PNG Map</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="mapprintform">
+                    <fieldset class="mb-3">
+                        <legend class="h6">Map Geographic Extent</legend>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mapprint-extent" id="mapprint-extent-domain" value="domain" checked>
+                            <label class="form-check-label" for="mapprint-extent-domain">Plot entire DEP domain</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mapprint-extent" id="mapprint-extent-current" value="current">
+                            <label class="form-check-label" for="mapprint-extent-current">Use current window display extent</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="mapprint-extent" id="mapprint-extent-state" value="state">
+                            <label class="form-check-label" for="mapprint-extent-state">Plot a single state</label>
+                        </div>
+                        <div id="mapprint-state-options" class="row g-2 ms-1" aria-disabled="true">
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-il" value="IL" checked disabled><label class="form-check-label" for="mapprint-state-il">Illinois</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-ia" value="IA" disabled><label class="form-check-label" for="mapprint-state-ia">Iowa</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-ks" value="KS" disabled><label class="form-check-label" for="mapprint-state-ks">Kansas</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-mn" value="MN" disabled><label class="form-check-label" for="mapprint-state-mn">Minnesota</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-mo" value="MO" disabled><label class="form-check-label" for="mapprint-state-mo">Missouri</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-ne" value="NE" disabled><label class="form-check-label" for="mapprint-state-ne">Nebraska</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-sd" value="SD" disabled><label class="form-check-label" for="mapprint-state-sd">South Dakota</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="mapprint-state" id="mapprint-state-wi" value="WI" disabled><label class="form-check-label" for="mapprint-state-wi">Wisconsin</label></div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="mapprint-sdate">Start date</label>
+                            <input type="date" class="form-control" id="mapprint-sdate" name="sdate">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="mapprint-edate">End date</label>
+                            <input type="date" class="form-control" id="mapprint-edate" name="edate">
+                        </div>
+                    </div>
+
+                    <fieldset>
+                        <legend class="h6">Period Aggregation</legend>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mapprint-annual" id="mapprint-total" value="0" checked>
+                            <label class="form-check-label" for="mapprint-total">Total for selected period</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mapprint-annual" id="mapprint-annual" value="1">
+                            <label class="form-check-label" for="mapprint-annual">Annual average for selected period</label>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="mapprintform">Open PNG</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- End of modals -->
 
 <div id="mapcontrols">
@@ -145,7 +216,7 @@
     <i class="bi-info-circle"></i></button>
 <button id="mapplus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map In." aria-label="Zoom Map In"><i class="bi-zoom-in"></i></button>
 <button id="mapminus" class="btn btn-sq-sm btn-danger float-start" title="Zoom Map Out." aria-label="Zoom Map Out"><i class="bi-zoom-out"></i></button>
-<button id="mapprint" class="btn btn-sq-sm btn-danger float-start" title="Create PNG image of map." aria-label="Create PNG image of map"><i class="bi-printer"></i></button>
+<button id="mapprint" class="btn btn-sq-sm btn-danger float-start" title="Create PNG image of map." aria-label="Create PNG image of map" data-bs-toggle="modal" data-bs-target="#printModal"><i class="bi-printer"></i></button>
 </div>
 
 <div id="fdetails">
