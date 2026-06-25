@@ -90,6 +90,8 @@ export function remap() {
                     {
                         avg_delivery: 0,
                         qc_precip: 0,
+                        avg_runoff: 0,
+                        avg_loss: 0,
                     },
                     true
                 );
