@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Clone Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set Node.js Version
         uses: actions/setup-node@v6
@@ -34,7 +34,7 @@ jobs:
           npm run test:coverage
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           files: ./coverage/lcov.info
           flags: unittests
@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Clone Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set Node.js Version
         uses: actions/setup-node@v6
