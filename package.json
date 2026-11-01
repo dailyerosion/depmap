@@ -21,19 +21,19 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@vitest/coverage-v8": "^5.0.2",
+    "@vitest/coverage-v8": "^5.0.5",
     "@vitest/ui": "^5.0.2",
-    "eslint": "^10.11.0",
-    "globals": "^17.12.0",
-    "jsdom": "^30.1.1",
-    "vite": "^8.3.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "jsdom": "^30.1.3",
+    "vite": "^8.3.5",
     "vitest": "^5.0.2"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
+    "bootstrap-icons": "^1.13.2",
     "iemjs": "^0.0.7",
-    "ol": "^10.10.0",
+    "ol": "^10.11.0",
     "strftime": "^0.10.3"
   }
 }
